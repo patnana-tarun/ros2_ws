@@ -1,0 +1,42 @@
+[0.007s] Invoking command in '/home/shadows/ros2_ws/build/my_mesh_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/my_mesh_interfaces -- -j20 -l20
+[0.027s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.088s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.092s] -- Found rosidl_default_generators: 1.6.1 (/opt/ros/jazzy/share/rosidl_default_generators/cmake)
+[0.093s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.113s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.129s] -- Found rosidl_adapter: 4.6.9 (/opt/ros/jazzy/share/rosidl_adapter/cmake)
+[0.130s] -- Found sensor_msgs: 5.3.8 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[0.352s] -- Found ament_cmake_ros: 0.12.1 (/opt/ros/jazzy/share/ament_cmake_ros/cmake)
+[0.465s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.621s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.621s] -- Found python_cmake_module: 0.11.1 (/opt/ros/jazzy/share/python_cmake_module/cmake)
+[0.778s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development NumPy Development.Module Development.Embed 
+[0.841s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.846s] -- Configuring done (0.8s)
+[0.869s] -- Generating done (0.0s)
+[0.876s] -- Build files have been written to: /home/shadows/ros2_ws/build/my_mesh_interfaces
+[0.904s] [  1%] [34m[1mGenerating type hashes for ROS interfaces[0m
+[0.907s] [  3%] [34m[1mGenerating Rust code for ROS interfaces[0m
+[0.914s] [  3%] Built target ament_cmake_python_symlink_my_mesh_interfaces
+[1.038s] [  3%] Built target my_mesh_interfaces__rs
+[1.044s] running egg_info
+[1.055s] writing my_mesh_interfaces.egg-info/PKG-INFO
+[1.055s] writing dependency_links to my_mesh_interfaces.egg-info/dependency_links.txt
+[1.055s] writing top-level names to my_mesh_interfaces.egg-info/top_level.txt
+[1.086s] reading manifest file 'my_mesh_interfaces.egg-info/SOURCES.txt'
+[1.086s] writing manifest file 'my_mesh_interfaces.egg-info/SOURCES.txt'
+[1.105s] [  3%] Built target ament_cmake_python_build_my_mesh_interfaces_egg
+[1.880s] Traceback (most recent call last):
+[1.880s]   File "/opt/ros/jazzy/lib/rosidl_generator_type_description/rosidl_generator_type_description", line 50, in <module>
+[1.880s]     sys.exit(main())
+[1.880s]              ^^^^^^
+[1.880s]   File "/opt/ros/jazzy/lib/rosidl_generator_type_description/rosidl_generator_type_description", line 46, in main
+[1.880s]     generate_type_hash(args.generator_arguments_file)
+[1.880s]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rosidl_generator_type_description/__init__.py", line 160, in generate_type_hash
+[1.880s]     pkg_dir = include_map[pkg]
+[1.880s]               ~~~~~~~~~~~^^^^^
+[1.880s] KeyError: 'nav_msgs'
+[1.906s] gmake[2]: *** [CMakeFiles/my_mesh_interfaces__rosidl_generator_type_description.dir/build.make:79: rosidl_generator_type_description/my_mesh_interfaces/msg/MeshScan.json] Error 1
+[1.906s] gmake[1]: *** [CMakeFiles/Makefile2:234: CMakeFiles/my_mesh_interfaces__rosidl_generator_type_description.dir/all] Error 2
+[1.906s] gmake: *** [Makefile:146: all] Error 2
+[1.908s] Invoked command in '/home/shadows/ros2_ws/build/my_mesh_interfaces' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/my_mesh_interfaces -- -j20 -l20

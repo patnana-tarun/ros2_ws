@@ -1,0 +1,14 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from my_mesh_interfaces/msg/SenderStatus.msg
+// generated code does not contain a copyright notice
+
+
+module my_mesh_interfaces {
+  module msg {
+    struct SenderStatus {
+      uint64 session_id;
+
+      uint64 last_sequence_sent;
+    };
+  };
+};

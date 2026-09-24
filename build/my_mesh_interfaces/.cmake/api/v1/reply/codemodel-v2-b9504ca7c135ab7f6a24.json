@@ -1,0 +1,267 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-a86de8a71b0b8c3faf54.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						15,
+						16,
+						17,
+						18,
+						19
+					]
+				},
+				{
+					"build" : "my_mesh_interfaces__py",
+					"jsonFile" : "directory-my_mesh_interfaces__py-7dffbe857ab89f89d68d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/shadows/ros2_ws/build/my_mesh_interfaces/my_mesh_interfaces__py",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "my_mesh_interfaces__rs",
+					"jsonFile" : "directory-my_mesh_interfaces__rs-82269c766c290a7d890a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/shadows/ros2_ws/build/my_mesh_interfaces/my_mesh_interfaces__rs",
+					"targetIndexes" : 
+					[
+						14
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "my_mesh_interfaces",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_my_mesh_interfaces_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_my_mesh_interfaces_egg-37198d5e35d307ef5ec1.json",
+					"name" : "ament_cmake_python_build_my_mesh_interfaces_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_copy_my_mesh_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_copy_my_mesh_interfaces-df411df65776aaafc015.json",
+					"name" : "ament_cmake_python_copy_my_mesh_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces-bf673ee04ae7cb20f7b3.json",
+					"name" : "my_mesh_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__cpp-1bdd665206484bb3c169.json",
+					"name" : "my_mesh_interfaces__cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "my_mesh_interfaces__py::@458ec9c3cdd788f3720d",
+					"jsonFile" : "target-my_mesh_interfaces__py-1b8f15f75d566df83521.json",
+					"name" : "my_mesh_interfaces__py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_generator_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_generator_c-43a4c6efa1acafb32b27.json",
+					"name" : "my_mesh_interfaces__rosidl_generator_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_generator_py::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_generator_py-97347d10c8f399cc1dcc.json",
+					"name" : "my_mesh_interfaces__rosidl_generator_py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_generator_type_description::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_generator_type_description-7de5590e6f8dce212b1b.json",
+					"name" : "my_mesh_interfaces__rosidl_generator_type_description",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_typesupport_c-cfb3e5ee2905211b752b.json",
+					"name" : "my_mesh_interfaces__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_typesupport_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_typesupport_cpp-19fc9c7b76c3e8c0f850.json",
+					"name" : "my_mesh_interfaces__rosidl_typesupport_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_typesupport_fastrtps_c-e7bc7a96394a9cc77e98.json",
+					"name" : "my_mesh_interfaces__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp-afa344d75da5f5f767fa.json",
+					"name" : "my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_typesupport_introspection_c-c3b6e284714fa9abd6e2.json",
+					"name" : "my_mesh_interfaces__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces__rosidl_typesupport_introspection_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces__rosidl_typesupport_introspection_cpp-e40c7b298f1489f72ed3.json",
+					"name" : "my_mesh_interfaces__rosidl_typesupport_introspection_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "my_mesh_interfaces__rs::@c00705bb4dd3fb5c697e",
+					"jsonFile" : "target-my_mesh_interfaces__rs-11aa5e3c82545b76ed74.json",
+					"name" : "my_mesh_interfaces__rs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces_s__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces_s__rosidl_typesupport_c-9abcf8aecfccc59b9874.json",
+					"name" : "my_mesh_interfaces_s__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c-181164dc80b8c00e758c.json",
+					"name" : "my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces_s__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces_s__rosidl_typesupport_introspection_c-4d67a1c03a5c4be80ff5.json",
+					"name" : "my_mesh_interfaces_s__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_mesh_interfaces_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_mesh_interfaces_uninstall-81e6448deec7df31d36e.json",
+					"name" : "my_mesh_interfaces_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-9e1ccea31a84f0b9513d.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/shadows/ros2_ws/build/my_mesh_interfaces",
+		"source" : "/home/shadows/ros2_ws/src/my_mesh_interfaces"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

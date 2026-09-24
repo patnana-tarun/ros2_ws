@@ -1,0 +1,4 @@
+uint64 session_id
+uint64 sequence_id
+builtin_interfaces/Time transmission_stamp
+nav_msgs/OccupancyGrid map_data

@@ -1,0 +1,308 @@
+[0.006s] Invoking command in '/home/shadows/ros2_ws/build/my_mesh_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/shadows/ros2_ws/src/my_mesh_interfaces -DCMAKE_INSTALL_PREFIX=/home/shadows/ros2_ws/install/my_mesh_interfaces
+[0.046s] -- The C compiler identification is GNU 13.3.0
+[0.086s] -- The CXX compiler identification is GNU 13.3.0
+[0.098s] -- Detecting C compiler ABI info
+[0.167s] -- Detecting C compiler ABI info - done
+[0.174s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.174s] -- Detecting C compile features
+[0.174s] -- Detecting C compile features - done
+[0.182s] -- Detecting CXX compiler ABI info
+[0.254s] -- Detecting CXX compiler ABI info - done
+[0.263s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.263s] -- Detecting CXX compile features
+[0.264s] -- Detecting CXX compile features - done
+[0.266s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.370s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.440s] -- Found rosidl_default_generators: 1.6.1 (/opt/ros/jazzy/share/rosidl_default_generators/cmake)
+[0.445s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.481s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.513s] -- Found rosidl_adapter: 4.6.9 (/opt/ros/jazzy/share/rosidl_adapter/cmake)
+[0.515s] -- Found sensor_msgs: 5.3.8 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[0.575s] -- Found nav_msgs: 5.3.8 (/opt/ros/jazzy/share/nav_msgs/cmake)
+[1.003s] -- Found ament_cmake_ros: 0.12.1 (/opt/ros/jazzy/share/ament_cmake_ros/cmake)
+[1.351s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.814s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.816s] -- Found python_cmake_module: 0.11.1 (/opt/ros/jazzy/share/python_cmake_module/cmake)
+[1.903s] -- Found PythonExtra: /usr/bin/python3  
+[2.168s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development NumPy Development.Module Development.Embed 
+[2.255s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[2.258s] -- Configuring done (2.2s)
+[2.282s] -- Generating done (0.0s)
+[2.288s] -- Build files have been written to: /home/shadows/ros2_ws/build/my_mesh_interfaces
+[2.296s] Invoked command in '/home/shadows/ros2_ws/build/my_mesh_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/shadows/ros2_ws/src/my_mesh_interfaces -DCMAKE_INSTALL_PREFIX=/home/shadows/ros2_ws/install/my_mesh_interfaces
+[2.296s] Invoking command in '/home/shadows/ros2_ws/build/my_mesh_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/my_mesh_interfaces -- -j20 -l20
+[2.337s] [  1%] [34m[1mGenerating Rust code for ROS interfaces[0m
+[2.337s] [  3%] [34m[1mGenerating type hashes for ROS interfaces[0m
+[2.345s] [  3%] Built target ament_cmake_python_copy_my_mesh_interfaces
+[2.464s] [  3%] Built target my_mesh_interfaces__rosidl_generator_type_description
+[2.468s] [  3%] Built target my_mesh_interfaces__rs
+[2.472s] running egg_info
+[2.473s] creating my_mesh_interfaces.egg-info
+[2.473s] [  5%] [34m[1mGenerating C code for ROS interfaces[0m
+[2.480s] [  7%] [34m[1mGenerating C++ code for ROS interfaces[0m
+[2.483s] writing my_mesh_interfaces.egg-info/PKG-INFO
+[2.483s] writing dependency_links to my_mesh_interfaces.egg-info/dependency_links.txt
+[2.483s] writing top-level names to my_mesh_interfaces.egg-info/top_level.txt
+[2.483s] writing manifest file 'my_mesh_interfaces.egg-info/SOURCES.txt'
+[2.515s] reading manifest file 'my_mesh_interfaces.egg-info/SOURCES.txt'
+[2.515s] writing manifest file 'my_mesh_interfaces.egg-info/SOURCES.txt'
+[2.535s] [  7%] Built target ament_cmake_python_build_my_mesh_interfaces_egg
+[2.639s] [  7%] Built target my_mesh_interfaces__cpp
+[2.664s] [  9%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/mesh_scan__functions.c.o[0m
+[2.664s] [ 12%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/mesh_map__type_support.c.o[0m
+[2.664s] [ 12%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/sender_status__description.c.o[0m
+[2.664s] [ 14%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/sender_status__functions.c.o[0m
+[2.664s] [ 16%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/sender_status__type_support.c.o[0m
+[2.665s] [ 18%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/mesh_scan__description.c.o[0m
+[2.665s] [ 21%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/mesh_scan__type_support.c.o[0m
+[2.666s] [ 21%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/mesh_map__description.c.o[0m
+[2.666s] [ 23%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_c.dir/rosidl_generator_c/my_mesh_interfaces/msg/detail/mesh_map__functions.c.o[0m
+[2.700s] [ 25%] [32m[1mLinking C shared library libmy_mesh_interfaces__rosidl_generator_c.so[0m
+[2.726s] [ 25%] Built target my_mesh_interfaces__rosidl_generator_c
+[2.732s] [ 29%] [34m[1mGenerating C++ introspection for ROS interfaces[0m
+[2.733s] [ 29%] [34m[1mGenerating C++ type support dispatch for ROS interfaces[0m
+[2.733s] [ 30%] [34m[1mGenerating C type support dispatch for ROS interfaces[0m
+[2.734s] [ 32%] [34m[1mGenerating C type support for eProsima Fast-RTPS[0m
+[2.734s] [ 36%] [34m[1mGenerating C introspection for ROS interfaces[0m
+[2.734s] [ 36%] [34m[1mGenerating C++ type support for eProsima Fast-RTPS[0m
+[2.880s] [ 38%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/my_mesh_interfaces/msg/mesh_scan__type_support.cpp.o[0m
+[2.881s] [ 40%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/my_mesh_interfaces/msg/mesh_scan__type_support.cpp.o[0m
+[2.883s] [ 43%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/my_mesh_interfaces/msg/sender_status__type_support.cpp.o[0m
+[2.883s] [ 43%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/my_mesh_interfaces/msg/mesh_map__type_support.cpp.o[0m
+[2.883s] [ 47%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/my_mesh_interfaces/msg/sender_status__type_support.cpp.o[0m
+[2.883s] [ 47%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/my_mesh_interfaces/msg/mesh_map__type_support.cpp.o[0m
+[2.889s] [ 49%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/my_mesh_interfaces/msg/detail/sender_status__type_support.cpp.o[0m
+[2.891s] [ 52%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/my_mesh_interfaces/msg/detail/mesh_scan__type_support.cpp.o[0m
+[2.891s] [ 52%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/my_mesh_interfaces/msg/detail/mesh_map__type_support.cpp.o[0m
+[2.901s] [ 54%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/my_mesh_interfaces/msg/detail/mesh_map__type_support.c.o[0m
+[2.901s] [ 58%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/my_mesh_interfaces/msg/detail/mesh_scan__type_support.c.o[0m
+[2.902s] [ 58%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/my_mesh_interfaces/msg/detail/sender_status__type_support.c.o[0m
+[2.922s] [ 60%] [32m[1mLinking CXX shared library libmy_mesh_interfaces__rosidl_typesupport_c.so[0m
+[2.922s] [ 61%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/my_mesh_interfaces/msg/detail/mesh_scan__type_support_c.cpp.o[0m
+[2.922s] [ 63%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/my_mesh_interfaces/msg/detail/mesh_map__type_support_c.cpp.o[0m
+[2.923s] [ 65%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/my_mesh_interfaces/msg/detail/sender_status__type_support_c.cpp.o[0m
+[2.934s] [ 67%] [32m[1mLinking C shared library libmy_mesh_interfaces__rosidl_typesupport_introspection_c.so[0m
+[2.938s] [ 69%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/my_mesh_interfaces/msg/detail/dds_fastrtps/mesh_map__type_support.cpp.o[0m
+[2.939s] [ 70%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/my_mesh_interfaces/msg/detail/dds_fastrtps/mesh_scan__type_support.cpp.o[0m
+[2.940s] [ 72%] [32mBuilding CXX object CMakeFiles/my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/my_mesh_interfaces/msg/detail/dds_fastrtps/sender_status__type_support.cpp.o[0m
+[2.947s] [ 72%] Built target my_mesh_interfaces__rosidl_typesupport_c
+[2.961s] [ 72%] Built target my_mesh_interfaces__rosidl_typesupport_introspection_c
+[3.171s] [ 74%] [32m[1mLinking CXX shared library libmy_mesh_interfaces__rosidl_typesupport_introspection_cpp.so[0m
+[3.177s] [ 76%] [32m[1mLinking CXX shared library libmy_mesh_interfaces__rosidl_typesupport_cpp.so[0m
+[3.184s] [ 78%] [32m[1mLinking CXX shared library libmy_mesh_interfaces__rosidl_typesupport_fastrtps_c.so[0m
+[3.215s] [ 78%] Built target my_mesh_interfaces__rosidl_typesupport_cpp
+[3.215s] [ 78%] Built target my_mesh_interfaces__rosidl_typesupport_introspection_cpp
+[3.221s] [ 78%] Built target my_mesh_interfaces__rosidl_typesupport_fastrtps_c
+[3.314s] [ 80%] [32m[1mLinking CXX shared library libmy_mesh_interfaces__rosidl_typesupport_fastrtps_cpp.so[0m
+[3.347s] [ 80%] Built target my_mesh_interfaces__rosidl_typesupport_fastrtps_cpp
+[3.363s] [ 80%] Built target my_mesh_interfaces
+[3.377s] [ 81%] [34m[1mGenerating Python code for ROS interfaces[0m
+[3.576s] [ 81%] Built target my_mesh_interfaces__py
+[3.590s] [ 83%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_py.dir/rosidl_generator_py/my_mesh_interfaces/msg/_mesh_map_s.c.o[0m
+[3.591s] [ 85%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_py.dir/rosidl_generator_py/my_mesh_interfaces/msg/_mesh_scan_s.c.o[0m
+[3.592s] [ 87%] [32mBuilding C object CMakeFiles/my_mesh_interfaces__rosidl_generator_py.dir/rosidl_generator_py/my_mesh_interfaces/msg/_sender_status_s.c.o[0m
+[3.661s] [ 89%] [32m[1mLinking C shared library libmy_mesh_interfaces__rosidl_generator_py.so[0m
+[3.700s] [ 89%] Built target my_mesh_interfaces__rosidl_generator_py
+[3.717s] [ 90%] [32mBuilding C object CMakeFiles/my_mesh_interfaces_s__rosidl_typesupport_introspection_c.dir/rosidl_generator_py/my_mesh_interfaces/_my_mesh_interfaces_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[3.718s] [ 92%] [32mBuilding C object CMakeFiles/my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c.dir/rosidl_generator_py/my_mesh_interfaces/_my_mesh_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[3.718s] [ 94%] [32mBuilding C object CMakeFiles/my_mesh_interfaces_s__rosidl_typesupport_c.dir/rosidl_generator_py/my_mesh_interfaces/_my_mesh_interfaces_s.ep.rosidl_typesupport_c.c.o[0m
+[3.779s] [ 98%] [32m[1mLinking C shared module rosidl_generator_py/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_c.so[0m
+[3.779s] [ 98%] [32m[1mLinking C shared module rosidl_generator_py/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c.so[0m
+[3.779s] [100%] [32m[1mLinking C shared module rosidl_generator_py/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_introspection_c.so[0m
+[3.803s] [100%] Built target my_mesh_interfaces_s__rosidl_typesupport_c
+[3.803s] [100%] Built target my_mesh_interfaces_s__rosidl_typesupport_introspection_c
+[3.804s] [100%] Built target my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c
+[3.839s] Invoked command in '/home/shadows/ros2_ws/build/my_mesh_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/my_mesh_interfaces -- -j20 -l20
+[3.848s] Invoking command in '/home/shadows/ros2_ws/build/my_mesh_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/shadows/ros2_ws/build/my_mesh_interfaces
+[3.853s] -- Install configuration: ""
+[3.853s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/ament_index/resource_index/rosidl_interfaces/my_mesh_interfaces
+[3.853s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/MeshScan.json
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/MeshMap.json
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/SenderStatus.json
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/sender_status.h
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/mesh_scan.h
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/rosidl_generator_c__visibility_control.h
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/mesh_map.h
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__functions.c
+[3.854s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__functions.c
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__functions.h
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__type_support.h
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__functions.h
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__functions.c
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__description.c
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__type_support.c
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__description.c
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__struct.h
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__type_support.h
+[3.855s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__struct.h
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__functions.h
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__type_support.c
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__type_support.h
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__description.c
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__struct.h
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__type_support.c
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/library_path.sh
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/library_path.dsv
+[3.856s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_generator_c.so
+[3.856s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_generator_c.so" to ""
+[3.856s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces
+[3.857s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[3.857s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__rosidl_typesupport_fastrtps_c.h
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__rosidl_typesupport_fastrtps_c.h
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__rosidl_typesupport_fastrtps_c.h
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_fastrtps_c.so
+[3.857s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_fastrtps_c.so" to ""
+[3.857s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces
+[3.857s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[3.857s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail
+[3.857s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__rosidl_typesupport_introspection_c.h
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__rosidl_typesupport_introspection_c.h
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__rosidl_typesupport_introspection_c.h
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__type_support.c
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__type_support.c
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__type_support.c
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_introspection_c.so
+[3.858s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_introspection_c.so" to ""
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_c.so
+[3.858s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_c.so" to ""
+[3.858s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces
+[3.858s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/sender_status.hpp
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/mesh_map.hpp
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/mesh_scan.hpp
+[3.858s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp
+[3.858s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__builder.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__traits.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__type_support.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__traits.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__type_support.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__traits.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__type_support.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__builder.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__struct.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__builder.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__struct.hpp
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__struct.hpp
+[3.859s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces
+[3.859s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg
+[3.859s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[3.859s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__rosidl_typesupport_fastrtps_cpp.hpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__rosidl_typesupport_fastrtps_cpp.hpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/dds_fastrtps
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__rosidl_typesupport_fastrtps_cpp.hpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_fastrtps_cpp.so
+[3.860s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_fastrtps_cpp.so" to ""
+[3.860s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces
+[3.860s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg
+[3.860s] -- Up-to-date: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__type_support.cpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__type_support.cpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__type_support.cpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/sender_status__rosidl_typesupport_introspection_cpp.hpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_scan__rosidl_typesupport_introspection_cpp.hpp
+[3.860s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/include/my_mesh_interfaces/my_mesh_interfaces/msg/detail/mesh_map__rosidl_typesupport_introspection_cpp.hpp
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_introspection_cpp.so
+[3.861s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_introspection_cpp.so" to ""
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_cpp.so
+[3.861s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_typesupport_cpp.so" to ""
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/pythonpath.sh
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/pythonpath.dsv
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces-0.0.0-py3.12.egg-info
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces-0.0.0-py3.12.egg-info/SOURCES.txt
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces-0.0.0-py3.12.egg-info/dependency_links.txt
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces-0.0.0-py3.12.egg-info/top_level.txt
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces-0.0.0-py3.12.egg-info/PKG-INFO
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_c.so
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/_my_mesh_interfaces_s.ep.rosidl_typesupport_c.c
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/__init__.py
+[3.861s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/_my_mesh_interfaces_s.ep.rosidl_typesupport_introspection_c.c
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/_my_mesh_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c.so
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_introspection_c.so
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_sender_status_s.c
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_sender_status.py
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/__init__.py
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_mesh_map_s.c
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_mesh_scan.py
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_mesh_scan_s.c
+[3.862s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_mesh_map.py
+[3.886s] Listing '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces'...
+[3.886s] Compiling '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/__init__.py'...
+[3.886s] Listing '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg'...
+[3.886s] Compiling '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/__init__.py'...
+[3.886s] Compiling '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_mesh_map.py'...
+[3.886s] Compiling '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_mesh_scan.py'...
+[3.886s] Compiling '/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/msg/_sender_status.py'...
+[3.889s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c.so
+[3.889s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_fastrtps_c.so" to ""
+[3.889s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_introspection_c.so
+[3.889s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_introspection_c.so" to ""
+[3.889s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_c.so
+[3.889s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages/my_mesh_interfaces/my_mesh_interfaces_s__rosidl_typesupport_c.so" to ""
+[3.889s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_generator_py.so
+[3.889s] -- Set non-toolchain portion of runtime path of "/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/libmy_mesh_interfaces__rosidl_generator_py.so" to ""
+[3.889s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust
+[3.889s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/Cargo.toml
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/src
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/src/lib.rs
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/src/msg.rs
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/src/msg
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/src/msg/rmw.rs
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/rust/build.rs
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/MeshScan.idl
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/MeshMap.idl
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/SenderStatus.idl
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/MeshScan.msg
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/MeshMap.msg
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/msg/SenderStatus.msg
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/ament_index/resource_index/package_run_dependencies/my_mesh_interfaces
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/ament_index/resource_index/parent_prefix_path/my_mesh_interfaces
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/ament_prefix_path.sh
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/ament_prefix_path.dsv
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/path.sh
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/environment/path.dsv
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/local_setup.bash
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/local_setup.sh
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/local_setup.zsh
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/local_setup.dsv
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/package.dsv
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/ament_index/resource_index/packages/my_mesh_interfaces
+[3.890s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_generator_cExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_generator_cExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_typesupport_fastrtps_cExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_introspection_cExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_cExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_cExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_generator_cppExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_typesupport_fastrtps_cppExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_introspection_cppExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_cppExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfaces__rosidl_typesupport_cppExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_generator_pyExport.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/export_my_mesh_interfaces__rosidl_generator_pyExport-noconfig.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/rosidl_cmake-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/ament_cmake_export_libraries-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/ament_cmake_export_targets-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[3.891s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/rosidl_cmake_aggregate_target-extras.cmake
+[3.892s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfacesConfig.cmake
+[3.892s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/cmake/my_mesh_interfacesConfig-version.cmake
+[3.892s] -- Installing: /home/shadows/ros2_ws/install/my_mesh_interfaces/share/my_mesh_interfaces/package.xml
+[3.893s] Invoked command in '/home/shadows/ros2_ws/build/my_mesh_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/shadows/ros2_ws/build/my_mesh_interfaces

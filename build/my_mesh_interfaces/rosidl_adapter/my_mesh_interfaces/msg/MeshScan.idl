@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from my_mesh_interfaces/msg/MeshScan.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "nav_msgs/msg/OccupancyGrid.idl"
+
+module my_mesh_interfaces {
+  module msg {
+    struct MeshScan {
+      uint64 session_id;
+
+      uint64 sequence_id;
+
+      nav_msgs::msg::OccupancyGrid map_data;
+
+      builtin_interfaces::msg::Time transmission_stamp;
+    };
+  };
+};

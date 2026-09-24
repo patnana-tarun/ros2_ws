@@ -1,0 +1,36 @@
+{
+  "type_description_msg": {
+    "type_description": {
+      "type_name": "my_mesh_interfaces/msg/SenderStatus",
+      "fields": [
+        {
+          "name": "session_id",
+          "type": {
+            "type_id": 9,
+            "capacity": 0,
+            "string_capacity": 0,
+            "nested_type_name": ""
+          },
+          "default_value": ""
+        },
+        {
+          "name": "last_sequence_sent",
+          "type": {
+            "type_id": 9,
+            "capacity": 0,
+            "string_capacity": 0,
+            "nested_type_name": ""
+          },
+          "default_value": ""
+        }
+      ]
+    },
+    "referenced_type_descriptions": []
+  },
+  "type_hashes": [
+    {
+      "type_name": "my_mesh_interfaces/msg/SenderStatus",
+      "hash_string": "RIHS01_bff1545ccdd303ecbe33e7083efd0c61103b04fdf6eb4409e91b5ca116a02b8f"
+    }
+  ]
+}

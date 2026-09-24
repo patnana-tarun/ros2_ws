@@ -1,0 +1,5 @@
+uint64 session_id
+uint64 sequence_id
+builtin_interfaces/Time transmission_stamp
+tf2_msgs/TFMessage tf_data
+bool map_in_flight

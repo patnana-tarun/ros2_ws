@@ -1,0 +1,9 @@
+{
+  "package_name": "my_mesh_interfaces",
+  "non_idl_tuples": [
+    "/home/shadows/ros2_ws/src/my_mesh_interfaces:msg/MeshScan.msg",
+    "/home/shadows/ros2_ws/src/my_mesh_interfaces:msg/MeshMap.msg",
+    "/home/shadows/ros2_ws/src/my_mesh_interfaces:msg/MeshTf.msg",
+    "/home/shadows/ros2_ws/src/my_mesh_interfaces:msg/SenderStatus.msg"
+  ]
+}

@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from my_mesh_interfaces/msg/MeshTf.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "tf2_msgs/msg/TFMessage.idl"
+
+module my_mesh_interfaces {
+  module msg {
+    struct MeshTf {
+      uint64 session_id;
+
+      uint64 sequence_id;
+
+      builtin_interfaces::msg::Time transmission_stamp;
+
+      tf2_msgs::msg::TFMessage tf_data;
+
+      boolean map_in_flight;
+    };
+  };
+};
