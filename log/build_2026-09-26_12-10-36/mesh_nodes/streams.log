@@ -1,0 +1,41 @@
+[0.688s] Invoking command in '/home/shadows/ros2_ws/src/mesh_nodes': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/mesh_nodes/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/mesh_nodes build --build-base /home/shadows/ros2_ws/build/mesh_nodes/build install --record /home/shadows/ros2_ws/build/mesh_nodes/install.log --install-scripts $base/lib/mesh_nodes --single-version-externally-managed install_data
+[0.852s] running egg_info
+[0.852s] creating ../../build/mesh_nodes/mesh_nodes.egg-info
+[0.864s] writing ../../build/mesh_nodes/mesh_nodes.egg-info/PKG-INFO
+[0.864s] writing dependency_links to ../../build/mesh_nodes/mesh_nodes.egg-info/dependency_links.txt
+[0.864s] writing entry points to ../../build/mesh_nodes/mesh_nodes.egg-info/entry_points.txt
+[0.864s] writing requirements to ../../build/mesh_nodes/mesh_nodes.egg-info/requires.txt
+[0.864s] writing top-level names to ../../build/mesh_nodes/mesh_nodes.egg-info/top_level.txt
+[0.864s] writing manifest file '../../build/mesh_nodes/mesh_nodes.egg-info/SOURCES.txt'
+[0.886s] reading manifest file '../../build/mesh_nodes/mesh_nodes.egg-info/SOURCES.txt'
+[0.886s] writing manifest file '../../build/mesh_nodes/mesh_nodes.egg-info/SOURCES.txt'
+[0.887s] running build
+[0.887s] running build_py
+[0.887s] creating /home/shadows/ros2_ws/build/mesh_nodes/build
+[0.887s] creating /home/shadows/ros2_ws/build/mesh_nodes/build/lib
+[0.887s] creating /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes
+[0.887s] copying mesh_nodes/explorer_relay_node.py -> /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes
+[0.887s] copying mesh_nodes/__init__.py -> /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes
+[0.887s] running install
+[0.891s] running install_lib
+[0.902s] creating /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes
+[0.902s] copying /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes/explorer_relay_node.py -> /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes
+[0.902s] copying /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes/__init__.py -> /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes
+[0.903s] byte-compiling /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes/explorer_relay_node.py to explorer_relay_node.cpython-312.pyc
+[0.903s] byte-compiling /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes/__init__.py to __init__.cpython-312.pyc
+[0.904s] running install_data
+[0.904s] creating /home/shadows/ros2_ws/install/mesh_nodes/share/ament_index
+[0.904s] creating /home/shadows/ros2_ws/install/mesh_nodes/share/ament_index/resource_index
+[0.904s] creating /home/shadows/ros2_ws/install/mesh_nodes/share/ament_index/resource_index/packages
+[0.904s] copying resource/mesh_nodes -> /home/shadows/ros2_ws/install/mesh_nodes/share/ament_index/resource_index/packages
+[0.904s] copying package.xml -> /home/shadows/ros2_ws/install/mesh_nodes/share/mesh_nodes
+[0.904s] creating /home/shadows/ros2_ws/install/mesh_nodes/share/mesh_nodes/launch
+[0.904s] copying launch/explorer_relay.launch.py -> /home/shadows/ros2_ws/install/mesh_nodes/share/mesh_nodes/launch
+[0.904s] creating /home/shadows/ros2_ws/install/mesh_nodes/share/mesh_nodes/config
+[0.904s] copying config/explorer_relay.yaml -> /home/shadows/ros2_ws/install/mesh_nodes/share/mesh_nodes/config
+[0.904s] running install_egg_info
+[0.917s] Copying ../../build/mesh_nodes/mesh_nodes.egg-info to /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes-0.1.0-py3.12.egg-info
+[0.917s] running install_scripts
+[0.993s] Installing explorer_relay script to /home/shadows/ros2_ws/install/mesh_nodes/lib/mesh_nodes
+[0.993s] writing list of installed files to '/home/shadows/ros2_ws/build/mesh_nodes/install.log'
+[1.008s] Invoked command in '/home/shadows/ros2_ws/src/mesh_nodes' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/mesh_nodes/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/mesh_nodes build --build-base /home/shadows/ros2_ws/build/mesh_nodes/build install --record /home/shadows/ros2_ws/build/mesh_nodes/install.log --install-scripts $base/lib/mesh_nodes --single-version-externally-managed install_data

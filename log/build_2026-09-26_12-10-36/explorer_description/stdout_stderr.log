@@ -1,0 +1,40 @@
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Configuring done (0.9s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/shadows/ros2_ws/build/explorer_description
+-- Install configuration: ""
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf/explorer_gazebo.xacro
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf/explorer.urdf.xacro
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/launch
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/launch/explorer_gazebo.launch.py
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/rviz
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/rviz/explorer.rviz
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/package_run_dependencies/explorer_description
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/parent_prefix_path/explorer_description
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/ament_prefix_path.sh
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/ament_prefix_path.dsv
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/path.sh
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/path.dsv
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.bash
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.sh
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.zsh
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.dsv
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/package.dsv
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/packages/explorer_description
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/cmake/explorer_descriptionConfig.cmake
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/cmake/explorer_descriptionConfig-version.cmake
+-- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/package.xml

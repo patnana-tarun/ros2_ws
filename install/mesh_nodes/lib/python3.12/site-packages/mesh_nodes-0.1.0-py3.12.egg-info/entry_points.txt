@@ -1,0 +1,2 @@
+[console_scripts]
+explorer_relay = mesh_nodes.explorer_relay_node:main

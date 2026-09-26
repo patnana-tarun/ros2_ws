@@ -1,0 +1,46 @@
+[0.005s] Invoking command in '/home/shadows/ros2_ws/build/explorer_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/shadows/ros2_ws/src/explorer_description -DCMAKE_INSTALL_PREFIX=/home/shadows/ros2_ws/install/explorer_description
+[0.214s] -- The C compiler identification is GNU 13.3.0
+[0.307s] -- The CXX compiler identification is GNU 13.3.0
+[0.322s] -- Detecting C compiler ABI info
+[0.399s] -- Detecting C compiler ABI info - done
+[0.404s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.488s] -- Detecting C compile features
+[0.492s] -- Detecting C compile features - done
+[0.509s] -- Detecting CXX compiler ABI info
+[0.711s] -- Detecting CXX compiler ABI info - done
+[0.711s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.711s] -- Detecting CXX compile features
+[0.711s] -- Detecting CXX compile features - done
+[0.712s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.715s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.935s] -- Configuring done (0.9s)
+[0.937s] -- Generating done (0.0s)
+[0.938s] -- Build files have been written to: /home/shadows/ros2_ws/build/explorer_description
+[0.942s] Invoked command in '/home/shadows/ros2_ws/build/explorer_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/shadows/ros2_ws/src/explorer_description -DCMAKE_INSTALL_PREFIX=/home/shadows/ros2_ws/install/explorer_description
+[0.942s] Invoking command in '/home/shadows/ros2_ws/build/explorer_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/explorer_description -- -j20 -l20
+[0.974s] Invoked command in '/home/shadows/ros2_ws/build/explorer_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/explorer_description -- -j20 -l20
+[0.975s] Invoking command in '/home/shadows/ros2_ws/build/explorer_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/shadows/ros2_ws/build/explorer_description
+[0.981s] -- Install configuration: ""
+[0.981s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf/explorer_gazebo.xacro
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf/explorer.urdf.xacro
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/launch
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/launch/explorer_gazebo.launch.py
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/rviz
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/rviz/explorer.rviz
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/package_run_dependencies/explorer_description
+[0.982s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/parent_prefix_path/explorer_description
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/ament_prefix_path.sh
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/ament_prefix_path.dsv
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/path.sh
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/path.dsv
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.bash
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.sh
+[0.983s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.zsh
+[0.984s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.dsv
+[0.984s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/package.dsv
+[0.984s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/packages/explorer_description
+[0.984s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/cmake/explorer_descriptionConfig.cmake
+[0.984s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/cmake/explorer_descriptionConfig-version.cmake
+[0.984s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/package.xml
+[0.986s] Invoked command in '/home/shadows/ros2_ws/build/explorer_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/shadows/ros2_ws/build/explorer_description

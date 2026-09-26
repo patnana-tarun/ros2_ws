@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: mesh-nodes
+Version: 0.1.0
+Summary: Explorer-side mesh relay for /map and /tf
+Maintainer: Patnana Tarun
+Maintainer-email: hansika9705@gmail.com
+License: Apache-2.0

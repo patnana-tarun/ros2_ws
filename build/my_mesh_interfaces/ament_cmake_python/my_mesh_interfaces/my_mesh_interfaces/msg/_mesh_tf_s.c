@@ -98,6 +98,15 @@ bool my_mesh_interfaces__msg__mesh_tf__convert_from_py(PyObject * _pymsg, void *
     }
     Py_DECREF(field);
   }
+  {  // map_in_flight
+    PyObject * field = PyObject_GetAttrString(_pymsg, "map_in_flight");
+    if (!field) {
+      return false;
+    }
+    assert(PyBool_Check(field));
+    ros_message->map_in_flight = (Py_True == field);
+    Py_DECREF(field);
+  }
 
   return true;
 }
@@ -164,6 +173,17 @@ PyObject * my_mesh_interfaces__msg__mesh_tf__convert_to_py(void * raw_ros_messag
     }
     {
       int rc = PyObject_SetAttrString(_pymessage, "tf_data", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // map_in_flight
+    PyObject * field = NULL;
+    field = PyBool_FromLong(ros_message->map_in_flight ? 1 : 0);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "map_in_flight", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;

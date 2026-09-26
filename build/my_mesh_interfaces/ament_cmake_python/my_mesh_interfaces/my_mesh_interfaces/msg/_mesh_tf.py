@@ -74,6 +74,7 @@ class MeshTf(metaclass=Metaclass_MeshTf):
         '_sequence_id',
         '_transmission_stamp',
         '_tf_data',
+        '_map_in_flight',
         '_check_fields',
     ]
 
@@ -82,6 +83,7 @@ class MeshTf(metaclass=Metaclass_MeshTf):
         'sequence_id': 'uint64',
         'transmission_stamp': 'builtin_interfaces/Time',
         'tf_data': 'tf2_msgs/TFMessage',
+        'map_in_flight': 'boolean',
     }
 
     # This attribute is used to store an rosidl_parser.definition variable
@@ -91,6 +93,7 @@ class MeshTf(metaclass=Metaclass_MeshTf):
         rosidl_parser.definition.BasicType('uint64'),  # noqa: E501
         rosidl_parser.definition.NamespacedType(['builtin_interfaces', 'msg'], 'Time'),  # noqa: E501
         rosidl_parser.definition.NamespacedType(['tf2_msgs', 'msg'], 'TFMessage'),  # noqa: E501
+        rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
     )
 
     def __init__(self, **kwargs):
@@ -108,6 +111,7 @@ class MeshTf(metaclass=Metaclass_MeshTf):
         self.transmission_stamp = kwargs.get('transmission_stamp', Time())
         from tf2_msgs.msg import TFMessage
         self.tf_data = kwargs.get('tf_data', TFMessage())
+        self.map_in_flight = kwargs.get('map_in_flight', bool())
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -146,6 +150,8 @@ class MeshTf(metaclass=Metaclass_MeshTf):
         if self.transmission_stamp != other.transmission_stamp:
             return False
         if self.tf_data != other.tf_data:
+            return False
+        if self.map_in_flight != other.map_in_flight:
             return False
         return True
 
@@ -211,3 +217,16 @@ class MeshTf(metaclass=Metaclass_MeshTf):
                 isinstance(value, TFMessage), \
                 "The 'tf_data' field must be a sub message of type 'TFMessage'"
         self._tf_data = value
+
+    @builtins.property
+    def map_in_flight(self):
+        """Message field 'map_in_flight'."""
+        return self._map_in_flight
+
+    @map_in_flight.setter
+    def map_in_flight(self, value):
+        if self._check_fields:
+            assert \
+                isinstance(value, bool), \
+                "The 'map_in_flight' field must be of type 'bool'"
+        self._map_in_flight = value
