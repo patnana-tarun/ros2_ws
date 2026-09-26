@@ -1,0 +1,65 @@
+[0.007s] Invoking command in '/home/shadows/ros2_ws/build/explorer_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/explorer_description -- -j20 -l20
+[0.028s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.394s] -- Configuring done (0.4s)
+[0.396s] -- Generating done (0.0s)
+[0.397s] -- Build files have been written to: /home/shadows/ros2_ws/build/explorer_description
+[0.424s] [100%] Generating cave world
+[5.537s] generate_cave: seed 7, grid 461x331 @ 0.05 m, triangles {'floor': 63816, 'walls': 15520, 'ceiling': 79336, 'collision': 20674, 'floor_open': 63816, 'walls_open': 45996}
+[5.564s] [100%] Built target cave_world
+[5.574s] Invoked command in '/home/shadows/ros2_ws/build/explorer_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/shadows/ros2_ws/build/explorer_description -- -j20 -l20
+[5.581s] Invoking command in '/home/shadows/ros2_ws/build/explorer_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/shadows/ros2_ws/build/explorer_description
+[5.589s] -- Install configuration: ""
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf/explorer_gazebo.xacro
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/urdf/explorer.urdf.xacro
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/launch
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/launch/explorer_gazebo.launch.py
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/rviz
+[5.589s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/rviz/explorer.rviz
+[5.590s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models
+[5.590s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_roof
+[5.590s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_roof/meshes
+[5.590s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_roof/meshes/ceiling.obj
+[5.593s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_roof/meshes/stalactites.obj
+[5.594s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_roof/model.sdf
+[5.594s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_roof/model.config
+[5.594s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock
+[5.594s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes
+[5.594s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/formations.obj
+[5.594s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/floor_open.obj
+[5.598s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/floor.obj
+[5.604s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/collision.obj
+[5.606s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/puddles.obj
+[5.606s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/walls_open.obj
+[5.608s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/meshes/walls.obj
+[5.609s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/model.sdf
+[5.609s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/model.config
+[5.609s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/materials
+[5.610s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/materials/textures
+[5.610s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/materials/textures/gravel_normal.png
+[5.610s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/materials/textures/gravel_albedo.png
+[5.610s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/materials/textures/rock_normal.png
+[5.611s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock/materials/textures/rock_albedo.png
+[5.611s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock_open
+[5.611s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock_open/model.sdf
+[5.611s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/models/cave_rock_open/model.config
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/worlds
+[5.612s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/worlds/cave.sdf
+[5.612s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/worlds/cave_open.sdf
+[5.612s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/lib/explorer_description/generate_cave.py
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/package_run_dependencies/explorer_description
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/parent_prefix_path/explorer_description
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/ament_prefix_path.sh
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/ament_prefix_path.dsv
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/path.sh
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/environment/path.dsv
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.bash
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.sh
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.zsh
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/local_setup.dsv
+[5.612s] -- Installing: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/package.dsv
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/ament_index/resource_index/packages/explorer_description
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/cmake/explorer_descriptionConfig.cmake
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/cmake/explorer_descriptionConfig-version.cmake
+[5.612s] -- Up-to-date: /home/shadows/ros2_ws/install/explorer_description/share/explorer_description/package.xml
+[5.613s] Invoked command in '/home/shadows/ros2_ws/build/explorer_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/shadows/ros2_ws/build/explorer_description

@@ -47,7 +47,19 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     "/home/shadows/ros2_ws/src/explorer_description/urdf"
     "/home/shadows/ros2_ws/src/explorer_description/launch"
     "/home/shadows/ros2_ws/src/explorer_description/rviz"
+    "/home/shadows/ros2_ws/src/explorer_description/config"
     )
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/explorer_description" TYPE DIRECTORY FILES
+    "/home/shadows/ros2_ws/build/explorer_description/cave/models"
+    "/home/shadows/ros2_ws/build/explorer_description/cave/worlds"
+    )
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/explorer_description" TYPE PROGRAM FILES "/home/shadows/ros2_ws/src/explorer_description/scripts/generate_cave.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)

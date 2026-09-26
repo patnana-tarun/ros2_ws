@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <!--
-  Explorer robot — Kit4Curious-style 6WD chassis with passive rear bogie
+  Explorer robot — Kit4Curious-style 6WD chassis; the passive bogie leads (front)
   Frame convention (REP-103): x forward, y left, z up. Units: metres, kg, radians.
 
   Measured by user: plate 198 x 143 x 2.5 mm, plate top 130 mm above ground,
   wheel D 65 mm x 25 mm, axle spacing 120 mm + 120 mm, wheel track 176 mm,
   bogie pivot 95 mm above ground, side plates 2.5 mm, motors sandwiched between two side plates.
-  Derived: pivot 60 mm behind middle axle (90-degree L-bogie geometry).
+  Derived: pivot 60 mm from the middle axle, on the bogie side (90-degree L-bogie geometry).
+  Driving direction (user, 2026-09-26): the bogie end is the front and carries the LiDAR,
+  so the bogie's two wheels meet a rock first and the pivot lets them climb it.
   Measured from photos: bogie swing 28 deg (front up), 43 deg (rear up).
   Assumed: all masses, motor size, LiDAR/Pi body sizes.
 -->
@@ -24,7 +26,11 @@
   <xacro:property name="plate_top_h"  value="0.130"/>   <!-- ground -> plate top -->
 
   <xacro:property name="pivot_h"      value="0.095"/>   <!-- ground -> bogie bolt -->
-  <xacro:property name="pivot_x"      value="-0.06"/>   <!-- derived -->
+  <xacro:property name="pivot_x"      value="-0.06"/>   <!-- derived; toward the bogie end -->
+  <!-- 1 = rocker wheel in front (as first drawn); -1 = bogie in front (the real robot).
+       Every chassis x-coordinate below is multiplied by fx. -->
+  <xacro:property name="bogie_leads"  value="true"/>
+  <xacro:property name="fx"           value="${-1 if bogie_leads else 1}"/>
 
   <xacro:property name="leg_t"        value="0.0025"/>
   <xacro:property name="leg_w"        value="0.03"/>
@@ -50,10 +56,15 @@
   <xacro:property name="motor_wd"     value="0.0185"/>
   <xacro:property name="motor_h"      value="0.022"/>
 
-  <!-- Bogie swing, measured from photos (+/- ~5 deg). Positive = rear wheel up -->
-  <xacro:property name="bogie_front_up" value="${radians(28)}"/>  <!-- middle wheel lifted -->
-  <xacro:property name="bogie_rear_up"  value="${radians(43)}"/>  <!-- rear wheel lifted -->
-  <xacro:property name="wheel_effort" value="0.08"/>    <!-- ~0.8 kg.cm BO motor -->
+  <!-- Bogie swing, measured from photos (+/- ~5 deg) -->
+  <xacro:property name="bogie_mid_up"   value="${radians(28)}"/>  <!-- middle wheel lifted -->
+  <xacro:property name="bogie_outer_up" value="${radians(43)}"/>  <!-- outer (end) wheel lifted -->
+  <!-- BO motor (user, 2026-09-26): 200 RPM, rated 0.35 kg.cm (0.034 N.m), 3-12 V.
+       The joint effort limit is the motor's *peak* torque, i.e. stall, not rated. With the
+       rated 0.034 N.m as the limit the robot could not turn on the spot at all (a pivot
+       drags the 4 corner wheels sideways). Stall assumed ~0.8 kg.cm, typical for 200 RPM BO
+       motors (about 2-3x rated) - replace with the datasheet stall torque if known. -->
+  <xacro:property name="wheel_effort" value="0.078"/>
   <xacro:property name="wheel_vel"    value="20.9"/>    <!-- 200 RPM -->
 
   <xacro:property name="lidar_back"   value="0.02"/>    <!-- scan centre behind front edge -->
@@ -64,6 +75,10 @@
   <xacro:property name="pi_wd"        value="0.056"/>
   <xacro:property name="pi_h"         value="0.02"/>
   <xacro:property name="pi_margin"    value="0.005"/>
+
+  <xacro:property name="imu_l"        value="0.025"/>   <!-- GY-9250 breakout board -->
+  <xacro:property name="imu_w"        value="0.015"/>
+  <xacro:property name="imu_h"        value="0.003"/>
 
   <!-- ===================== MATERIALS ===================== -->
   <material name="black">  <color rgba="0.1 0.1 0.1 1"/></material>
@@ -166,14 +181,14 @@
 
   <xacro:macro name="side" params="side reflect">
 
-    <!-- Rocker: fixed side plate (image 3). Carries front wheel + bogie bolt -->
+    <!-- Rocker: fixed side plate (image 3). Carries the rocker-end wheel + bogie bolt -->
     <link name="${side}_rocker">
-      <xacro:plate_pair x1="${pivot_x}" z1="${pivot_z}" x2="${rk_bx}" z2="${leg_top_z}"/>
-      <xacro:plate_pair x1="${rk_bx}"   z1="${leg_top_z}" x2="${rk_fx}" z2="${leg_top_z}"/>
-      <xacro:plate_pair x1="${rk_fx}"   z1="${leg_top_z}" x2="${axle_dx}" z2="0"/>
-      <xacro:bo_motor ax="${axle_dx}" az="0" tx="${rk_fx}" tz="${leg_top_z}" y="0"/>
+      <xacro:plate_pair x1="${fx*pivot_x}" z1="${pivot_z}" x2="${fx*rk_bx}" z2="${leg_top_z}"/>
+      <xacro:plate_pair x1="${fx*rk_bx}"   z1="${leg_top_z}" x2="${fx*rk_fx}" z2="${leg_top_z}"/>
+      <xacro:plate_pair x1="${fx*rk_fx}"   z1="${leg_top_z}" x2="${fx*axle_dx}" z2="0"/>
+      <xacro:bo_motor ax="${fx*axle_dx}" az="0" tx="${fx*rk_fx}" tz="${leg_top_z}" y="0"/>
       <xacro:box_inertial m="${m_rocker}" x="0.2" y="0.024" z="0.1">
-        <origin xyz="0.03 0 0.045" rpy="0 0 0"/>
+        <origin xyz="${fx*0.03} 0 0.045" rpy="0 0 0"/>
       </xacro:box_inertial>
     </link>
     <joint name="${side}_rocker_joint" type="fixed">
@@ -184,10 +199,10 @@
 
     <!-- Bogie: L-plate (image 2), swings freely on the bolt -->
     <link name="${side}_bogie">
-      <xacro:plate_pair x1="0" z1="0" x2="${-pivot_x}" z2="${-pivot_z}"/>
-      <xacro:plate_pair x1="0" z1="0" x2="${pivot_x}"  z2="${-pivot_z}"/>
-      <xacro:bo_motor ax="${-pivot_x}" az="${-pivot_z}" tx="0" tz="0" y="0"/>
-      <xacro:bo_motor ax="${pivot_x}"  az="${-pivot_z}" tx="0" tz="0" y="0"/>
+      <xacro:plate_pair x1="0" z1="0" x2="${-fx*pivot_x}" z2="${-pivot_z}"/>
+      <xacro:plate_pair x1="0" z1="0" x2="${fx*pivot_x}"  z2="${-pivot_z}"/>
+      <xacro:bo_motor ax="${-fx*pivot_x}" az="${-pivot_z}" tx="0" tz="0" y="0"/>
+      <xacro:bo_motor ax="${fx*pivot_x}"  az="${-pivot_z}" tx="0" tz="0" y="0"/>
       <xacro:box_inertial m="${m_bogie}" x="0.14" y="0.024" z="0.07">
         <origin xyz="0 0 ${-pivot_z/2}" rpy="0 0 0"/>
       </xacro:box_inertial>
@@ -195,19 +210,21 @@
     <joint name="${side}_bogie_joint" type="revolute">
       <parent link="${side}_rocker"/>
       <child link="${side}_bogie"/>
-      <origin xyz="${pivot_x} 0 ${pivot_z}" rpy="0 0 0"/>
+      <origin xyz="${fx*pivot_x} 0 ${pivot_z}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit lower="${-bogie_front_up}" upper="${bogie_rear_up}" effort="10" velocity="10"/>
+      <!-- Rotation about +y lifts whichever wheel is at -x, so mirroring swaps the limits -->
+      <limit lower="${-bogie_mid_up if fx > 0 else -bogie_outer_up}"
+             upper="${bogie_outer_up if fx > 0 else bogie_mid_up}" effort="10" velocity="10"/>
       <dynamics damping="0.05" friction="0.0"/>
     </joint>
 
-    <!-- Wheels -->
-    <xacro:wheel name="${side}_front"  parent="${side}_rocker"
-                 x="${axle_dx}"  y="${reflect*(wheel_y - side_y)}" z="0"/>
+    <!-- Wheels, named by where they end up (front = +x) -->
+    <xacro:wheel name="${side}_${'front' if fx > 0 else 'rear'}"  parent="${side}_rocker"
+                 x="${fx*axle_dx}"  y="${reflect*(wheel_y - side_y)}" z="0"/>
     <xacro:wheel name="${side}_middle" parent="${side}_bogie"
-                 x="${-pivot_x}" y="${reflect*(wheel_y - side_y)}"  z="${-pivot_z}"/>
-    <xacro:wheel name="${side}_rear"   parent="${side}_bogie"
-                 x="${pivot_x}"  y="${reflect*(wheel_y - side_y)}"  z="${-pivot_z}"/>
+                 x="${-fx*pivot_x}" y="${reflect*(wheel_y - side_y)}"  z="${-pivot_z}"/>
+    <xacro:wheel name="${side}_${'rear' if fx > 0 else 'front'}"   parent="${side}_bogie"
+                 x="${fx*pivot_x}"  y="${reflect*(wheel_y - side_y)}"  z="${-pivot_z}"/>
   </xacro:macro>
 
   <!-- ===================== ROBOT TREE ===================== -->
@@ -287,7 +304,23 @@
     <origin xyz="${-plate_l/2 + pi_margin + pi_wd/2} 0 ${plate_top_z}" rpy="0 0 0"/>
   </joint>
 
-  <!-- Gazebo Harmonic: drive, joint states, LiDAR -->
+  <!-- MPU-9250 IMU breakout at the robot's centre, under the top plate, chip facing down
+       (user, 2026-09-26): z points down, x forward (assumed), so y points right.
+       Massless (a few grams). robot_localization rotates its data into base_footprint via TF. -->
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 ${imu_h/2}" rpy="0 0 0"/>
+      <geometry><box size="${imu_l} ${imu_w} ${imu_h}"/></geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 ${plate_top_z - plate_t}" rpy="${pi} 0 0"/>
+  </joint>
+
+  <!-- Gazebo Harmonic: drive, joint states, LiDAR, IMU -->
   <xacro:include filename="$(find explorer_description)/urdf/explorer_gazebo.xacro"/>
 
 </robot>

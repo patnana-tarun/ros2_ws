@@ -1,0 +1,4 @@
+[console_scripts]
+explore_coordinator = explorer_exploration.explore_coordinator:main
+frontier_tad_node = explorer_exploration.frontier_tad_node:main
+metrics_logger = explorer_exploration.metrics_logger:main

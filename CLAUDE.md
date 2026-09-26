@@ -5,14 +5,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A ROS 2 Jazzy colcon workspace for the explorer robot. It relays SLAM output (`/map`, `/tf`)
-over a lossy BATMAN-adv mesh and holds the robot's URDF/Gazebo model. This is the sender side
-only. The receiver is external.
+over a lossy BATMAN-adv mesh, holds the robot's URDF/Gazebo model, and explores autonomously
+(frontier/TAD + Nav2). This is the sender side only. The receiver is external.
 
 | Package                    | Type         | Contents |
 |----------------------------|--------------|----------|
 | `src/my_mesh_interfaces`   | ament_cmake  | `MeshMap`, `MeshTf`, `MeshScan`, `SenderStatus` |
 | `src/mesh_nodes`           | ament_python | `explorer_relay_node` (exe `explorer_relay`), launch + YAML |
-| `src/explorer_description` | ament_cmake  | URDF/xacro, Gazebo Harmonic launch, RViz config |
+| `src/explorer_description` | ament_cmake  | URDF/xacro, Gazebo Harmonic launch, cave world generator, wheel+IMU EKF config |
+| `src/explorer_exploration` | ament_python | frontier/TAD exploration nodes, Nav2 + SLAM Toolbox params, bringup launch |
 
 ## Commands
 
@@ -20,6 +21,8 @@ only. The receiver is external.
 colcon build && source install/setup.bash
 ros2 launch mesh_nodes explorer_relay.launch.py            # use_sim_time:=true with Gazebo
 ros2 launch explorer_description explorer_gazebo.launch.py rviz:=true
+ros2 launch explorer_exploration bringup.launch.py                 # world:=cave.sdf by default
+ros2 launch explorer_exploration benchmark_headless.launch.py      # headless + metrics
 ```
 
 There is no test suite or linter. The xacro include uses `$(find explorer_description)`, so

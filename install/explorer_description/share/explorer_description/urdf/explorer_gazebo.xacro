@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Gazebo Harmonic additions: wheel grip, skid-steer drive, joint states, 2D LiDAR.
+<!-- Gazebo Harmonic additions: wheel grip, skid-steer drive, joint states, 2D LiDAR, IMU.
      Included by explorer.urdf.xacro. -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
@@ -10,6 +10,8 @@
       <mu2>1.0</mu2>
     </gazebo>
   </xacro:macro>
+  <xacro:property name="skid_track" value="0.43"/>
+
   <xacro:wheel_grip name="left_front"/>
   <xacro:wheel_grip name="left_middle"/>
   <xacro:wheel_grip name="left_rear"/>
@@ -27,7 +29,12 @@
       <right_joint>right_middle_wheel_joint</right_joint>
       <right_joint>right_rear_wheel_joint</right_joint>
 
-      <wheel_separation>${2*wheel_y}</wheel_separation>
+      <!-- Effective track width, not the geometric 0.176 m: a skid-steer's wheels slide
+           sideways when it turns, so with the geometric value the robot only reached ~35 %
+           of the commanded yaw rate (measured, 2026-09-26). Recalibrated after the chassis
+           flip (bogie in front) and the stall-torque change: 0.50 m gave 1.17x, so
+           0.50 / 1.17 = 0.43 m. The real robot's motor driver needs the same calibration. -->
+      <wheel_separation>${skid_track}</wheel_separation>
       <wheel_radius>${wheel_r}</wheel_radius>
 
       <max_linear_velocity>0.5</max_linear_velocity>
@@ -35,8 +42,11 @@
       <max_linear_acceleration>1.0</max_linear_acceleration>
 
       <topic>cmd_vel</topic>
-      <odom_topic>odom</odom_topic>
-      <tf_topic>tf</tf_topic>
+      <!-- Wheel odometry only. Like the real robot's encoders, it is fused with the IMU by
+           robot_localization (config/ekf.yaml), which publishes /odom and odom->base_footprint.
+           The plugin's own TF goes to a topic that is not bridged. -->
+      <odom_topic>wheel/odom</odom_topic>
+      <tf_topic>wheel/tf_unused</tf_topic>
       <frame_id>odom</frame_id>
       <child_frame_id>base_footprint</child_frame_id>
       <odom_publish_frequency>30</odom_publish_frequency>
@@ -52,20 +62,54 @@
     <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
+
+    <!-- ===== Needed for IMU sensors ===== -->
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
   </gazebo>
 
-  <!-- ===== 2D LiDAR (generic placeholder until the YDLIDAR model is known) ===== -->
+  <!-- ===== MPU-9250 IMU (gyro + accelerometer; the magnetometer is not simulated) =====
+       Noise from the datasheet: gyro 0.01 deg/s/sqrt(Hz), accel 300 ug/sqrt(Hz), at 100 Hz. -->
+  <xacro:macro name="imu_axis_noise" params="stddev bias">
+    <noise type="gaussian">
+      <mean>0.0</mean>
+      <stddev>${stddev}</stddev>
+      <bias_mean>${bias}</bias_mean>
+      <bias_stddev>${bias / 10}</bias_stddev>
+    </noise>
+  </xacro:macro>
+  <gazebo reference="imu_link">
+    <sensor name="imu" type="imu">
+      <topic>imu</topic>
+      <gz_frame_id>imu_link</gz_frame_id>
+      <update_rate>100</update_rate>
+      <always_on>true</always_on>
+      <imu>
+        <angular_velocity>
+          <x><xacro:imu_axis_noise stddev="0.0012" bias="0.0005"/></x>
+          <y><xacro:imu_axis_noise stddev="0.0012" bias="0.0005"/></y>
+          <z><xacro:imu_axis_noise stddev="0.0012" bias="0.0005"/></z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x><xacro:imu_axis_noise stddev="0.021" bias="0.05"/></x>
+          <y><xacro:imu_axis_noise stddev="0.021" bias="0.05"/></y>
+          <z><xacro:imu_axis_noise stddev="0.021" bias="0.05"/></z>
+        </linear_acceleration>
+      </imu>
+    </sensor>
+  </gazebo>
+
+  <!-- ===== YDLIDAR X2: 360 deg, 7 Hz, ~3000 samples/s (~430 per turn), 0.12-8 m ===== -->
   <gazebo reference="laser_frame">
     <sensor name="lidar" type="gpu_lidar">
       <topic>scan</topic>
       <gz_frame_id>laser_frame</gz_frame_id>
-      <update_rate>10</update_rate>
+      <update_rate>7</update_rate>
       <always_on>true</always_on>
       <visualize>true</visualize>
       <lidar>
         <scan>
           <horizontal>
-            <samples>360</samples>
+            <samples>430</samples>
             <resolution>1</resolution>
             <min_angle>${-pi}</min_angle>
             <max_angle>${pi}</max_angle>

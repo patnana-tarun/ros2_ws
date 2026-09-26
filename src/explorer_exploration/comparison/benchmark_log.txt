@@ -1,0 +1,16 @@
+Tuning hyperparameters on held-out seeds 101-112 ...
+  tuned CU-exp     -> {'lam': 0.5}  (held-out AUC 69.19)
+  tuned CU-lin     -> {'lam': 0.8}  (held-out AUC 69.19)
+  tuned TAD-tuned  -> {'w_d': 0.0, 'w_a': 1.0, 'w_t': 1.0}  (held-out AUC 67.33)
+
+Evaluating on seeds 1-20 x 3 environments ...
+  Random     AUC  56.45  cov  97.3%  dist  119.1 m
+  NF         AUC  69.43  cov  98.3%  dist   63.1 m
+  LF         AUC  68.20  cov  98.4%  dist   76.0 m
+  MIG        AUC  66.27  cov  98.3%  dist   85.8 m
+  CU-exp     AUC  69.43  cov  98.3%  dist   79.5 m
+  CU-lin     AUC  69.46  cov  98.3%  dist   83.4 m
+  TAD        AUC  60.00  cov  98.2%  dist  117.6 m
+  TAD-tuned  AUC  68.20  cov  98.3%  dist   87.7 m
+
+Wrote /home/monesh/Downloads/explorer/comparison/results_comparison.json  (2003s total)

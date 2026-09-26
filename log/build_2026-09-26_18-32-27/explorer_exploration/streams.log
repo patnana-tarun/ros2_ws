@@ -1,0 +1,66 @@
+[0.500s] Invoking command in '/home/shadows/ros2_ws/src/explorer_exploration': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_exploration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_exploration build --build-base /home/shadows/ros2_ws/build/explorer_exploration/build install --record /home/shadows/ros2_ws/build/explorer_exploration/install.log --install-scripts $base/lib/explorer_exploration --single-version-externally-managed install_data
+[0.579s] /usr/lib/python3/dist-packages/setuptools/dist.py:744: SetuptoolsDeprecationWarning: Invalid dash-separated options
+[0.579s] !!
+[0.579s] 
+[0.579s]         ********************************************************************************
+[0.579s]         Usage of dash-separated 'script-dir' will not be supported in future
+[0.579s]         versions. Please use the underscore name 'script_dir' instead.
+[0.579s] 
+[0.579s]         This deprecation is overdue, please update your project and remove deprecated
+[0.579s]         calls to avoid build errors in the future.
+[0.579s] 
+[0.579s]         See https://setuptools.pypa.io/en/latest/userguide/declarative_config.html for details.
+[0.579s]         ********************************************************************************
+[0.580s] 
+[0.580s] !!
+[0.580s]   opt = self.warn_dash_deprecation(opt, section)
+[0.653s] running egg_info
+[0.653s] creating ../../build/explorer_exploration/explorer_exploration.egg-info
+[0.664s] writing ../../build/explorer_exploration/explorer_exploration.egg-info/PKG-INFO
+[0.664s] writing dependency_links to ../../build/explorer_exploration/explorer_exploration.egg-info/dependency_links.txt
+[0.664s] writing entry points to ../../build/explorer_exploration/explorer_exploration.egg-info/entry_points.txt
+[0.664s] writing requirements to ../../build/explorer_exploration/explorer_exploration.egg-info/requires.txt
+[0.664s] writing top-level names to ../../build/explorer_exploration/explorer_exploration.egg-info/top_level.txt
+[0.664s] writing manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.686s] reading manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.686s] writing manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.686s] running build
+[0.686s] running build_py
+[0.687s] creating /home/shadows/ros2_ws/build/explorer_exploration/build
+[0.687s] creating /home/shadows/ros2_ws/build/explorer_exploration/build/lib
+[0.687s] creating /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.687s] copying explorer_exploration/explore_coordinator.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.687s] copying explorer_exploration/__init__.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.687s] copying explorer_exploration/metrics_logger.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.687s] copying explorer_exploration/frontier_tad_node.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.687s] running install
+[0.690s] running install_lib
+[0.701s] creating /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.701s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/explore_coordinator.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.702s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/__init__.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.702s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/metrics_logger.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.702s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/frontier_tad_node.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.702s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/explore_coordinator.py to explore_coordinator.cpython-312.pyc
+[0.702s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/__init__.py to __init__.cpython-312.pyc
+[0.702s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/metrics_logger.py to metrics_logger.cpython-312.pyc
+[0.703s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/frontier_tad_node.py to frontier_tad_node.cpython-312.pyc
+[0.705s] running install_data
+[0.705s] creating /home/shadows/ros2_ws/install/explorer_exploration/share/ament_index
+[0.705s] creating /home/shadows/ros2_ws/install/explorer_exploration/share/ament_index/resource_index
+[0.705s] creating /home/shadows/ros2_ws/install/explorer_exploration/share/ament_index/resource_index/packages
+[0.705s] copying resource/explorer_exploration -> /home/shadows/ros2_ws/install/explorer_exploration/share/ament_index/resource_index/packages
+[0.705s] copying package.xml -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration
+[0.705s] creating /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.705s] copying launch/explore.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.705s] copying launch/bringup.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.705s] copying launch/benchmark_headless.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.705s] creating /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/config
+[0.706s] copying config/nav2_params.yaml -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/config
+[0.706s] running install_egg_info
+[0.718s] Copying ../../build/explorer_exploration/explorer_exploration.egg-info to /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info
+[0.718s] running install_scripts
+[0.794s] Installing explore_coordinator script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.794s] Installing frontier_tad_node script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.794s] Installing metrics_logger script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.794s] writing list of installed files to '/home/shadows/ros2_ws/build/explorer_exploration/install.log'
+[0.808s] Invoked command in '/home/shadows/ros2_ws/src/explorer_exploration' returned '0': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_exploration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_exploration build --build-base /home/shadows/ros2_ws/build/explorer_exploration/build install --record /home/shadows/ros2_ws/build/explorer_exploration/install.log --install-scripts $base/lib/explorer_exploration --single-version-externally-managed install_data

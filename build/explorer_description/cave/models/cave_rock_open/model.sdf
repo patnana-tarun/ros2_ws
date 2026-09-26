@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="cave_rock_open">
+    <static>true</static>
+    <link name="rock">
+      <collision name="ground">
+        <geometry><plane><normal>0 0 1</normal><size>25.0 18.5</size></plane></geometry>
+        <pose>6.50 -0.25 0 0 0 0</pose>
+        <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface>
+      </collision>
+      <collision name="walls">
+        <geometry><mesh><uri>model://cave_rock/meshes/collision.obj</uri></mesh></geometry>
+      </collision>
+      <collision name="formations">
+        <geometry><mesh><uri>model://cave_rock/meshes/formations.obj</uri></mesh></geometry>
+      </collision>
+      <visual name="floor">
+        <geometry><mesh><uri>model://cave_rock/meshes/floor_open.obj</uri></mesh></geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.08 0.08 0.08 1</specular>
+          <pbr><metal>
+            <albedo_map>model://cave_rock/materials/textures/gravel_albedo.png</albedo_map>
+            <normal_map>model://cave_rock/materials/textures/gravel_normal.png</normal_map>
+            <roughness>0.95</roughness>
+            <metalness>0.0</metalness>
+          </metal></pbr>
+        </material>
+      </visual>
+      <visual name="walls">
+        <geometry><mesh><uri>model://cave_rock/meshes/walls_open.obj</uri></mesh></geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.08 0.08 0.08 1</specular>
+          <pbr><metal>
+            <albedo_map>model://cave_rock/materials/textures/rock_albedo.png</albedo_map>
+            <normal_map>model://cave_rock/materials/textures/rock_normal.png</normal_map>
+            <roughness>0.85</roughness>
+            <metalness>0.0</metalness>
+          </metal></pbr>
+        </material>
+      </visual>
+      <visual name="formations">
+        <geometry><mesh><uri>model://cave_rock/meshes/formations.obj</uri></mesh></geometry>
+        <material>
+          <diffuse>0.9 0.88 0.85 1</diffuse>
+          <specular>0.08 0.08 0.08 1</specular>
+          <pbr><metal>
+            <albedo_map>model://cave_rock/materials/textures/rock_albedo.png</albedo_map>
+            <normal_map>model://cave_rock/materials/textures/rock_normal.png</normal_map>
+            <roughness>0.6</roughness>
+            <metalness>0.0</metalness>
+          </metal></pbr>
+        </material>
+      </visual>
+      <visual name="puddles">
+        <geometry><mesh><uri>model://cave_rock/meshes/puddles.obj</uri></mesh></geometry>
+        <material>
+          <ambient>0.04 0.035 0.03 1</ambient>
+          <diffuse>0.06 0.052 0.045 1</diffuse>
+          <specular>0.6 0.6 0.6 1</specular>
+          <pbr><metal><roughness>0.15</roughness><metalness>0.0</metalness></metal></pbr>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

@@ -197,6 +197,19 @@ explorer_description_uninstall/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/explorer_description_uninstall.dir/build.make CMakeFiles/explorer_description_uninstall.dir/build
 .PHONY : explorer_description_uninstall/fast
 
+#=============================================================================
+# Target rules for targets named cave_world
+
+# Build rule for target.
+cave_world: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cave_world
+.PHONY : cave_world
+
+# fast build rule for target.
+cave_world/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cave_world.dir/build.make CMakeFiles/cave_world.dir/build
+.PHONY : cave_world/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -210,6 +223,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... cave_world"
 	@echo "... explorer_description_uninstall"
 	@echo "... uninstall"
 .PHONY : help

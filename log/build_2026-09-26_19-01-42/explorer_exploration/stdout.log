@@ -1,0 +1,22 @@
+running egg_info
+writing ../../build/explorer_exploration/explorer_exploration.egg-info/PKG-INFO
+writing dependency_links to ../../build/explorer_exploration/explorer_exploration.egg-info/dependency_links.txt
+writing entry points to ../../build/explorer_exploration/explorer_exploration.egg-info/entry_points.txt
+writing requirements to ../../build/explorer_exploration/explorer_exploration.egg-info/requires.txt
+writing top-level names to ../../build/explorer_exploration/explorer_exploration.egg-info/top_level.txt
+reading manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+writing manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+copying launch/bringup.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+running install_egg_info
+removing '/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info' (and everything under it)
+Copying ../../build/explorer_exploration/explorer_exploration.egg-info to /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info
+running install_scripts
+Installing explore_coordinator script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+Installing frontier_tad_node script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+Installing metrics_logger script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+writing list of installed files to '/home/shadows/ros2_ws/build/explorer_exploration/install.log'

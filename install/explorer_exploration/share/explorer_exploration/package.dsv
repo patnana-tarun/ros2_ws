@@ -1,0 +1,6 @@
+source;share/explorer_exploration/hook/pythonpath.ps1
+source;share/explorer_exploration/hook/pythonpath.dsv
+source;share/explorer_exploration/hook/pythonpath.sh
+source;share/explorer_exploration/hook/ament_prefix_path.ps1
+source;share/explorer_exploration/hook/ament_prefix_path.dsv
+source;share/explorer_exploration/hook/ament_prefix_path.sh

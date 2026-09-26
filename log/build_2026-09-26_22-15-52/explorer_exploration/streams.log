@@ -1,0 +1,26 @@
+[0.553s] Invoking command in '/home/shadows/ros2_ws/src/explorer_exploration': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_exploration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_exploration build --build-base /home/shadows/ros2_ws/build/explorer_exploration/build install --record /home/shadows/ros2_ws/build/explorer_exploration/install.log --install-scripts $base/lib/explorer_exploration --single-version-externally-managed install_data
+[0.700s] running egg_info
+[0.710s] writing ../../build/explorer_exploration/explorer_exploration.egg-info/PKG-INFO
+[0.711s] writing dependency_links to ../../build/explorer_exploration/explorer_exploration.egg-info/dependency_links.txt
+[0.711s] writing entry points to ../../build/explorer_exploration/explorer_exploration.egg-info/entry_points.txt
+[0.711s] writing requirements to ../../build/explorer_exploration/explorer_exploration.egg-info/requires.txt
+[0.711s] writing top-level names to ../../build/explorer_exploration/explorer_exploration.egg-info/top_level.txt
+[0.732s] reading manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.732s] writing manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.732s] running build
+[0.732s] running build_py
+[0.732s] running install
+[0.736s] running install_lib
+[0.747s] running install_data
+[0.747s] copying package.xml -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration
+[0.747s] copying launch/bringup.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.747s] copying config/nav2_params.yaml -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/config
+[0.747s] running install_egg_info
+[0.758s] removing '/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info' (and everything under it)
+[0.758s] Copying ../../build/explorer_exploration/explorer_exploration.egg-info to /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info
+[0.759s] running install_scripts
+[0.833s] Installing explore_coordinator script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.833s] Installing frontier_tad_node script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.833s] Installing metrics_logger script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.833s] writing list of installed files to '/home/shadows/ros2_ws/build/explorer_exploration/install.log'
+[0.846s] Invoked command in '/home/shadows/ros2_ws/src/explorer_exploration' returned '0': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_exploration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_exploration build --build-base /home/shadows/ros2_ws/build/explorer_exploration/build install --record /home/shadows/ros2_ws/build/explorer_exploration/install.log --install-scripts $base/lib/explorer_exploration --single-version-externally-managed install_data

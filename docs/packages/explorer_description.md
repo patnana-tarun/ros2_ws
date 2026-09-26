@@ -1,12 +1,12 @@
 ---
 tags: [package]
 path: src/explorer_description
-build_type: ament_cmake (install only)
+build_type: ament_cmake (install + cave generation)
 ---
 # explorer_description
 
 The explorer's URDF and its Gazebo Harmonic simulation. Contents are covered in
-[[Robot model]] and [[Gazebo simulation]].
+[[Robot model]], [[Gazebo simulation]] and [[Cave world]].
 
 | File                               | Role                                             |
 |------------------------------------|--------------------------------------------------|
@@ -14,11 +14,12 @@ The explorer's URDF and its Gazebo Harmonic simulation. Contents are covered in
 | `urdf/explorer_gazebo.xacro`       | friction, drive, joint states, LiDAR ([[Gazebo simulation]]) |
 | `launch/explorer_gazebo.launch.py` | Gazebo + robot_state_publisher + spawn + bridge + optional RViz |
 | `rviz/explorer.rviz`               | RobotModel, TF, `/scan`, `/map`; fixed frame `odom` |
+| `scripts/generate_cave.py`         | generates the cave meshes, textures and worlds at build time ([[Cave world]]) |
 
 ## Run
 ```bash
-ros2 launch explorer_description explorer_gazebo.launch.py rviz:=true   # world:=<file.sdf>
-ros2 run teleop_twist_keyboard teleop_twist_keyboard                    # drive it
+ros2 launch explorer_description explorer_gazebo.launch.py rviz:=true   # world:=cave.sdf
+ros2 run turtlebot3_teleop teleop_keyboard                              # drive it (TwistStamped)
 ```
 
 ## Check the model
