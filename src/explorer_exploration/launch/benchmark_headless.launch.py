@@ -29,6 +29,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
         DeclareLaunchArgument('scoring_mode', default_value='tad'),
+        DeclareLaunchArgument('selection_mode', default_value='dfs'),
         DeclareLaunchArgument('world', default_value='cave.sdf'),
         DeclareLaunchArgument('x', default_value='0.0'),
         DeclareLaunchArgument('y', default_value='0.0'),
@@ -43,6 +44,7 @@ def generate_launch_description():
                 'gui': 'false',
                 'rviz': 'false',
                 'scoring_mode': LaunchConfiguration('scoring_mode'),
+                'selection_mode': LaunchConfiguration('selection_mode'),
             }.items(),
         ),
 

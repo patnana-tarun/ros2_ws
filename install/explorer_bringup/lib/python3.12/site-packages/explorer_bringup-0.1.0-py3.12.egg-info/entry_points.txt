@@ -1,0 +1,3 @@
+[console_scripts]
+explorer_base = explorer_bringup.explorer_base:main
+mpu9250_imu = explorer_bringup.mpu9250_imu:main

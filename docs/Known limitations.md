@@ -22,6 +22,6 @@ tags: [issue]
 | 15 | Robot | The effective track width (0.43 m) was measured in simulation only ([[Gazebo simulation]]) | measure turn rate against command on the real robot |
 | 19 | Robot | Motor stall torque is assumed (0.8 kg·cm). With the rated 0.35 kg·cm the simulated robot can't pivot at all ([[Robot model]]) | datasheet stall torque; test a pivot on rock with the real robot |
 | 20 | Robot | Leading with the bogie climbed worse than leading with the rocker in simulation ([[Rock climbing]]) | compare both on the real robot |
-| 16 | Robot | No driver exists yet for the real encoders and IMU. The EKF expects `/wheel/odom` and `/imu` ([[Odometry fusion]]) | write the firmware/driver |
-| 17 | Robot | LM393 slot encoders are single-channel, so they count pulses but can't tell direction | take direction from the commanded wheel speed |
-| 18 | Model | IMU height on the plate is assumed ([[Robot model]]) | measure it |
+| 16 | Robot | The Pi drivers ([[explorer_bringup]]) are tested in mock mode only. GPIO pins are an example wiring | set the pins, then test on the Pi |
+| 17 | Robot | LM393 slot encoders are single-channel, so direction comes from the command. If a wheel is pushed backwards against the command, odometry counts it the wrong way. 20 slots give only 10 mm resolution | quadrature encoders |
+| 18 | Model | IMU height is assumed, and its +y axis (forward) is derived from +x left, +z down ([[Robot model]]) | check: rotating the robot left must give a negative gyro z on the chip (z points down) |

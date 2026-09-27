@@ -304,9 +304,10 @@
     <origin xyz="${-plate_l/2 + pi_margin + pi_wd/2} 0 ${plate_top_z}" rpy="0 0 0"/>
   </joint>
 
-  <!-- MPU-9250 IMU breakout at the robot's centre, under the top plate, chip facing down
-       (user, 2026-09-26): z points down, x forward (assumed), so y points right.
-       Massless (a few grams). robot_localization rotates its data into base_footprint via TF. -->
+  <!-- MPU-9250 IMU breakout at the robot's centre, under the top plate, chip facing down.
+       Axes (user, 2026-09-26): +x points left, +z points down; right-handed, so +y points
+       forward. rpy = (180 deg, 0, 90 deg). Massless (a few grams). robot_localization
+       rotates its data into base_footprint via TF. -->
   <link name="imu_link">
     <visual>
       <origin xyz="0 0 ${imu_h/2}" rpy="0 0 0"/>
@@ -317,7 +318,7 @@
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
     <child link="imu_link"/>
-    <origin xyz="0 0 ${plate_top_z - plate_t}" rpy="${pi} 0 0"/>
+    <origin xyz="0 0 ${plate_top_z - plate_t}" rpy="${pi} 0 ${pi/2}"/>
   </joint>
 
   <!-- Gazebo Harmonic: drive, joint states, LiDAR, IMU -->

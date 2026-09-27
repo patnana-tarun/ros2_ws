@@ -1,0 +1,45 @@
+[0.550s] Invoking command in '/home/shadows/ros2_ws/src/explorer_bringup': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_bringup build --build-base /home/shadows/ros2_ws/build/explorer_bringup/build install --record /home/shadows/ros2_ws/build/explorer_bringup/install.log --install-scripts $base/lib/explorer_bringup --single-version-externally-managed install_data
+[0.733s] running egg_info
+[0.733s] creating ../../build/explorer_bringup/explorer_bringup.egg-info
+[0.747s] writing ../../build/explorer_bringup/explorer_bringup.egg-info/PKG-INFO
+[0.747s] writing dependency_links to ../../build/explorer_bringup/explorer_bringup.egg-info/dependency_links.txt
+[0.747s] writing entry points to ../../build/explorer_bringup/explorer_bringup.egg-info/entry_points.txt
+[0.747s] writing requirements to ../../build/explorer_bringup/explorer_bringup.egg-info/requires.txt
+[0.747s] writing top-level names to ../../build/explorer_bringup/explorer_bringup.egg-info/top_level.txt
+[0.747s] writing manifest file '../../build/explorer_bringup/explorer_bringup.egg-info/SOURCES.txt'
+[0.773s] reading manifest file '../../build/explorer_bringup/explorer_bringup.egg-info/SOURCES.txt'
+[0.773s] writing manifest file '../../build/explorer_bringup/explorer_bringup.egg-info/SOURCES.txt'
+[0.773s] running build
+[0.773s] running build_py
+[0.773s] creating /home/shadows/ros2_ws/build/explorer_bringup/build
+[0.773s] creating /home/shadows/ros2_ws/build/explorer_bringup/build/lib
+[0.773s] creating /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup
+[0.773s] copying explorer_bringup/__init__.py -> /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup
+[0.774s] copying explorer_bringup/mpu9250_imu.py -> /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup
+[0.774s] copying explorer_bringup/explorer_base.py -> /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup
+[0.774s] running install
+[0.778s] running install_lib
+[0.792s] creating /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup
+[0.792s] copying /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup/__init__.py -> /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup
+[0.792s] copying /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup/mpu9250_imu.py -> /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup
+[0.793s] copying /home/shadows/ros2_ws/build/explorer_bringup/build/lib/explorer_bringup/explorer_base.py -> /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup
+[0.793s] byte-compiling /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup/__init__.py to __init__.cpython-312.pyc
+[0.793s] byte-compiling /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup/mpu9250_imu.py to mpu9250_imu.cpython-312.pyc
+[0.795s] byte-compiling /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup/explorer_base.py to explorer_base.cpython-312.pyc
+[0.798s] running install_data
+[0.799s] creating /home/shadows/ros2_ws/install/explorer_bringup/share/ament_index
+[0.799s] creating /home/shadows/ros2_ws/install/explorer_bringup/share/ament_index/resource_index
+[0.799s] creating /home/shadows/ros2_ws/install/explorer_bringup/share/ament_index/resource_index/packages
+[0.799s] copying resource/explorer_bringup -> /home/shadows/ros2_ws/install/explorer_bringup/share/ament_index/resource_index/packages
+[0.799s] copying package.xml -> /home/shadows/ros2_ws/install/explorer_bringup/share/explorer_bringup
+[0.799s] creating /home/shadows/ros2_ws/install/explorer_bringup/share/explorer_bringup/launch
+[0.799s] copying launch/robot.launch.py -> /home/shadows/ros2_ws/install/explorer_bringup/share/explorer_bringup/launch
+[0.799s] creating /home/shadows/ros2_ws/install/explorer_bringup/share/explorer_bringup/config
+[0.799s] copying config/robot.yaml -> /home/shadows/ros2_ws/install/explorer_bringup/share/explorer_bringup/config
+[0.799s] running install_egg_info
+[0.817s] Copying ../../build/explorer_bringup/explorer_bringup.egg-info to /home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages/explorer_bringup-0.1.0-py3.12.egg-info
+[0.817s] running install_scripts
+[0.904s] Installing explorer_base script to /home/shadows/ros2_ws/install/explorer_bringup/lib/explorer_bringup
+[0.904s] Installing mpu9250_imu script to /home/shadows/ros2_ws/install/explorer_bringup/lib/explorer_bringup
+[0.904s] writing list of installed files to '/home/shadows/ros2_ws/build/explorer_bringup/install.log'
+[0.922s] Invoked command in '/home/shadows/ros2_ws/src/explorer_bringup' returned '0': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_bringup build --build-base /home/shadows/ros2_ws/build/explorer_bringup/build install --record /home/shadows/ros2_ws/build/explorer_bringup/install.log --install-scripts $base/lib/explorer_bringup --single-version-externally-managed install_data

@@ -14,6 +14,7 @@ over a lossy BATMAN-adv mesh, holds the robot's URDF/Gazebo model, and explores 
 | `src/mesh_nodes`           | ament_python | `explorer_relay_node` (exe `explorer_relay`), launch + YAML |
 | `src/explorer_description` | ament_cmake  | URDF/xacro, Gazebo Harmonic launch, cave world generator, wheel+IMU EKF config |
 | `src/explorer_exploration` | ament_python | frontier/TAD exploration nodes, Nav2 + SLAM Toolbox params, bringup launch |
+| `src/explorer_bringup`     | ament_python | real robot on the Pi: TB6612FNG/encoder and MPU-9250 drivers, robot launch |
 
 ## Commands
 
@@ -23,6 +24,8 @@ ros2 launch mesh_nodes explorer_relay.launch.py            # use_sim_time:=true 
 ros2 launch explorer_description explorer_gazebo.launch.py rviz:=true
 ros2 launch explorer_exploration bringup.launch.py                 # world:=cave.sdf by default
 ros2 launch explorer_exploration benchmark_headless.launch.py      # headless + metrics
+ros2 run explorer_exploration manual_drive                         # manual override (pauses exploration)
+ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false   # real robot, on the Pi
 ```
 
 There is no test suite or linter. The xacro include uses `$(find explorer_description)`, so

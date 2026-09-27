@@ -5,6 +5,7 @@ Gazebo world + SLAM Toolbox + Nav2 + our frontier/TAD exploration package + RViz
     ros2 launch explorer_exploration bringup.launch.py                   # cave.sdf
     ros2 launch explorer_exploration bringup.launch.py world:=cave_open.sdf
     ros2 launch explorer_exploration bringup.launch.py gui:=false rviz:=false
+    ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false   # real robot (Pi)
 
 Ported from the Humble/TurtleBot3 version: turtlebot3_gazebo (Gazebo Classic) is replaced
 by explorer_description's explorer_gazebo.launch.py, and turtlebot3_navigation2's
@@ -29,7 +30,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -60,7 +61,9 @@ def generate_launch_description():
         get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')
 
     return LaunchDescription([
-        DeclareLaunchArgument('use_sim_time', default_value='true'),
+        DeclareLaunchArgument('sim', default_value='true',
+                              description='true = Gazebo; false = the real robot (explorer_bringup)'),
+        DeclareLaunchArgument('use_sim_time', default_value=LaunchConfiguration('sim')),
         DeclareLaunchArgument('world', default_value='cave.sdf',
                               description='Gazebo world (see explorer_description)'),
         DeclareLaunchArgument('x', default_value='0.0'),
@@ -72,6 +75,8 @@ def generate_launch_description():
                               description='Nav2 + SLAM Toolbox parameters'),
         DeclareLaunchArgument('scoring_mode', default_value='tad',
                               description="'tad' or 'nearest' (baseline)"),
+        DeclareLaunchArgument('selection_mode', default_value='dfs',
+                              description="'dfs' (finish the branch first) or 'global' (original)"),
 
         # Robot, world, bridge, wheel+IMU EKF. cmd_vel is bridged as TwistStamped, which is
         # what nav2_params.yaml makes Nav2 publish (enable_stamped_cmd_vel).
@@ -85,6 +90,13 @@ def generate_launch_description():
                 'gui': LaunchConfiguration('gui'),
                 'cmd_vel_stamped': 'true',
             }.items(),
+            condition=IfCondition(LaunchConfiguration('sim')),
+        ),
+        # Real robot: drivers, LiDAR, robot_state_publisher, EKF - same topics as the sim
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory('explorer_bringup'), 'launch', 'robot.launch.py')),
+            condition=UnlessCondition(LaunchConfiguration('sim')),
         ),
 
         Node(
@@ -127,6 +139,7 @@ def generate_launch_description():
             launch_arguments={
                 'use_sim_time': use_sim_time,
                 'scoring_mode': LaunchConfiguration('scoring_mode'),
+                'selection_mode': LaunchConfiguration('selection_mode'),
             }.items(),
         ),
 

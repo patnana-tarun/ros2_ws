@@ -1,0 +1,38 @@
+# Real-robot parameters (Raspberry Pi). See explorer_base.py / mpu9250_imu.py.
+#
+# !! The GPIO pins below are an EXAMPLE wiring. Set them to how your robot is wired
+# !! before the first run (BCM numbering, i.e. "GPIO17", not the header pin number).
+# Example wiring: each side's three motors share IN1/IN2/PWM (all three TB6612FNG
+# channel-A inputs wired together for the left, channel-B for the right), and the three
+# STBY lines share one pin. Pins may be shared only by the same signal.
+explorer_base:
+  ros__parameters:
+    wheel_radius: 0.0325
+    track_width: 0.43          # EFFECTIVE skid-steer track (sim-calibrated); recalibrate
+    slots_per_rev: 20          # LM393 disk
+    max_wheel_rpm: 200.0       # BO motor at the supply voltage used - check
+    min_duty: 0.25             # raise if the motors hum without turning
+    kp: 1.5
+    ki: 3.0
+    cmd_timeout: 0.5
+    rate: 20.0
+    invert: ['']               # e.g. ['right_front', 'right_middle', 'right_rear']
+    stby: [4, 4, 4]
+    left_front:   {in1: 5,  in2: 6,  pwm: 12}
+    left_middle:  {in1: 5,  in2: 6,  pwm: 12}
+    left_rear:    {in1: 5,  in2: 6,  pwm: 12}
+    right_front:  {in1: 23, in2: 24, pwm: 13}
+    right_middle: {in1: 23, in2: 24, pwm: 13}
+    right_rear:   {in1: 23, in2: 24, pwm: 13}
+    encoder:
+      left_front: 17
+      left_rear: 27
+      right_front: 22
+      right_rear: 16
+
+mpu9250_imu:
+  ros__parameters:
+    bus: 1                     # /dev/i2c-1 (GPIO 2 = SDA, GPIO 3 = SCL)
+    address: 0x68              # 0x69 if AD0 is pulled high
+    rate: 100.0
+    calibration_s: 2.0         # keep the robot still this long at start-up

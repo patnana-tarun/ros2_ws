@@ -28,11 +28,13 @@ file for why this keeps the two nodes decoupled).
 
 import numpy as np
 import rclpy
+from scipy import sparse
+from scipy.sparse.csgraph import dijkstra
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 from rclpy.time import Time
 from nav_msgs.msg import OccupancyGrid
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PointStamped, PoseStamped
 from visualization_msgs.msg import Marker, MarkerArray
 from std_msgs.msg import Empty
 from scipy import ndimage
@@ -73,6 +75,28 @@ class FrontierTADNode(Node):
         # Yamauchi nearest-frontier baseline (score = -d_n only, a/t
         # ignored) - for A/B comparison against the paper's own baseline.
         self.declare_parameter('scoring_mode', 'tad')
+        # How the scored candidates become a goal.
+        # 'dfs' (default): depth-first. Only frontiers whose travel distance
+        #   (along free space, not straight line) is within dfs_ratio x (or
+        #   dfs_margin m more than) the nearest frontier's are eligible; the best
+        #   TAD score among them wins. The robot finishes the branch it is in
+        #   before crossing the map, and at a dead end the nearest remaining
+        #   frontier - the branch it most recently passed - comes next, like
+        #   DFS backtracking. Frontiers it cannot reach are dropped.
+        # 'global': the original behaviour - best TAD score anywhere.
+        self.declare_parameter('selection_mode', 'dfs')
+        self.declare_parameter('dfs_ratio', 1.5)
+        self.declare_parameter('dfs_margin', 2.0)
+        # 'dfs' only: skip frontiers whose unknown region (a_n) is smaller than this.
+        # Every rock casts a LiDAR shadow - a small unknown pocket enclosed by free
+        # space and the rock - and each pocket is a frontier. Preferring near
+        # frontiers, 'dfs' otherwise tours every rock in a chamber. A real opening
+        # borders the large unexplored rest of the cave instead.
+        self.declare_parameter('min_pocket_area', 1.0)
+        # Frontiers near a goal Nav2 failed to reach are skipped for a while
+        # (explore_coordinator reports failures on /frontier_blacklist).
+        self.declare_parameter('blacklist_radius', 0.5)
+        self.declare_parameter('blacklist_duration', 300.0)
 
         self.w_d = self.get_parameter('w_distance').value
         self.w_a = self.get_parameter('w_adjacency').value
@@ -83,6 +107,14 @@ class FrontierTADNode(Node):
         self.scoring_mode = self.get_parameter('scoring_mode').value
         self.robot_frame = self.get_parameter('robot_frame').value
         self.gap_fill = self.get_parameter('unknown_gap_fill').value
+        self.selection_mode = self.get_parameter('selection_mode').value
+        self.dfs_ratio = self.get_parameter('dfs_ratio').value
+        self.dfs_margin = self.get_parameter('dfs_margin').value
+        self.min_pocket = self.get_parameter('min_pocket_area').value
+        self.bl_radius = self.get_parameter('blacklist_radius').value
+        self.bl_duration = self.get_parameter('blacklist_duration').value
+        self.blacklist = []     # (x, y, time added)
+        self.create_subscription(PointStamped, '/frontier_blacklist', self.blacklist_cb, 10)
 
         # map topic from slam_toolbox is latched - match its QoS or you'll miss it
         map_qos = QoSProfile(depth=1)
@@ -100,6 +132,18 @@ class FrontierTADNode(Node):
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
 
         self.get_logger().info('Frontier + TAD scorer node started')
+
+    def blacklist_cb(self, msg: PointStamped):
+        self.blacklist.append((msg.point.x, msg.point.y, self.get_clock().now()))
+        self.get_logger().info(
+            f'Blacklisted frontiers near ({msg.point.x:.2f}, {msg.point.y:.2f}) '
+            f'for {self.bl_duration:.0f} s')
+
+    def blacklisted(self, x, y):
+        now = self.get_clock().now()
+        self.blacklist = [b for b in self.blacklist
+                          if (now - b[2]).nanoseconds / 1e9 < self.bl_duration]
+        return any(np.hypot(x - bx, y - by) < self.bl_radius for bx, by, _ in self.blacklist)
 
     def map_callback(self, msg: OccupancyGrid):
         self.process_map(msg)
@@ -178,6 +222,11 @@ class FrontierTADNode(Node):
         rcol = (rx - origin_x) / resolution
         rrow = (ry - origin_y) / resolution
 
+        # Travel distance from the robot to every free cell (for 'dfs').
+        travel = None
+        if self.selection_mode == 'dfs':
+            travel = self.travel_distances(free, obstacle, rrow, rcol, resolution)
+
         candidates = []
         for cluster_id in range(1, num_clusters + 1):
             ys, xs = np.where(labeled == cluster_id)
@@ -217,9 +266,25 @@ class FrontierTADNode(Node):
             else:
                 t_n = -1.0
 
+            # Travel distance to the nearest cell of the cluster (inf = unreachable).
+            travel_n = float(travel[ys, xs].min()) if travel is not None else d_n
+
+            # Goal point: the centroid can fall inside a wall or among rocks, so in 'dfs'
+            # mode use the reachable cluster cell nearest to the centroid instead.
+            gx, gy = wx, wy
+            if travel is not None and np.isfinite(travel_n):
+                ok = np.isfinite(travel[ys, xs])
+                k = np.argmin(np.hypot(xs[ok] - centroid_col, ys[ok] - centroid_row))
+                gx = origin_x + xs[ok][k] * resolution
+                gy = origin_y + ys[ok][k] * resolution
+            if self.blacklisted(gx, gy) or self.blacklisted(wx, wy):
+                continue
+            if self.selection_mode == 'dfs' and a_n < self.min_pocket:
+                continue    # LiDAR shadow behind a rock, not an opening
+
             candidates.append({
-                'x': wx, 'y': wy, 'd': d_n, 'a': a_n, 't': t_n,
-                'cell_count': cell_count,
+                'x': gx, 'y': gy, 'd': d_n, 'a': a_n, 't': t_n,
+                'cell_count': cell_count, 'travel': travel_n,
             })
 
         if not candidates:
@@ -244,15 +309,66 @@ class FrontierTADNode(Node):
             a_vals = normalize([c['a'] for c in candidates])
             t_vals = normalize([c['t'] for c in candidates])
             scores = self.w_d * d_vals + self.w_a * a_vals + self.w_t * t_vals
-        best_idx = int(np.argmax(scores))
+
+        # Which candidates may be chosen. TAD scores above are unchanged; 'dfs'
+        # only restricts the choice to frontiers along the current branch.
+        eligible = np.ones(len(candidates), dtype=bool)
+        if self.selection_mode == 'dfs':
+            travel = np.array([c['travel'] for c in candidates])
+            reachable = np.isfinite(travel)
+            if reachable.any():
+                nearest = travel[reachable].min()
+                window = max(self.dfs_ratio * nearest, nearest + self.dfs_margin)
+                eligible = reachable & (travel <= window)
+            # else: the robot's own cell is not in the free map yet (startup) -
+            # fall back to every candidate rather than stalling.
+        best_idx = int(np.argmax(np.where(eligible, scores, -np.inf)))
         best = candidates[best_idx]
 
-        self.publish_markers(candidates, scores, best_idx)
+        self.publish_markers(candidates, scores, best_idx, eligible)
         self.publish_goal(best)
 
         self.get_logger().info(
             f'Chose frontier at ({best["x"]:.2f}, {best["y"]:.2f}) '
-            f'score={scores[best_idx]:.2f} among {len(candidates)} candidates')
+            f'score={scores[best_idx]:.2f} travel={best["travel"]:.1f} m, '
+            f'{int(eligible.sum())} of {len(candidates)} candidates eligible')
+
+    def travel_distances(self, free, obstacle, rrow, rcol, resolution):
+        """Shortest 8-connected path length (m) through free cells from the
+        robot to every cell; inf where unreachable. Cells next to an obstacle
+        are excluded so paths don't squeeze through gaps the robot can't."""
+        h, w = free.shape
+        passable = free & ~ndimage.binary_dilation(obstacle, iterations=1)
+        r0, c0 = int(round(rrow)), int(round(rcol))
+        # The robot's own cell may not be free yet (start-up, or inflated);
+        # start from the nearest passable cell within 0.5 m.
+        rad = int(0.5 / resolution)
+        rs, cs = np.nonzero(passable[max(r0 - rad, 0):r0 + rad + 1, max(c0 - rad, 0):c0 + rad + 1])
+        if len(rs) == 0:
+            return np.full((h, w), np.inf)
+        k = np.argmin(np.hypot(rs + max(r0 - rad, 0) - r0, cs + max(c0 - rad, 0) - c0))
+        start = (rs[k] + max(r0 - rad, 0)) * w + cs[k] + max(c0 - rad, 0)
+
+        idx = np.arange(h * w).reshape(h, w)
+        rows, cols, wts = [], [], []
+        # Edges to the right, down, down-right and down-left neighbours
+        for dr, dc, cost in ((0, 1, 1.0), (1, 0, 1.0), (1, 1, 1.4142), (1, -1, 1.4142)):
+            c0, c1 = max(0, -dc), w - max(0, dc)
+            a = passable[0:h - dr, c0:c1]
+            b = passable[dr:h, c0 + dc:c1 + dc]
+            m = a & b
+            rows.append(idx[0:h - dr, c0:c1][m])
+            cols.append(idx[dr:h, c0 + dc:c1 + dc][m])
+            wts.append(np.full(m.sum(), cost))
+        graph = sparse.csr_matrix(
+            (np.concatenate(wts), (np.concatenate(rows), np.concatenate(cols))), shape=(h * w, h * w))
+        dist = dijkstra(graph, directed=False, indices=start)
+        # Frontier cells themselves may touch an obstacle: give them the distance
+        # of their best passable neighbour plus one step.
+        dist = dist.reshape(h, w) * resolution
+        near = ndimage.grey_erosion(np.where(np.isfinite(dist), dist, 1e9), size=(3, 3)) + resolution
+        dist = np.where(np.isfinite(dist), dist, np.where(near < 1e8, near, np.inf))
+        return dist
 
     def publish_goal(self, best):
         goal = PoseStamped()
@@ -270,7 +386,7 @@ class FrontierTADNode(Node):
         marker_array.markers.append(delete_all)
         self.marker_pub.publish(marker_array)
 
-    def publish_markers(self, candidates, scores, best_idx):
+    def publish_markers(self, candidates, scores, best_idx, eligible=None):
         marker_array = MarkerArray()
         delete_all = Marker()
         delete_all.action = Marker.DELETEALL
@@ -291,10 +407,14 @@ class FrontierTADNode(Node):
                 # Winner: green
                 marker.color.r, marker.color.g, marker.color.b, marker.color.a = (
                     0.0, 1.0, 0.0, 1.0)
-            else:
+            elif eligible is None or eligible[i]:
                 # Candidates: orange, translucent
                 marker.color.r, marker.color.g, marker.color.b, marker.color.a = (
                     1.0, 0.5, 0.0, 0.6)
+            else:
+                # Outside the depth-first window (selection_mode 'dfs'): grey
+                marker.color.r, marker.color.g, marker.color.b, marker.color.a = (
+                    0.6, 0.6, 0.6, 0.5)
             marker_array.markers.append(marker)
         self.marker_pub.publish(marker_array)
 

@@ -27,6 +27,7 @@ setup(
             'frontier_tad_node = explorer_exploration.frontier_tad_node:main',
             'explore_coordinator = explorer_exploration.explore_coordinator:main',
             'metrics_logger = explorer_exploration.metrics_logger:main',
+            'manual_drive = explorer_exploration.manual_drive:main',
         ],
     },
 )

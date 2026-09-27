@@ -29,7 +29,7 @@ Frames follow REP-103: x forward, y left, z up. Units are metres, kg and rad. Pa
 | Bogie swing              | 43° front (end) wheel up, 28° middle wheel up (±5°) | measured from photos |
 | base_link                | at axle height, 32.5 mm above ground | convention |
 | LiDAR scan plane         | x = +79 mm, 180 mm above ground | assumed 50 mm LiDAR height |
-| IMU (`imu_link`)         | robot centre, under the top plate, chip facing down (z down, y right; x forward assumed), 127.5 mm up | user: "centre, on the main base, facing down" |
+| IMU (`imu_link`)         | robot centre, under the top plate, 127.5 mm up. Chip axes: +x left, +z down, so +y forward (right-handed); rpy (180°, 0, 90°) | user, 2026-09-26 (+y derived) |
 | Raspberry Pi             | x = −66 mm, long side across the robot | assumed |
 
 ## Sensors (from the user, 2026-09-26)

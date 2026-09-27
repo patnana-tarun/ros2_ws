@@ -35,6 +35,11 @@ Why the QoS differs: [[QoS design]].
 | sub | `/wheel/odom`, `/imu` | `Odometry`, `Imu` | `ekf_filter_node` |
 | pub | `/odom` + TF `odom → base_footprint` | `Odometry` | `ekf_filter_node` (remapped from `odometry/filtered`) |
 
+## Real robot ([[explorer_bringup]])
+Same as the Gazebo bridge above, from drivers instead: `/wheel/odom` and `/joint_states`
+from `explorer_base`, `/imu` from `mpu9250_imu`, and `/scan` from `ydlidar_ros2_driver`.
+`/cmd_vel` goes into `explorer_base`.
+
 ## Exploration ([[explorer_exploration]])
 | Dir | Topic | Type | Node |
 |-----|-------|------|------|
@@ -42,5 +47,7 @@ Why the QoS differs: [[QoS design]].
 | pub | `/best_goal` | `PoseStamped` | `frontier_tad_node` |
 | pub | `/frontier_markers` | `MarkerArray` | `frontier_tad_node` (orange = candidates, green = chosen) |
 | pub | `/exploration_complete` | `std_msgs/Empty` | `frontier_tad_node` |
+| pub/sub | `/manual_override` | `std_msgs/Bool` | `manual_drive` → `explore_coordinator` (heartbeat 5 Hz; `false` = resume now) |
+| pub | `/cmd_vel_nav` | `TwistStamped` | `manual_drive` (Nav2's controller output, into the velocity smoother) |
 | action | `navigate_to_pose` | `nav2_msgs/NavigateToPose` | `explore_coordinator` → Nav2 |
 | pub | `/cmd_vel` | `TwistStamped` | Nav2 collision monitor ([[Navigation stack]]) |

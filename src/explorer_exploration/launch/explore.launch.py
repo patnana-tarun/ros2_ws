@@ -15,6 +15,7 @@ def generate_launch_description():
     sensor_long_range = LaunchConfiguration('sensor_long_range')
     scoring_mode = LaunchConfiguration('scoring_mode')
     unknown_gap_fill = LaunchConfiguration('unknown_gap_fill')
+    selection_mode = LaunchConfiguration('selection_mode')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
@@ -31,6 +32,9 @@ def generate_launch_description():
         # Fill unknown gaps between LiDAR rays before frontier detection
         # (0 = original behaviour). See frontier_tad_node.py.
         DeclareLaunchArgument('unknown_gap_fill', default_value='2'),
+        # 'dfs' (finish the current branch first) or 'global' (original: best
+        # TAD score anywhere). See frontier_tad_node.py.
+        DeclareLaunchArgument('selection_mode', default_value='dfs'),
 
         Node(
             package='explorer_exploration',
@@ -47,6 +51,7 @@ def generate_launch_description():
                 'sensor_long_range': ParameterValue(sensor_long_range, value_type=float),
                 'scoring_mode': ParameterValue(scoring_mode, value_type=str),
                 'unknown_gap_fill': ParameterValue(unknown_gap_fill, value_type=int),
+                'selection_mode': ParameterValue(selection_mode, value_type=str),
             }],
         ),
         Node(

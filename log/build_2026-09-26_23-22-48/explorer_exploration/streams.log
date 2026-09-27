@@ -1,0 +1,36 @@
+[0.460s] Invoking command in '/home/shadows/ros2_ws/src/explorer_exploration': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_exploration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_exploration build --build-base /home/shadows/ros2_ws/build/explorer_exploration/build install --record /home/shadows/ros2_ws/build/explorer_exploration/install.log --install-scripts $base/lib/explorer_exploration --single-version-externally-managed install_data
+[0.608s] running egg_info
+[0.618s] writing ../../build/explorer_exploration/explorer_exploration.egg-info/PKG-INFO
+[0.618s] writing dependency_links to ../../build/explorer_exploration/explorer_exploration.egg-info/dependency_links.txt
+[0.618s] writing entry points to ../../build/explorer_exploration/explorer_exploration.egg-info/entry_points.txt
+[0.618s] writing requirements to ../../build/explorer_exploration/explorer_exploration.egg-info/requires.txt
+[0.618s] writing top-level names to ../../build/explorer_exploration/explorer_exploration.egg-info/top_level.txt
+[0.639s] reading manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.640s] writing manifest file '../../build/explorer_exploration/explorer_exploration.egg-info/SOURCES.txt'
+[0.640s] running build
+[0.640s] running build_py
+[0.640s] copying explorer_exploration/explore_coordinator.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.640s] copying explorer_exploration/frontier_tad_node.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.640s] copying explorer_exploration/manual_drive.py -> /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration
+[0.640s] running install
+[0.644s] running install_lib
+[0.655s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/explore_coordinator.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.655s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/frontier_tad_node.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.655s] copying /home/shadows/ros2_ws/build/explorer_exploration/build/lib/explorer_exploration/manual_drive.py -> /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration
+[0.655s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/explore_coordinator.py to explore_coordinator.cpython-312.pyc
+[0.656s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/frontier_tad_node.py to frontier_tad_node.cpython-312.pyc
+[0.658s] byte-compiling /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration/manual_drive.py to manual_drive.cpython-312.pyc
+[0.659s] running install_data
+[0.659s] copying launch/explore.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.659s] copying launch/bringup.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.659s] copying launch/benchmark_headless.launch.py -> /home/shadows/ros2_ws/install/explorer_exploration/share/explorer_exploration/launch
+[0.659s] running install_egg_info
+[0.671s] removing '/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info' (and everything under it)
+[0.671s] Copying ../../build/explorer_exploration/explorer_exploration.egg-info to /home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages/explorer_exploration-0.0.1-py3.12.egg-info
+[0.672s] running install_scripts
+[0.747s] Installing explore_coordinator script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.748s] Installing frontier_tad_node script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.748s] Installing manual_drive script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.748s] Installing metrics_logger script to /home/shadows/ros2_ws/install/explorer_exploration/lib/explorer_exploration
+[0.748s] writing list of installed files to '/home/shadows/ros2_ws/build/explorer_exploration/install.log'
+[0.764s] Invoked command in '/home/shadows/ros2_ws/src/explorer_exploration' returned '0': AMENT_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/shadows/ros2_ws/install/explorer_description:${CMAKE_PREFIX_PATH} DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/explorer_exploration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/explorer_exploration build --build-base /home/shadows/ros2_ws/build/explorer_exploration/build install --record /home/shadows/ros2_ws/build/explorer_exploration/install.log --install-scripts $base/lib/explorer_exploration --single-version-externally-managed install_data

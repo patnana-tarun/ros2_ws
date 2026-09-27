@@ -17,6 +17,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[mesh_nodes]]: the relay node
 - [[explorer_description]]: the robot model and Gazebo simulation
 - [[explorer_exploration]]: autonomous frontier exploration with Nav2
+- [[explorer_bringup]]: the real robot on the Raspberry Pi (motor, encoder and IMU drivers)
 
 ## Concepts
 - [[Message envelope]] → [[PDR measurement]]
@@ -40,6 +41,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 
 ## Log
 - [[2026-09-26]]
+- [[2026-09-27]]
 
 ## Quick start
 ```bash

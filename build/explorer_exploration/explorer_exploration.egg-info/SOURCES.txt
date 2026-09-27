@@ -13,6 +13,7 @@ config/nav2_params.yaml
 explorer_exploration/__init__.py
 explorer_exploration/explore_coordinator.py
 explorer_exploration/frontier_tad_node.py
+explorer_exploration/manual_drive.py
 explorer_exploration/metrics_logger.py
 launch/benchmark_headless.launch.py
 launch/bringup.launch.py
