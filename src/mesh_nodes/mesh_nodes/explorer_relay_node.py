@@ -1,66 +1,73 @@
 #!/usr/bin/env python3
 """
-Explorer-side relay node: publishes BOTH /map and /tf onto the mesh from
-a single process, since both originate from the same robot. This lets
-the map-in-flight signal be a plain in-process flag -- no extra topic,
-no risk of that signal itself being lost on a lossy mesh.
+Explorer-side relay: forward /map and /tf onto the mesh from one process.
 
-Behavior:
-  - Map: forwarded on every /map publish, RELIABLE + TRANSIENT_LOCAL,
-    unchanged from the earlier map relay. Right before publish(), sets
-    self.map_in_flight = True; a one-shot timer clears it back to False
-    after map_in_flight_hold_sec (a fixed approximation of mesh clear
-    time -- see notes below on why fixed vs. dynamic).
-  - TF: forwarded on every /tf publish UNLESS map_in_flight is True, in
-    which case only tf_throttle_send out of every tf_throttle_total
-    consecutive messages are forwarded (default 2-in-5). This trades a
-    temporary reduction in tf freshness for more mesh airtime for the
-    map, during exactly the window it's competing for the channel.
+Behavior (fixed rates, no map-in-flight throttle):
+  - Map: the latest /map is published every map_publish_period_sec (3 s),
+    whether or not it changed since the last one, RELIABLE +
+    TRANSIENT_LOCAL. A fixed period gives the receiver a known expected
+    map count per window. The map heartbeat is also sent right after
+    each map, so that count is exact rather than up to 1 s stale.
+  - TF: 1 of every tf_decimation (3) /tf messages is forwarded, i.e. a
+    third of the real tf rate. Counted per tf source (the set of child
+    frames in the message), so each source keeps a third of its own
+    rate; one shared counter over the mixed stream could alias and
+    starve one source. Skipped messages use no sequence_id, so the
+    receiver's expected count is already the forwarded third.
+  - MeshTf.map_in_flight is kept in the message (changing it would break
+    the receiver's interface) but is always False now.
+
+Timers and transmission_stamp use wall time even with use_sim_time:=true.
+Mesh airtime and the receiver's latency measurement are both wall-clock
+quantities; sim time would make the publish and heartbeat rates depend
+on Gazebo's real-time factor and give the receiver stamps it can't
+compare against its own clock.
 """
-
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
-from nav_msgs.msg import OccupancyGrid
-from tf2_msgs.msg import TFMessage
-
-from my_mesh_interfaces.msg import MeshMap, MeshTf, SenderStatus
 
 import random
 
+from my_mesh_interfaces.msg import MeshMap, MeshTf, SenderStatus
+from nav_msgs.msg import OccupancyGrid
+import rclpy
+from rclpy.clock import Clock, ClockType
+from rclpy.executors import ExternalShutdownException
+from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, ReliabilityPolicy
+from tf2_msgs.msg import TFMessage
+
 
 class ExplorerRelayNode(Node):
+    """Relay /map and /tf to /mesh/* with an envelope, at fixed reduced rates."""
+
     def __init__(self):
         super().__init__('explorer_relay_node')
 
         # ---- parameters ----
-        self.declare_parameter('tf_throttle_send', 2)
-        self.declare_parameter('tf_throttle_total', 5)
-        self.declare_parameter('map_in_flight_hold_sec', 2.0)
+        self.declare_parameter('map_publish_period_sec', 3.0)
+        self.declare_parameter('tf_decimation', 3)
 
-        self.tf_throttle_send = max(
-            1, int(self.get_parameter('tf_throttle_send').value))
-        self.tf_throttle_total = max(
-            self.tf_throttle_send, int(self.get_parameter('tf_throttle_total').value))
-        self.map_in_flight_hold_sec = max(
-            0.0, float(self.get_parameter('map_in_flight_hold_sec').value))
+        self.map_publish_period = max(
+            0.1, float(self.get_parameter('map_publish_period_sec').value))
+        self.tf_decimation = max(1, int(self.get_parameter('tf_decimation').value))
 
         self.get_logger().info(
-            f'TF throttle ratio during map transmission: '
-            f'{self.tf_throttle_send}/{self.tf_throttle_total}, '
-            f'map_in_flight_hold_sec={self.map_in_flight_hold_sec}')
+            f'Map every {self.map_publish_period}s, '
+            f'TF 1 of every {self.tf_decimation} messages')
+
+        # ---- clocks: wall time regardless of use_sim_time (see module doc) ----
+        self._stamp_clock = Clock(clock_type=ClockType.SYSTEM_TIME)
+        self._timer_clock = Clock(clock_type=ClockType.STEADY_TIME)
 
         # ---- shared session for this node's lifetime ----
         self.session_id = random.getrandbits(63)
         self.map_sequence_counter = 0
         self.tf_sequence_counter = 0
 
-        # ---- in-flight flag, cleared by a one-shot timer per map publish ----
-        self.map_in_flight = False
-        self._map_in_flight_timer = None
+        # ---- latest /map, sent on the map timer ----
+        self._latest_map = None
 
-        # ---- tf throttle counter (counts messages seen while throttling active) ----
-        self._tf_throttle_counter = 0
+        # ---- tf decimation: messages seen per tf source ----
+        self._tf_seen = {}
 
         # ==================== MAP side ====================
         map_qos = QoSProfile(
@@ -75,7 +82,9 @@ class ExplorerRelayNode(Node):
             MeshMap, '/mesh/map', map_qos)
         self.map_status_pub = self.create_publisher(
             SenderStatus, '/mesh/map_status', 10)
-        self.create_timer(1.0, self.publish_map_status)
+        self.create_timer(1.0, self.publish_map_status, clock=self._timer_clock)
+        self.create_timer(self.map_publish_period, self.publish_map,
+                          clock=self._timer_clock)
 
         # ==================== TF side ====================
         # BEST_EFFORT, not RELIABLE: tf is high-rate and self-healing (a
@@ -100,53 +109,40 @@ class ExplorerRelayNode(Node):
             SenderStatus, '/mesh/tf_status', 10)
         # 5Hz, not 1Hz: the receiver's rolling-window PDR expected-count
         # is derived from these heartbeats (see _expected_over_span in
-        # tf_rolling_metrics_node.py). A 1s heartbeat is coarse next to
-        # the throttle gate, which can flip state well inside a second --
-        # a rolling window straddling that transition could pick a
-        # heartbeat sample stale by up to ~1s, over/under-estimating
-        # "expected" right at the edges. Seen in practice as PDR
-        # oscillating with throttle_active_fraction instead of degrading
-        # smoothly, while tq (an independent, non-heartbeat-based signal)
-        # stayed flat -- i.e. the dips tracked measurement quantization,
-        # not the link. SenderStatus is two uint64s; 5Hz adds negligible
-        # airtime.
-        self.create_timer(0.2, self.publish_tf_status)
+        # tf_rolling_metrics_node.py). With a 1s heartbeat a rolling
+        # window edge could use a sample stale by up to ~1s, over/under-
+        # estimating "expected" (seen in practice while the old map
+        # throttle switched on and off within a second). SenderStatus is
+        # two uint64s; 5Hz adds negligible airtime.
+        self.create_timer(0.2, self.publish_tf_status, clock=self._timer_clock)
 
         self.get_logger().info(
             f'Explorer Relay Node initialized. session_id={self.session_id}')
 
     # ------------------------------------------------------------------
     def map_callback(self, raw_msg: OccupancyGrid):
+        """Keep the latest /map; publish_map sends it on a fixed period."""
+        self._latest_map = raw_msg
+
+    def publish_map(self):
+        """Wrap the latest /map in the envelope and publish it."""
+        if self._latest_map is None:
+            return
         self.map_sequence_counter += 1
 
         mesh_msg = MeshMap()
         mesh_msg.session_id = self.session_id
         mesh_msg.sequence_id = self.map_sequence_counter
-        mesh_msg.map_data = raw_msg
-        mesh_msg.transmission_stamp = self.get_clock().now().to_msg()
+        mesh_msg.map_data = self._latest_map
+        mesh_msg.transmission_stamp = self._stamp_clock.now().to_msg()
 
         self.mesh_map_pub.publish(mesh_msg)
-
-        # Mark map as "in flight" and (re)arm the timer that clears it.
-        # A fixed hold time is a deliberate simplification: we don't have
-        # a delivery ACK back from the receiver at this layer, so we
-        # approximate "long enough for this map to likely clear the
-        # mesh" rather than waiting for confirmed delivery. Tune
-        # map_in_flight_hold_sec against your own observed map latency
-        # (e.g. ~2x your typical map transmission_stamp-to-receive delay).
-        self.map_in_flight = True
-        if self._map_in_flight_timer is not None:
-            self.destroy_timer(self._map_in_flight_timer)
-        self._map_in_flight_timer = self.create_timer(
-            self.map_in_flight_hold_sec, self._clear_map_in_flight)
-
-    def _clear_map_in_flight(self):
-        self.map_in_flight = False
-        if self._map_in_flight_timer is not None:
-            self.destroy_timer(self._map_in_flight_timer)
-            self._map_in_flight_timer = None
+        # Heartbeat straight away, so the receiver's expected map count
+        # includes this map as soon as it could have arrived.
+        self.publish_map_status()
 
     def publish_map_status(self):
+        """Publish the map heartbeat (session + last map sequence sent)."""
         status = SenderStatus()
         status.session_id = self.session_id
         status.last_sequence_sent = self.map_sequence_counter
@@ -154,20 +150,14 @@ class ExplorerRelayNode(Node):
 
     # ------------------------------------------------------------------
     def tf_callback(self, raw_msg: TFMessage):
-        if self.map_in_flight:
-            # Throttled mode: forward tf_throttle_send out of every
-            # tf_throttle_total consecutive messages. Counter resets
-            # naturally once map_in_flight goes False (see below).
-            self._tf_throttle_counter += 1
-            slot = ((self._tf_throttle_counter - 1) % self.tf_throttle_total)
-            if slot >= self.tf_throttle_send:
-                return  # dropped intentionally, not a loss -- self-heals
-                        # via the next forwarded tf sample, per earlier
-                        # discussion of tf being self-correcting
-        else:
-            # Not throttling right now -- reset the counter so the next
-            # throttled period starts cleanly at slot 0, not mid-cycle.
-            self._tf_throttle_counter = 0
+        """Forward 1 of every tf_decimation /tf messages per tf source."""
+        source = tuple(sorted(t.child_frame_id for t in raw_msg.transforms))
+        seen = self._tf_seen.get(source, 0)
+        self._tf_seen[source] = seen + 1
+        if seen % self.tf_decimation != 0:
+            # Skipped on purpose, not a loss: tf self-heals via the next
+            # forwarded sample, and no sequence_id is used.
+            return
 
         self.tf_sequence_counter += 1
 
@@ -175,14 +165,13 @@ class ExplorerRelayNode(Node):
         mesh_msg.session_id = self.session_id
         mesh_msg.sequence_id = self.tf_sequence_counter
         mesh_msg.tf_data = raw_msg
-        mesh_msg.transmission_stamp = self.get_clock().now().to_msg()
-        # Explicit signal, not a rate-based heuristic: was this sample one
-        # of the throttled 2-of-5 sent while a map transfer was in flight.
-        mesh_msg.map_in_flight = self.map_in_flight
+        mesh_msg.transmission_stamp = self._stamp_clock.now().to_msg()
+        mesh_msg.map_in_flight = False  # throttle removed; field kept for the interface
 
         self.mesh_tf_pub.publish(mesh_msg)
 
     def publish_tf_status(self):
+        """Publish the TF heartbeat (session + last TF sequence sent)."""
         status = SenderStatus()
         status.session_id = self.session_id
         status.last_sequence_sent = self.tf_sequence_counter
@@ -194,9 +183,13 @@ def main(args=None):
     node = ExplorerRelayNode()
     try:
         rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        # try_shutdown: on Ctrl+C the SIGINT handler has usually shut the
+        # context down already, and a second rclpy.shutdown() raises.
+        rclpy.try_shutdown()
 
 
 if __name__ == '__main__':

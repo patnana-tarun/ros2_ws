@@ -1,10 +1,7 @@
 # Parameters for explorer_relay_node. Defaults match the values hard-coded in the node.
 explorer_relay_node:
   ros__parameters:
-    # While a map is "in flight", forward tf_throttle_send out of every
-    # tf_throttle_total consecutive /tf messages.
-    tf_throttle_send: 2
-    tf_throttle_total: 5
-    # How long (s) after each /map publish the mesh is assumed busy.
-    # Tune to roughly 2x the observed map transmission latency.
-    map_in_flight_hold_sec: 2.0
+    # The latest /map is published on the mesh every this many seconds.
+    map_publish_period_sec: 3.0
+    # 1 of every tf_decimation /tf messages (per tf source) is forwarded.
+    tf_decimation: 3

@@ -43,12 +43,11 @@ NAV2_PARAMS = os.path.join(PKG_SHARE, 'config', 'nav2_params.yaml')
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # The BT file must be an absolute path: point it at this install's nav2_bt_navigator.
+    # The BT file must be an absolute path: point it at this package's install.
     params = RewrittenYaml(
         source_file=LaunchConfiguration('params_file'),
         param_rewrites={'default_nav_to_pose_bt_xml': os.path.join(
-            get_package_share_directory('nav2_bt_navigator'), 'behavior_trees',
-            'nav_to_pose_with_consistent_replanning_and_if_path_becomes_invalid.xml')},
+            PKG_SHARE, 'behavior_trees', 'explore_nav_to_pose.xml')},
         convert_types=True)
 
     sim_launch = os.path.join(
@@ -128,6 +127,10 @@ def generate_launch_description():
             launch_arguments={
                 'slam': 'False',
                 'use_localization': 'False',
+                # Separate processes, not one component container: in discovery-server
+                # mode the launch's load_node service call can miss the container and
+                # silently leave Nav2 empty (no /navigate_to_pose server, no /cmd_vel).
+                'use_composition': 'False',
                 'map': '',
                 'use_sim_time': use_sim_time,
                 'params_file': params,

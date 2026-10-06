@@ -1,0 +1,25 @@
+[0.675s] Invoking command in '/home/shadows/ros2_ws/src/mesh_nodes': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/mesh_nodes/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages:/opt/ros/jazzy/opt/gz_sim_vendor/lib/python:/opt/ros/jazzy/opt/sdformat_vendor/lib/python:/opt/ros/jazzy/opt/gz_transport_vendor/lib/python:/opt/ros/jazzy/opt/gz_msgs_vendor/lib/python:/opt/ros/jazzy/opt/gz_math_vendor/lib/python:/opt/ros/jazzy/lib/python3.12/site-packages /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/mesh_nodes build --build-base /home/shadows/ros2_ws/build/mesh_nodes/build install --record /home/shadows/ros2_ws/build/mesh_nodes/install.log --install-scripts $base/lib/mesh_nodes --single-version-externally-managed install_data
+[0.877s] running egg_info
+[0.900s] writing ../../build/mesh_nodes/mesh_nodes.egg-info/PKG-INFO
+[0.900s] writing dependency_links to ../../build/mesh_nodes/mesh_nodes.egg-info/dependency_links.txt
+[0.900s] writing entry points to ../../build/mesh_nodes/mesh_nodes.egg-info/entry_points.txt
+[0.900s] writing requirements to ../../build/mesh_nodes/mesh_nodes.egg-info/requires.txt
+[0.900s] writing top-level names to ../../build/mesh_nodes/mesh_nodes.egg-info/top_level.txt
+[0.927s] reading manifest file '../../build/mesh_nodes/mesh_nodes.egg-info/SOURCES.txt'
+[0.927s] writing manifest file '../../build/mesh_nodes/mesh_nodes.egg-info/SOURCES.txt'
+[0.927s] running build
+[0.928s] running build_py
+[0.928s] copying mesh_nodes/explorer_relay_node.py -> /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes
+[0.928s] running install
+[0.932s] running install_lib
+[0.947s] copying /home/shadows/ros2_ws/build/mesh_nodes/build/lib/mesh_nodes/explorer_relay_node.py -> /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes
+[0.947s] byte-compiling /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes/explorer_relay_node.py to explorer_relay_node.cpython-312.pyc
+[0.948s] running install_data
+[0.948s] copying config/explorer_relay.yaml -> /home/shadows/ros2_ws/install/mesh_nodes/share/mesh_nodes/config
+[0.948s] running install_egg_info
+[0.963s] removing '/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes-0.1.0-py3.12.egg-info' (and everything under it)
+[0.963s] Copying ../../build/mesh_nodes/mesh_nodes.egg-info to /home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages/mesh_nodes-0.1.0-py3.12.egg-info
+[0.963s] running install_scripts
+[1.061s] Installing explorer_relay script to /home/shadows/ros2_ws/install/mesh_nodes/lib/mesh_nodes
+[1.061s] writing list of installed files to '/home/shadows/ros2_ws/build/mesh_nodes/install.log'
+[1.082s] Invoked command in '/home/shadows/ros2_ws/src/mesh_nodes' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/shadows/ros2_ws/build/mesh_nodes/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/my_mesh_interfaces/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/mesh_nodes/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/explorer_exploration/lib/python3.12/site-packages:/home/shadows/ros2_ws/install/explorer_bringup/lib/python3.12/site-packages:/opt/ros/jazzy/opt/gz_sim_vendor/lib/python:/opt/ros/jazzy/opt/sdformat_vendor/lib/python:/opt/ros/jazzy/opt/gz_transport_vendor/lib/python:/opt/ros/jazzy/opt/gz_msgs_vendor/lib/python:/opt/ros/jazzy/opt/gz_math_vendor/lib/python:/opt/ros/jazzy/lib/python3.12/site-packages /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/mesh_nodes build --build-base /home/shadows/ros2_ws/build/mesh_nodes/build install --record /home/shadows/ros2_ws/build/mesh_nodes/install.log --install-scripts $base/lib/mesh_nodes --single-version-externally-managed install_data

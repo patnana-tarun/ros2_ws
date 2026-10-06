@@ -14,6 +14,8 @@ setup(
             ['launch/explore.launch.py', 'launch/bringup.launch.py',
              'launch/benchmark_headless.launch.py']),
         ('share/' + package_name + '/config', ['config/nav2_params.yaml']),
+        ('share/' + package_name + '/behavior_trees',
+            ['behavior_trees/explore_nav_to_pose.xml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

@@ -86,10 +86,9 @@ bt_navigator:
     wait_for_service_timeout: 1000
     action_server_result_timeout: 900.0
     navigators: ["navigate_to_pose", "navigate_through_poses"]
-    # Replan every 10 s or when the path becomes blocked - not every second (the default).
-    # With a rock ahead, left and right around it cost about the same, so the default tree
-    # flipped the path from side to side and the robot kept turning (user's demo video,
-    # 2026-09-26). bringup.launch.py rewrites this to the installed nav2_bt_navigator path.
+    # Our own tree (behavior_trees/explore_nav_to_pose.xml): keeps a path 4 s unless it
+    # becomes blocked, and backs up first when stuck. bringup.launch.py rewrites this to the
+    # installed path; this value is only a fallback for other launchers.
     default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/nav_to_pose_with_consistent_replanning_and_if_path_becomes_invalid.xml"
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
@@ -116,7 +115,9 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.3   # at 0.2 m/s plus pivots
-      movement_time_allowance: 30.0   # pivots don't count as movement
+      # pivots don't count as movement; a 180 deg pivot at 0.6 rad/s takes ~5 s. Was 30 s:
+      # two failures (60 s) used up the coordinator's goal timeout before any recovery ran.
+      movement_time_allowance: 15.0
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
@@ -245,8 +246,12 @@ local_costmap:
         # A steep, short slope leaves a low-cost channel through every gap the robot fits;
         # the earlier 0.35 m / 6.0 merged wall and rock inflation into one high-cost field,
         # MPPI scored every trajectory as costly and dithered (user's demo video).
-        cost_scaling_factor: 10.0
-        inflation_radius: 0.30
+        # 0.30 m / 10 still closed the gaps between chamber rocks (2026-10-05 run: robot
+        # wedged between three rock halos, 4 goals timed out, planner ignored a free side
+        # passage). 0.22 m is just past the circumscribed radius (0.194 m), so only a thin
+        # cost band is left beyond the footprint-checked inscribed zone.
+        cost_scaling_factor: 12.0
+        inflation_radius: 0.22
       always_send_full_costmap: True
 
 global_costmap:
@@ -279,8 +284,8 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 10.0
-        inflation_radius: 0.30
+        cost_scaling_factor: 12.0     # same as local_costmap, see the comment there
+        inflation_radius: 0.22
       always_send_full_costmap: True
 
 map_saver:

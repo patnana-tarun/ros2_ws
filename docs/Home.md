@@ -20,9 +20,9 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[explorer_bringup]]: the real robot on the Raspberry Pi (motor, encoder and IMU drivers)
 
 ## Concepts
-- [[Message envelope]] → [[PDR measurement]]
+- [[Message envelope]] → [[PDR measurement]] → [[Run logging]]
 - [[QoS design]]
-- [[Map-in-flight throttle]]
+- [[Relay rates]] (replaced the [[Map-in-flight throttle]])
 - [[Topics]]: every topic, in one table
 - [[Frontier exploration]]: TAD scoring and the gap filling
 - [[Navigation stack]]: SLAM Toolbox + Nav2 tuned for this robot
@@ -37,11 +37,15 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 ## Open issues
 - [[Known limitations]]
 - [[Discovery server not running]]: empty Gazebo world / nothing in RViz
+- [[Nav2 not loaded]]: robot sits still, coordinator stuck at "waiting for Nav2"
 - [[Receiver (external)]]
 
 ## Log
 - [[2026-09-26]]
 - [[2026-09-27]]
+- [[2026-09-29]]
+- [[2026-09-30]]
+- [[2026-10-05]]
 
 ## Quick start
 ```bash

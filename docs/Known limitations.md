@@ -7,8 +7,6 @@ tags: [issue]
 |---|------|-------|--------------|
 | 1 | Relay | `/tf_static` is not relayed, so the receiver never gets `base_link → laser_frame` and the other fixed frames | receiver runs its own robot_state_publisher, or relay `/tf_static` |
 | 2 | Relay | All of `/tf` is forwarded. In simulation that includes 6 wheel and 2 bogie transforms, which means heavy mesh traffic | filter by frame (e.g. keep `map→odom`, `odom→base_footprint`) |
-| 3 | Relay | The throttle counts messages, not bytes or time | throttle by rate or bytes if needed |
-| 4 | Relay | Fixed hold time instead of confirmed delivery ([[Map-in-flight throttle]]) | receiver ACK topic |
 | 5 | Relay | Parameters are read only at startup | add a parameter callback |
 | 6 | Interfaces | `MeshScan` wraps `OccupancyGrid` and its field order differs from `MeshMap` ([[my_mesh_interfaces]]) | fix it before first use |
 | 7 | Sim | Yaw from the EKF drifts slowly: gyro only, no magnetometer ([[Odometry fusion]]) | SLAM corrects it through `map → odom` |
@@ -25,3 +23,6 @@ tags: [issue]
 | 16 | Robot | The Pi drivers ([[explorer_bringup]]) are tested in mock mode only. GPIO pins are an example wiring | set the pins, then test on the Pi |
 | 17 | Robot | LM393 slot encoders are single-channel, so direction comes from the command. If a wheel is pushed backwards against the command, odometry counts it the wrong way. 20 slots give only 10 mm resolution | quadrature encoders |
 | 18 | Model | IMU height is assumed, and its +y axis (forward) is derived from +x left, +z down ([[Robot model]]) | check: rotating the robot left must give a negative gyro z on the chip (z points down) |
+| 21 | Receiver | The receiver Pi has no RTC. On 2026-09-29 it booted reading 2026-06-05 and synced only later in the session; on 2026-10-05 it again read 2026-06-05 and was not synced. Until it syncs, latency = receive − `transmission_stamp` is meaningless ([[Message envelope]]). The wrong clock also makes `colcon build` skip copying edited Python files, because the old installed copies look newer | check `timedatectl` before a run; serve time from the explorer over `bat0` with chrony; until then, `rm -rf build/mesh_nodes install/mesh_nodes` before building | check `timedatectl` before a run; serve time from the explorer over `bat0` with chrony |
+| 22 | Receiver | Two senders on one ROS domain make `tf_rolling_metrics` reset its state on almost every message (the session ID flips back and forth), so it never reports ([[Receiver (external)]]) | one sender per domain, or track state per session |
+| 23 | Receiver | TF throughput counts 56 bytes per transform (the 7 doubles), not the real serialised size. The throughput score's 7.31 KB/s reference uses the same estimate | measure serialised size if absolute KB/s matters |

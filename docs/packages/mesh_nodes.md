@@ -7,7 +7,7 @@ build_type: ament_python
 
 Holds `explorer_relay_node` (executable `explorer_relay`). The node forwards `/map` and `/tf` to
 `/mesh/*` (see [[Topics]]) using the [[Message envelope]], [[QoS design]] and
-[[Map-in-flight throttle]].
+[[Relay rates]] (before 2026-10-05: [[Map-in-flight throttle]]).
 
 ## Files
 | File                               | Role                                   |
@@ -19,16 +19,15 @@ Holds `explorer_relay_node` (executable `explorer_relay`). The node forwards `/m
 ## Run
 ```bash
 ros2 launch mesh_nodes explorer_relay.launch.py                   # add use_sim_time:=true with Gazebo
-ros2 run mesh_nodes explorer_relay --ros-args -p map_in_flight_hold_sec:=3.0
+ros2 run mesh_nodes explorer_relay --ros-args -p map_publish_period_sec:=3.0 -p tf_decimation:=3
 ```
 
 ## Parameters
 Parameters are read once at startup. `ros2 param set` has no effect while the node is running.
 
-| Name                     | Default | Clamp                | Meaning                                  |
-|--------------------------|---------|----------------------|------------------------------------------|
-| `tf_throttle_send`       | 2       | ≥ 1                  | TF messages forwarded per window during a map transfer |
-| `tf_throttle_total`      | 5       | ≥ `tf_throttle_send` | Size of that window                      |
-| `map_in_flight_hold_sec` | 2.0     | ≥ 0                  | How long the mesh counts as busy after each `/map` |
+| Name                     | Default | Clamp  | Meaning                                       |
+|--------------------------|---------|--------|-----------------------------------------------|
+| `map_publish_period_sec` | 3.0     | ≥ 0.1  | The latest `/map` is sent every this many seconds |
+| `tf_decimation`          | 3       | ≥ 1    | 1 of every N `/tf` messages is forwarded, per TF source |
 
 Depends on [[my_mesh_interfaces]].

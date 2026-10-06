@@ -9,6 +9,7 @@ setup.py
 ../../build/explorer_exploration/explorer_exploration.egg-info/requires.txt
 ../../build/explorer_exploration/explorer_exploration.egg-info/top_level.txt
 ../../build/explorer_exploration/explorer_exploration.egg-info/zip-safe
+behavior_trees/explore_nav_to_pose.xml
 config/nav2_params.yaml
 explorer_exploration/__init__.py
 explorer_exploration/explore_coordinator.py

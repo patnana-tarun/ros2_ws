@@ -11,7 +11,7 @@ message in the [[Message envelope]].
 | Message        | Wraps                    | Extra field           | Used by        |
 |----------------|--------------------------|-----------------------|----------------|
 | `MeshMap`      | `nav_msgs/OccupancyGrid` | –                     | [[mesh_nodes]] |
-| `MeshTf`       | `tf2_msgs/TFMessage`     | `bool map_in_flight` ([[Map-in-flight throttle]]) | [[mesh_nodes]] |
+| `MeshTf`       | `tf2_msgs/TFMessage`     | `bool map_in_flight` ([[Map-in-flight throttle]]; always `false` since [[Relay rates]]) | [[mesh_nodes]] |
 | `SenderStatus` | –                        | `uint64 last_sequence_sent` ([[PDR measurement]]) | [[mesh_nodes]] |
 | `MeshScan`     | `nav_msgs/OccupancyGrid` | –                     | nothing yet    |
 
