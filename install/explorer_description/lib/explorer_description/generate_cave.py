@@ -59,6 +59,12 @@ PUDDLE_Z = 0.004
 # Rocks must cross the LiDAR scan plane (0.18 m) near their widest, or the 2D LiDAR can't see
 # what the robot hits (user, 2026-09-26: keep every rock at LiDAR level for testing).
 ROCK_MIN_HEIGHT = 0.26
+# Boulders (index in generation order, printed at build) left out of the world. The rest of the
+# cave is unchanged: the removed boulder is still drawn from the random generator.
+REMOVED_BOULDERS = {
+    12,   # (4.33, 2.86) r 0.17, chamber B entrance: split the gap between boulders 9 and 10
+          # into two ~0.3 m slots the robot could enter but not turn in (user, 2026-10-06)
+}
 SPIKE_COLUMN_Z = 0.24     # stalagmites keep their base width up to here, then taper
 COLLISION_Z = 0.12        # visual wall height where the collision wall stands
 
@@ -587,10 +593,16 @@ def main():
                 return p
         return None
 
-    for _ in range(14):                                     # boulders in the chambers
+    for i in range(14):                                     # boulders in the chambers
         p = free_spot(0.35, 9, 0.7)
         if p is not None:
-            form.add(*boulder(rng, p, rng.uniform(0.12, 0.28), 0.0))
+            r = rng.uniform(0.12, 0.28)
+            parts = boulder(rng, p, r, 0.0)   # always drawn, so removing one moves no other rock
+            if i in REMOVED_BOULDERS:
+                print(f"generate_cave: boulder {i} at ({p[0]:.2f}, {p[1]:.2f}) r={r:.2f} removed")
+                continue
+            print(f"generate_cave: boulder {i} at ({p[0]:.2f}, {p[1]:.2f}) r={r:.2f}")
+            form.add(*parts)
     for _ in range(26):                                     # stalagmites near chamber walls
         p = free_spot(0.12, 0.45, 0.25)
         if p is not None:

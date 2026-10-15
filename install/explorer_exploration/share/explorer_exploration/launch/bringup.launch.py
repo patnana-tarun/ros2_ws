@@ -23,6 +23,12 @@ the map saver) through service calls instead. nav2_bringup gets use_localization
 so it starts neither its own SLAM Toolbox nor map_server/amcl - a second SLAM Toolbox
 would race this one to publish /map and the map -> odom transform. Both read the same
 params file, which is why nav2_params.yaml has a slam_toolbox section.
+
+Both lifecycle managers start with autostart off, and lifecycle_startup sends them STARTUP
+after startup_delay seconds. With autostart on, a manager sent change_state to each node while
+~25 processes were still discovering each other. A request or reply could be dropped before
+the endpoints matched, and the manager then waited forever ("Configuring controller_server" /
+"Configuring map_saver", robot never moves). The delay lets discovery finish first.
 """
 
 import os
@@ -34,6 +40,7 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from nav2_common.launch import RewrittenYaml
 
 PKG_SHARE = get_package_share_directory('explorer_exploration')
@@ -76,6 +83,8 @@ def generate_launch_description():
                               description="'tad' or 'nearest' (baseline)"),
         DeclareLaunchArgument('selection_mode', default_value='dfs',
                               description="'dfs' (finish the branch first) or 'global' (original)"),
+        DeclareLaunchArgument('startup_delay', default_value='8.0',
+                              description='s before SLAM and Nav2 are configured and activated'),
 
         # Robot, world, bridge, wheel+IMU EKF. cmd_vel is bridged as TwistStamped, which is
         # what nav2_params.yaml makes Nav2 publish (enable_stamped_cmd_vel).
@@ -118,7 +127,7 @@ def generate_launch_description():
             executable='lifecycle_manager',
             name='lifecycle_manager_slam',
             output='screen',
-            parameters=[{'use_sim_time': use_sim_time, 'autostart': True,
+            parameters=[{'use_sim_time': use_sim_time, 'autostart': False,
                          'node_names': ['slam_toolbox', 'map_saver']}],
         ),
 
@@ -132,9 +141,19 @@ def generate_launch_description():
                 # silently leave Nav2 empty (no /navigate_to_pose server, no /cmd_vel).
                 'use_composition': 'False',
                 'map': '',
+                'autostart': 'False',
                 'use_sim_time': use_sim_time,
                 'params_file': params,
             }.items(),
+        ),
+
+        Node(
+            package='explorer_exploration',
+            executable='lifecycle_startup',
+            name='lifecycle_startup',
+            output='screen',
+            parameters=[{'delay': ParameterValue(LaunchConfiguration('startup_delay'),
+                                                 value_type=float)}],
         ),
 
         IncludeLaunchDescription(

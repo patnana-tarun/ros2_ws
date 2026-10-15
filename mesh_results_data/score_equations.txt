@@ -1,0 +1,4 @@
+Score_CRITIC = 0.6113*throughput_n + 0.2617*latency_n + 0.1271*pdr_n
+Score_Entropy = 0.8194*throughput_n + 0.1587*latency_n + 0.0220*pdr_n
+Score_MEREC = 0.4729*throughput_n + 0.4166*latency_n + 0.1105*pdr_n
+Score_Mean = 0.6345*throughput_n + 0.2790*latency_n + 0.0865*pdr_n
