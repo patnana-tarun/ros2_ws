@@ -27,7 +27,12 @@ About 23 × 16.5 m. Six chambers (A–F, 2–6 m across) are joined by nine wind
 - **Loops:** A–B–C–D and B–C–E, for SLAM loop closure
 - **Dead ends:** off A (west), off D (south-west), and chamber F
 - **Heights:** ceiling about 0.45–0.8 m in tunnels and up to 1.4 m in chambers
-- **Obstacles:** 37 boulders and stalagmites, all inside the chambers.
+- **Obstacles:** 36 boulders and stalagmites, all inside the chambers.
+  - Boulder 12 (4.33, 2.86) at the chamber B entrance was removed on 2026-10-06
+    (`REMOVED_BOULDERS` in `generate_cave.py`). It split the gap between boulders 9 and 10 into
+    two ~0.3 m slots that the robot could enter but not turn in. Removed boulders are still drawn
+    from the random generator, so no other rock moves. The build prints every boulder's index
+    and position.
   - Every one is at least 0.26 m tall, i.e. at LiDAR level, as the user asked for testing.
     Stalagmites stay column-shaped up to 0.24 m, so the scan plane (0.18 m) cuts each rock
     at 65–100 % (median 92 %) of its base width.

@@ -2,17 +2,21 @@
 """
 Explorer-side relay: forward /map and /tf onto the mesh from one process.
 
-Behavior (fixed rates, no map-in-flight throttle):
-  - Map: the latest /map is published every map_publish_period_sec (3 s),
-    whether or not it changed since the last one, RELIABLE +
-    TRANSIENT_LOCAL. A fixed period gives the receiver a known expected
-    map count per window. The map heartbeat is also sent right after
-    each map, so that count is exact rather than up to 1 s stale.
-  - TF: 1 of every tf_decimation (3) /tf messages is forwarded, i.e. a
-    third of the real tf rate. Counted per tf source (the set of child
-    frames in the message), so each source keeps a third of its own
-    rate; one shared counter over the mixed stream could alias and
-    starve one source. Skipped messages use no sequence_id, so the
+Behavior (no map-in-flight throttle):
+  - Map: with map_publish_period_sec = 0 (default) every /map is
+    forwarded as it arrives; SLAM itself publishes one every 3 s
+    (map_update_interval). With a period > 0, the latest /map is instead
+    published on that timer, whether or not it changed. RELIABLE +
+    TRANSIENT_LOCAL. The map heartbeat is also sent right after each
+    map, so the receiver's expected count is exact rather than up to
+    1 s stale.
+  - TF: 1 of every tf_decimation (3) /tf messages is forwarded. The
+    robot's own nodes use /tf at full rate (EKF 30 Hz, SLAM 50 Hz,
+    robot_state_publisher 20 Hz); only the mesh gets a third. Raw /tf
+    never crosses the mesh unless a remote node subscribes to it.
+    Counted per tf source (the set of child frames in the message), so
+    each source keeps a third of its own rate; one shared counter over
+    the mixed stream could alias and starve one source. Skipped messages use no sequence_id, so the
     receiver's expected count is already the forwarded third.
   - MeshTf.map_in_flight is kept in the message (changing it would break
     the receiver's interface) but is always False now.
@@ -43,16 +47,17 @@ class ExplorerRelayNode(Node):
         super().__init__('explorer_relay_node')
 
         # ---- parameters ----
-        self.declare_parameter('map_publish_period_sec', 3.0)
+        self.declare_parameter('map_publish_period_sec', 0.0)
         self.declare_parameter('tf_decimation', 3)
 
         self.map_publish_period = max(
-            0.1, float(self.get_parameter('map_publish_period_sec').value))
+            0.0, float(self.get_parameter('map_publish_period_sec').value))
         self.tf_decimation = max(1, int(self.get_parameter('tf_decimation').value))
 
         self.get_logger().info(
-            f'Map every {self.map_publish_period}s, '
-            f'TF 1 of every {self.tf_decimation} messages')
+            'Map: ' + (f'every {self.map_publish_period}s' if self.map_publish_period > 0
+                        else 'each /map as it arrives') +
+            f', TF 1 of every {self.tf_decimation} messages')
 
         # ---- clocks: wall time regardless of use_sim_time (see module doc) ----
         self._stamp_clock = Clock(clock_type=ClockType.SYSTEM_TIME)
@@ -83,8 +88,9 @@ class ExplorerRelayNode(Node):
         self.map_status_pub = self.create_publisher(
             SenderStatus, '/mesh/map_status', 10)
         self.create_timer(1.0, self.publish_map_status, clock=self._timer_clock)
-        self.create_timer(self.map_publish_period, self.publish_map,
-                          clock=self._timer_clock)
+        if self.map_publish_period > 0.0:
+            self.create_timer(self.map_publish_period, self.publish_map,
+                              clock=self._timer_clock)
 
         # ==================== TF side ====================
         # BEST_EFFORT, not RELIABLE: tf is high-rate and self-healing (a
@@ -121,8 +127,10 @@ class ExplorerRelayNode(Node):
 
     # ------------------------------------------------------------------
     def map_callback(self, raw_msg: OccupancyGrid):
-        """Keep the latest /map; publish_map sends it on a fixed period."""
+        """Forward /map now, or keep it for the publish_map timer."""
         self._latest_map = raw_msg
+        if self.map_publish_period == 0.0:
+            self.publish_map()
 
     def publish_map(self):
         """Wrap the latest /map in the envelope and publish it."""

@@ -16,6 +16,7 @@ and ported to this robot on Jazzy on 2026-09-26 ([[2026-09-26]]).
 | `explore_coordinator` | sends `/best_goal` to Nav2's `navigate_to_pose`, one goal at a time, and logs how each goal ended |
 | `metrics_logger`      | exploration time, path length (from `/odom`), goal count and coverage, printed as one `METRICS_SUMMARY` line |
 | `manual_drive`        | keyboard driving that pauses exploration while it runs (below) |
+| `lifecycle_startup`   | sends STARTUP to the SLAM and Nav2 lifecycle managers `startup_delay` s (default 8) after launch, then exits ([[Nav2 not loaded]]) |
 
 Topics are in [[Topics]].
 
@@ -31,6 +32,9 @@ ros2 launch explorer_exploration bringup.launch.py                        # watc
 ros2 launch explorer_exploration bringup.launch.py world:=cave_open.sdf
 ros2 launch explorer_exploration benchmark_headless.launch.py scoring_mode:=nearest
 ```
+
+Gazebo and RViz crash at start if launched from the VS Code terminal
+([[GUI crashes in VS Code terminal]]).
 
 ## Manual override
 ```bash

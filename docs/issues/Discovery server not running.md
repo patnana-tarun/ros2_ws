@@ -29,3 +29,17 @@ The relay, Gazebo and RViz terminals must all use the same choice, as well as th
 
 **Verified 2026-09-26.** A `ros2 topic pub` / `echo` pair on the same machine got no messages with
 the `.bashrc` settings, and did get messages with the two variables unset.
+
+## Variant: server running but wedged (2026-10-06)
+
+**Symptom.** The robot doesn't appear in Gazebo for a long time (spawn took 106 s), and SLAM
+and Nav2 get no data, even though `fastdds discovery` is running.
+
+**Check.** `ss -uanp | grep 11811`. A Recv-Q that stays high (it was 208–210 kB, a full socket
+buffer) means the server has stopped reading. A talker/listener pair through it got 0 messages.
+
+**Fix.** Ctrl+C the server, start it again, then restart the bringup (and anything on the Pi).
+
+**Cause: unknown.** Fresh servers at the same address with the same code worked every time,
+with the CLIENT profile, without it, and with a SUPER_CLIENT on the Pi over the mesh. The same
+server had also stopped serving on 2026-09-30, before the CLIENT profile existed.

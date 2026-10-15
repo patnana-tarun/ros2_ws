@@ -19,7 +19,7 @@ Holds `explorer_relay_node` (executable `explorer_relay`). The node forwards `/m
 ## Run
 ```bash
 ros2 launch mesh_nodes explorer_relay.launch.py                   # add use_sim_time:=true with Gazebo
-ros2 run mesh_nodes explorer_relay --ros-args -p map_publish_period_sec:=3.0 -p tf_decimation:=3
+ros2 run mesh_nodes explorer_relay --ros-args -p map_publish_period_sec:=3.0   # latest /map on a 3 s timer instead
 ```
 
 ## Parameters
@@ -27,7 +27,7 @@ Parameters are read once at startup. `ros2 param set` has no effect while the no
 
 | Name                     | Default | Clamp  | Meaning                                       |
 |--------------------------|---------|--------|-----------------------------------------------|
-| `map_publish_period_sec` | 3.0     | ≥ 0.1  | The latest `/map` is sent every this many seconds |
+| `map_publish_period_sec` | 0.0     | ≥ 0    | 0 = forward each `/map` as it arrives; > 0 = send the latest `/map` on this period |
 | `tf_decimation`          | 3       | ≥ 1    | 1 of every N `/tf` messages is forwarded, per TF source |
 
 Depends on [[my_mesh_interfaces]].

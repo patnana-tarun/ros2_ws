@@ -30,6 +30,7 @@ setup(
             'explore_coordinator = explorer_exploration.explore_coordinator:main',
             'metrics_logger = explorer_exploration.metrics_logger:main',
             'manual_drive = explorer_exploration.manual_drive:main',
+            'lifecycle_startup = explorer_exploration.lifecycle_startup:main',
         ],
     },
 )

@@ -28,7 +28,7 @@ configured in `config/nav2_params.yaml` and started by `bringup.launch.py`.
 | Planner | NavFn, `allow_unknown: true` | frontier goals sit at the edge of unknown space |
 | Costmap sensor | `/scan`, obstacles to 4 m, clearing to 5 m | YDLIDAR X2 range 0.12–8 m |
 | `cmd_vel` | `TwistStamped` (`enable_stamped_cmd_vel`) | matches the Gazebo bridge default and the Jazzy teleop |
-| SLAM | sync mode, 0.05 m, laser 0.12–7.5 m, map update every 2 s, 0.2 m / 0.2 rad between scans | X2 range. Small, slow robot. The frontier node re-plans on every `/map` |
+| SLAM | sync mode, 0.05 m, laser 0.12–7.5 m, map update every 3 s, `map → odom` at 50 Hz, 0.2 m / 0.2 rad between scans | X2 range. Small, slow robot. The frontier node re-plans on every `/map`. The 3 s map is set for the mesh relay ([[Relay rates]]); before 2026-10-06 it was 2 s. `map → odom` ran at 16.7 Hz from 2026-10-06 to 2026-10-15 |
 
 ## Result
 ![[slam_map_cave_run11.png]]
@@ -41,7 +41,9 @@ Before the replanning, inflation and TwirlingCritic changes, and with a rock mis
 A→B tunnel, the same stack stalled at 16–32 m², turning back and forth in front of rocks.
 ## How SLAM is started
 `bringup.launch.py` starts SLAM Toolbox and the map saver itself, and brings them up with
-Nav2's lifecycle manager. It runs `nav2_bringup` with `use_localization:=False`.
+Nav2's lifecycle manager. It runs `nav2_bringup` with `use_localization:=False`. Both
+lifecycle managers wait for the `lifecycle_startup` node's STARTUP call, `startup_delay` s after
+launch ([[Nav2 not loaded]]).
 
 Why not `nav2_bringup slam:=True`: that path activates SLAM Toolbox from a launch-event
 handler, which races under CPU load. In one of the test runs SLAM Toolbox was configured

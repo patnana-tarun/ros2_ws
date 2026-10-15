@@ -24,6 +24,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[QoS design]]
 - [[Relay rates]] (replaced the [[Map-in-flight throttle]])
 - [[Topics]]: every topic, in one table
+- [[Mesh network setup]]: IBSS + BATMAN-adv settings, node addresses, start/stop scripts
 - [[Frontier exploration]]: TAD scoring and the gap filling
 - [[Navigation stack]]: SLAM Toolbox + Nav2 tuned for this robot
 
@@ -38,6 +39,8 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Known limitations]]
 - [[Discovery server not running]]: empty Gazebo world / nothing in RViz
 - [[Nav2 not loaded]]: robot sits still, coordinator stuck at "waiting for Nav2"
+- [[GUI crashes in VS Code terminal]]: Gazebo/RViz die at start, the launch shuts down
+- [[Baseline runs 2026-10-08]]: 3 observed runs, problem evidence database (P01–P13)
 - [[Receiver (external)]]
 
 ## Log
@@ -46,6 +49,12 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[2026-09-29]]
 - [[2026-09-30]]
 - [[2026-10-05]]
+- [[2026-10-06]]
+- [[2026-10-08]]
+- [[2026-10-09]]
+- [[2026-10-10]]
+- [[2026-10-14]]
+- [[2026-10-15]]
 
 ## Quick start
 ```bash

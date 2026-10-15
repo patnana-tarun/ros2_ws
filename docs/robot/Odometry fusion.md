@@ -15,7 +15,9 @@ listed in [[Robot model]].
 
 - Not used: the magnetometer (motors and rock make it unreliable) and the accelerometers.
   Yaw therefore drifts slowly, and SLAM corrects it through `map → odom`.
-- `two_d_mode` is on, and the output runs at 30 Hz.
+- `two_d_mode` is on, and the output runs at 30 Hz. From 2026-10-06 to 2026-10-15 it ran at 10 Hz
+  for the mesh relay, which made the startup turn overshoot badly ([[Baseline runs 2026-10-08]]).
+  The relay now thins TF for the mesh instead ([[Relay rates]]).
 - In simulation, Gazebo's DiffDrive publishes `/wheel/odom`. Its own transform goes to an
   unbridged topic, so only the EKF publishes `odom → base_footprint`.
 

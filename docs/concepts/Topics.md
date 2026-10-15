@@ -9,10 +9,10 @@ This is the only place topics are listed.
 | Dir | Topic              | Type           | Reliability | Durability      | Depth | Rate          |
 |-----|--------------------|----------------|-------------|-----------------|-------|---------------|
 | sub | `/map`             | `OccupancyGrid`| RELIABLE    | TRANSIENT_LOCAL | 1     | set by SLAM   |
-| pub | `/mesh/map`        | `MeshMap`      | RELIABLE    | TRANSIENT_LOCAL | 1     | every 3 s ([[Relay rates]]) |
+| pub | `/mesh/map`        | `MeshMap`      | RELIABLE    | TRANSIENT_LOCAL | 1     | 1 per `/map`, every 3 s ([[Relay rates]]) |
 | pub | `/mesh/map_status` | `SenderStatus` | RELIABLE    | VOLATILE        | 10    | 1 Hz + after each map |
-| sub | `/tf`              | `TFMessage`    | BEST_EFFORT | VOLATILE        | 100   | set by tf sources |
-| pub | `/mesh/tf`         | `MeshTf`       | BEST_EFFORT | VOLATILE        | 100   | 1 of every 3 `/tf`, per source ([[Relay rates]]) |
+| sub | `/tf`              | `TFMessage`    | BEST_EFFORT | VOLATILE        | 100   | ~100 /s from three sources ([[Relay rates]]) |
+| pub | `/mesh/tf`         | `MeshTf`       | BEST_EFFORT | VOLATILE        | 100   | 1 per 3 `/tf`, per source: ~33 /s ([[Relay rates]]) |
 | pub | `/mesh/tf_status`  | `SenderStatus` | RELIABLE    | VOLATILE        | 10    | 5 Hz ([[PDR measurement]]) |
 
 Why the QoS differs: [[QoS design]].

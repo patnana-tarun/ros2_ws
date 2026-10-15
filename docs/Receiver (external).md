@@ -34,3 +34,8 @@ Related files on the laptop, in `~/Downloads`:
 The receiver must use QoS compatible with [[QoS design]] and consume the topics in [[Topics]].
 Both machines use Fast DDS discovery-server mode, so the server on the laptop must be running
 ([[Discovery server not running]]). Its open issues are in [[Known limitations]].
+
+**RViz on the Pi does not use the relay.** Both machines share one ROS network, so its Map
+display subscribes to the laptop's raw `/map` and its TF comes from the raw `/tf`, not
+`/mesh/map` or `/tf_recovered`. That traffic also crosses the mesh, but the metrics don't see
+it. Found 2026-10-06 in `~/.rviz2/default.rviz`.
