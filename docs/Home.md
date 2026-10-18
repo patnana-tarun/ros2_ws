@@ -12,6 +12,9 @@ LiDAR ─/scan─► SLAM ─/map─┐
 drive ─/odom,/tf──────────┴─► explorer_relay_node ─/mesh/*─ BATMAN-adv ─► tf_rolling_metrics_node
 ```
 
+## Results
+- [[Comparisons]]: every design choice that was settled by comparing options, with charts (confirmed results only)
+
 ## Packages
 - [[my_mesh_interfaces]]: the custom mesh messages
 - [[mesh_nodes]]: the relay node
