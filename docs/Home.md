@@ -25,6 +25,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Relay rates]] (replaced the [[Map-in-flight throttle]])
 - [[Topics]]: every topic, in one table
 - [[Mesh network setup]]: IBSS + BATMAN-adv settings, node addresses, start/stop scripts
+- [[Relay placement protocol]]: how to collect data for the relay-drop threshold
 - [[Frontier exploration]]: TAD scoring and the gap filling
 - [[Navigation stack]]: SLAM Toolbox + Nav2 tuned for this robot
 
@@ -41,6 +42,10 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Nav2 not loaded]]: robot sits still, coordinator stuck at "waiting for Nav2"
 - [[GUI crashes in VS Code terminal]]: Gazebo/RViz die at start, the launch shuts down
 - [[Baseline runs 2026-10-08]]: 3 observed runs, problem evidence database (P01–P13)
+- [[Relay field tests 2026-10-17]]: 3 walk tests of the Pi Zero 2 W repeater
+- [[Gazebo multicast No such device]]: repeated multicast error, caused by the phone's USB tether
+- [[Path tracking and stalls 2026-10-18]]: why the robot leaves the path, and the 7 Hz warning
+- [[Planner comparison 2026-10-18]]: NavFn vs Smac Lattice A/B, 3 × 10 min pairs
 - [[Receiver (external)]]
 
 ## Log
@@ -55,6 +60,8 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[2026-10-10]]
 - [[2026-10-14]]
 - [[2026-10-15]]
+- [[2026-10-17]]
+- [[2026-10-18]]
 
 ## Quick start
 ```bash

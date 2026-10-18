@@ -21,6 +21,8 @@ Every node joins one BATMAN-adv mesh over 802.11 IBSS (ad-hoc). The mesh is star
 | Pi Zero 2 W (repeater, `ssh node1@192.168.123.3`) | 192.168.123.3 | `wlan0` | `~/demo/` on the Zero; source in `~/demo_com/pi-zero-2w/` on the laptop |
 | spare | 192.168.123.4 | `wlan0` | |
 
+Repeater walk tests: [[Relay field tests 2026-10-17]].
+
 ## Time sync
 The laptop's chrony serves time to `192.168.123.0/24` (`allow`, `local stratum 10 orphan`). The Pis have
 no RTC, so each `start-mesh.sh` syncs its clock from 192.168.123.1 at the end. Why this needs to be
