@@ -35,8 +35,11 @@
                 <IsPathValid path="{path}"/>
               </ReactiveSequence>
               <Sequence name="PlanAndSmooth">
-                <ComputePathToPose goal="{goal}" path="{raw_path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}"/>
-                <SmoothPath unsmoothed_path="{raw_path}" smoothed_path="{path}" smoother_id="simple_smoother" max_smoothing_duration="0.5" check_for_collisions="false" error_code_id="{smoother_error_code}"/>
+                <!-- Smooth {path} in place. A separate {raw_path} left a stale {path} behind when
+                     planning failed: FollowPath then "reached" the old path's end, and the
+                     frontier was sent again and again (smooth_1, 2026-10-18). -->
+                <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}"/>
+                <SmoothPath unsmoothed_path="{path}" smoothed_path="{path}" smoother_id="simple_smoother" max_smoothing_duration="0.5" check_for_collisions="false" error_code_id="{smoother_error_code}"/>
               </Sequence>
             </Fallback>
             <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
