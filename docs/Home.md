@@ -51,6 +51,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Planner comparison 2026-10-18]]: NavFn vs Smac Lattice A/B, 3 × 10 min pairs
 - [[Planner follow-ups 2026-10-18]]: 4-arm follow-up; Smac not adopted, NavFn stays (branch `exp/planner-tuning`)
 - [[Tunnel tracking 2026-10-18]]: NavFn + smoothing + MPPI tuning, GUI runs (branch `exp/tunnel-tracking`, verdict pending)
+- [[Run to 90 percent 2026-10-18]]: same 3 setups run until 90 % or stuck (GUI); 4 of 6 trapped in dead ends
 - [[Receiver (external)]]
 
 ## Log
