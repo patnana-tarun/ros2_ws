@@ -38,7 +38,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from nav2_common.launch import RewrittenYaml
@@ -53,8 +53,8 @@ def generate_launch_description():
     # The BT file must be an absolute path: point it at this package's install.
     params = RewrittenYaml(
         source_file=LaunchConfiguration('params_file'),
-        param_rewrites={'default_nav_to_pose_bt_xml': os.path.join(
-            PKG_SHARE, 'behavior_trees', 'explore_nav_to_pose.xml')},
+        param_rewrites={'default_nav_to_pose_bt_xml': PathJoinSubstitution(
+            [PKG_SHARE, 'behavior_trees', LaunchConfiguration('bt_xml')])},
         convert_types=True)
 
     sim_launch = os.path.join(
@@ -85,6 +85,8 @@ def generate_launch_description():
                               description="'dfs' (finish the branch first) or 'global' (original)"),
         DeclareLaunchArgument('startup_delay', default_value='8.0',
                               description='s before SLAM and Nav2 are configured and activated'),
+        DeclareLaunchArgument('bt_xml', default_value='explore_nav_to_pose.xml',
+                              description='navigate_to_pose BT file in behavior_trees/'),
         DeclareLaunchArgument('precheck_path', default_value='false',
                               description='plan once before sending a frontier; blacklist it if there is no path'),
 
