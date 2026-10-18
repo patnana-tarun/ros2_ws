@@ -11,6 +11,12 @@ straight-line distance) seconds. Aborted or timed-out goals are published on
 /frontier_blacklist so frontier_tad_node stops choosing that frontier for a while
 (otherwise one unreachable frontier among rocks kept the robot busy for 9 minutes).
 
+Path pre-check (precheck_path, off by default): before sending a frontier to Nav2, ask the
+planner once for a path to it. If there is none, blacklist the frontier at once instead of
+letting the navigator's recovery tree (clear, BackUp, Spin, Wait, up to 6 rounds) work on a
+goal the planner already refuses. Smac Lattice refuses goals the real footprint cannot reach
+(docs/issues/Planner comparison 2026-10-18.md).
+
 Manual override: while `manual_drive` runs it publishes a heartbeat on
 /manual_override. On the first heartbeat this node cancels the current Nav2
 goal and stops sending goals; when heartbeats stop for override_timeout
@@ -24,7 +30,7 @@ import tf2_ros
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from geometry_msgs.msg import PointStamped, PoseStamped
-from nav2_msgs.action import NavigateToPose
+from nav2_msgs.action import ComputePathToPose, NavigateToPose
 from action_msgs.msg import GoalStatus
 from std_msgs.msg import Bool
 
@@ -52,6 +58,10 @@ class ExploreCoordinator(Node):
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.create_timer(1.0, self.check_timeout)
+
+        self.declare_parameter('precheck_path', False)
+        self.precheck = self.get_parameter('precheck_path').value
+        self.plan_client = ActionClient(self, ComputePathToPose, 'compute_path_to_pose')
 
         self.declare_parameter('override_timeout', 1.0)
         self.override_timeout = self.get_parameter('override_timeout').value
@@ -111,6 +121,38 @@ class ExploreCoordinator(Node):
         self.busy = True
         self.goal = msg
         self.timed_out = False
+        if self.precheck and self.plan_client.server_is_ready():
+            req = ComputePathToPose.Goal()
+            req.goal = msg
+            req.use_start = False
+            self.plan_client.send_goal_async(req).add_done_callback(self.precheck_response)
+            return
+        self.send_nav_goal(msg)
+
+    def precheck_response(self, future):
+        handle = future.result()
+        if not handle.accepted:
+            self.send_nav_goal(self.goal)      # planner busy or refusing requests: let Nav2 decide
+            return
+        handle.get_result_async().add_done_callback(self.precheck_result)
+
+    def precheck_result(self, future):
+        res = future.result()
+        if res.status == GoalStatus.STATUS_SUCCEEDED and len(res.result.path.poses) > 0:
+            self.send_nav_goal(self.goal)
+            return
+        p = self.goal.pose.position
+        self.get_logger().warn(f'No path to frontier ({p.x:.2f}, {p.y:.2f}) - blacklisted, not sent')
+        self.publish_blacklist()
+        self.busy = False
+
+    def publish_blacklist(self):
+        bl = PointStamped()
+        bl.header = self.goal.header
+        bl.point.x, bl.point.y = self.goal.pose.position.x, self.goal.pose.position.y
+        self.blacklist_pub.publish(bl)
+
+    def send_nav_goal(self, msg: PoseStamped):
         goal_msg = NavigateToPose.Goal()
         goal_msg.pose = msg
 
@@ -145,10 +187,7 @@ class ExploreCoordinator(Node):
             self.get_logger().warn(f'Nav2 gave up on the goal ({reason}) - ready for next frontier')
             # A manual-override cancel is not the frontier's fault; anything else is.
             if (status == GoalStatus.STATUS_ABORTED or self.timed_out) and self.goal is not None:
-                bl = PointStamped()
-                bl.header = self.goal.header
-                bl.point.x, bl.point.y = self.goal.pose.position.x, self.goal.pose.position.y
-                self.blacklist_pub.publish(bl)
+                self.publish_blacklist()
         self.goal_handle = None
         self.deadline = None
         self.busy = False

@@ -85,6 +85,8 @@ def generate_launch_description():
                               description="'dfs' (finish the branch first) or 'global' (original)"),
         DeclareLaunchArgument('startup_delay', default_value='8.0',
                               description='s before SLAM and Nav2 are configured and activated'),
+        DeclareLaunchArgument('precheck_path', default_value='false',
+                              description='plan once before sending a frontier; blacklist it if there is no path'),
 
         # Robot, world, bridge, wheel+IMU EKF. cmd_vel is bridged as TwistStamped, which is
         # what nav2_params.yaml makes Nav2 publish (enable_stamped_cmd_vel).
@@ -162,6 +164,7 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'scoring_mode': LaunchConfiguration('scoring_mode'),
                 'selection_mode': LaunchConfiguration('selection_mode'),
+                'precheck_path': LaunchConfiguration('precheck_path'),
             }.items(),
         ),
 

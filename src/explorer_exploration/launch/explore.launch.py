@@ -16,6 +16,7 @@ def generate_launch_description():
     scoring_mode = LaunchConfiguration('scoring_mode')
     unknown_gap_fill = LaunchConfiguration('unknown_gap_fill')
     selection_mode = LaunchConfiguration('selection_mode')
+    precheck_path = LaunchConfiguration('precheck_path')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
@@ -35,6 +36,9 @@ def generate_launch_description():
         # 'dfs' (finish the current branch first) or 'global' (original: best
         # TAD score anywhere). See frontier_tad_node.py.
         DeclareLaunchArgument('selection_mode', default_value='dfs'),
+        # Ask the planner for a path before sending a frontier; blacklist it at once if
+        # there is none. See explore_coordinator.py.
+        DeclareLaunchArgument('precheck_path', default_value='false'),
 
         Node(
             package='explorer_exploration',
@@ -61,6 +65,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': ParameterValue(use_sim_time, value_type=bool),
+                'precheck_path': ParameterValue(precheck_path, value_type=bool),
             }],
         ),
     ])
