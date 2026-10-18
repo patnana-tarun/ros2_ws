@@ -87,6 +87,8 @@ def generate_launch_description():
                               description='s before SLAM and Nav2 are configured and activated'),
         DeclareLaunchArgument('bt_xml', default_value='explore_nav_to_pose.xml',
                               description='navigate_to_pose BT file in behavior_trees/'),
+        DeclareLaunchArgument('stall_timeout', default_value='0.0',
+                              description='give up on a goal after this many s with < 0.3 m of movement (0 = off)'),
         DeclareLaunchArgument('precheck_path', default_value='false',
                               description='plan once before sending a frontier; blacklist it if there is no path'),
 
@@ -167,6 +169,7 @@ def generate_launch_description():
                 'scoring_mode': LaunchConfiguration('scoring_mode'),
                 'selection_mode': LaunchConfiguration('selection_mode'),
                 'precheck_path': LaunchConfiguration('precheck_path'),
+                'stall_timeout': LaunchConfiguration('stall_timeout'),
             }.items(),
         ),
 

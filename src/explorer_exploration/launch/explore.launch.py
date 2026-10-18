@@ -17,6 +17,7 @@ def generate_launch_description():
     unknown_gap_fill = LaunchConfiguration('unknown_gap_fill')
     selection_mode = LaunchConfiguration('selection_mode')
     precheck_path = LaunchConfiguration('precheck_path')
+    stall_timeout = LaunchConfiguration('stall_timeout')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
@@ -39,6 +40,9 @@ def generate_launch_description():
         # Ask the planner for a path before sending a frontier; blacklist it at once if
         # there is none. See explore_coordinator.py.
         DeclareLaunchArgument('precheck_path', default_value='false'),
+        # Abandon a goal when the robot moved < 0.3 m in this many seconds (0 = off).
+        # See explore_coordinator.py.
+        DeclareLaunchArgument('stall_timeout', default_value='0.0'),
 
         Node(
             package='explorer_exploration',
@@ -66,6 +70,7 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': ParameterValue(use_sim_time, value_type=bool),
                 'precheck_path': ParameterValue(precheck_path, value_type=bool),
+                'stall_timeout': ParameterValue(stall_timeout, value_type=float),
             }],
         ),
     ])

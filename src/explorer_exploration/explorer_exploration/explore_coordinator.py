@@ -11,6 +11,12 @@ straight-line distance) seconds. Aborted or timed-out goals are published on
 /frontier_blacklist so frontier_tad_node stops choosing that frontier for a while
 (otherwise one unreachable frontier among rocks kept the robot busy for 9 minutes).
 
+Stall give-up (stall_timeout, 0 = off): a goal is also abandoned and blacklisted when the robot's
+net movement over the last stall_timeout seconds is below stall_radius. With 30 s / 0.3 m this
+is two of Nav2's progress-checker windows (0.3 m in 15 s), so a frontier the robot can't make
+progress toward costs about 30 s instead of the 60 s minimum timeout (measured 2026-10-18:
+median 60 s per failed goal, 56 of 58 failures ended by the timeout).
+
 Path pre-check (precheck_path, off by default): before sending a frontier to Nav2, ask the
 planner once for a path to it. If there is none, blacklist the frontier at once instead of
 letting the navigator's recovery tree (clear, BackUp, Spin, Wait, up to 6 rounds) work on a
@@ -59,6 +65,14 @@ class ExploreCoordinator(Node):
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.create_timer(1.0, self.check_timeout)
 
+        self.declare_parameter('stall_timeout', 0.0)
+        self.declare_parameter('stall_radius', 0.3)
+        self.stall_timeout = self.get_parameter('stall_timeout').value
+        self.stall_radius = self.get_parameter('stall_radius').value
+        self.track = []             # (t, x, y) of the robot while a goal is active
+        if self.stall_timeout > 0.0:
+            self.get_logger().info(f'Stall give-up on: < {self.stall_radius:.2f} m in {self.stall_timeout:.0f} s')
+
         self.declare_parameter('precheck_path', False)
         self.precheck = self.get_parameter('precheck_path').value
         self.plan_client = ActionClient(self, ComputePathToPose, 'compute_path_to_pose')
@@ -103,14 +117,38 @@ class ExploreCoordinator(Node):
         except Exception:
             return 0.0
 
+    def robot_position(self):
+        try:
+            t = self.tf_buffer.lookup_transform('map', 'base_footprint', rclpy.time.Time())
+            return t.transform.translation.x, t.transform.translation.y
+        except Exception:
+            return None
+
     def check_timeout(self):
         if self.deadline is None or self.goal_handle is None:
             return
-        if self.get_clock().now().nanoseconds / 1e9 > self.deadline:
+        now = self.get_clock().now().nanoseconds / 1e9
+        if now > self.deadline:
             self.get_logger().warn('Goal took too long - cancelling it')
-            self.timed_out = True
-            self.deadline = None
-            self.goal_handle.cancel_goal_async()
+            self.give_up()
+            return
+        if self.stall_timeout > 0.0 and (p := self.robot_position()) is not None:
+            self.track.append((now, *p))
+            old = [q for q in self.track if q[0] <= now - self.stall_timeout]
+            if old:
+                self.track = [q for q in self.track if q[0] >= old[-1][0]]
+                moved = math.hypot(p[0] - old[-1][1], p[1] - old[-1][2])
+                if moved < self.stall_radius:
+                    self.get_logger().warn(
+                        f'No progress: moved {moved:.2f} m in {self.stall_timeout:.0f} s - cancelling it')
+                    self.give_up()
+
+    def give_up(self):
+        # counted like a timeout: result_callback blacklists the frontier
+        self.timed_out = True
+        self.deadline = None
+        self.track = []
+        self.goal_handle.cancel_goal_async()
 
     def goal_callback(self, msg: PoseStamped):
         if self.paused:
@@ -170,6 +208,7 @@ class ExploreCoordinator(Node):
             return
 
         self.goal_handle = goal_handle
+        self.track = []
         dist = self.distance_to(self.goal)
         self.deadline = self.get_clock().now().nanoseconds / 1e9 + max(self.t_min, self.t_per_m * dist)
         if self.paused:                 # override began while the goal was in flight
