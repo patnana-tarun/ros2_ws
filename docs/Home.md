@@ -50,6 +50,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Path tracking and stalls 2026-10-18]]: why the robot leaves the path, and the 7 Hz warning
 - [[Planner comparison 2026-10-18]]: NavFn vs Smac Lattice A/B, 3 × 10 min pairs
 - [[Planner follow-ups 2026-10-18]]: 4-arm follow-up; Smac not adopted, NavFn stays (branch `exp/planner-tuning`)
+- [[Tunnel tracking 2026-10-18]]: NavFn + smoothing + MPPI tuning, GUI runs (branch `exp/tunnel-tracking`, verdict pending)
 - [[Receiver (external)]]
 
 ## Log
