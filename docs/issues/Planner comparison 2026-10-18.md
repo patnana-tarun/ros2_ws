@@ -103,6 +103,9 @@ are indicated, then the same benchmark should be re-run:
 `nav2_params.yaml` on `feat/demo` still uses NavFn. The candidate and the follow-ups are on the
 branch `exp/planner-tuning`, so `feat/demo` stays clean.
 
+**Follow-up:** both follow-ups, and a re-run under different load, are in
+[[Planner follow-ups 2026-10-18]]. Smac was not adopted.
+
 ## Limitations
 - 3 runs per planner, 10 min each, in simulation only. Exploration order diverges between runs,
   so outcome metrics are noisy.

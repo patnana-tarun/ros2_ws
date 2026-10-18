@@ -46,6 +46,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Gazebo multicast No such device]]: repeated multicast error, caused by the phone's USB tether
 - [[Path tracking and stalls 2026-10-18]]: why the robot leaves the path, and the 7 Hz warning
 - [[Planner comparison 2026-10-18]]: NavFn vs Smac Lattice A/B, 3 × 10 min pairs
+- [[Planner follow-ups 2026-10-18]]: 4-arm follow-up; Smac not adopted, NavFn stays (branch `exp/planner-tuning`)
 - [[Receiver (external)]]
 
 ## Log

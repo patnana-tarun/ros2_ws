@@ -1,0 +1,6 @@
+{
+"navfn_2": {"planner_cpu": 151.6, "controller_cpu": 178.9},
+"smac_2": {"planner_cpu": 295.0, "controller_cpu": 164.4},
+"smacpc_2": {"planner_cpu": 272.6, "controller_cpu": 166.8},
+"smacpcw_2": {"planner_cpu": 167.5, "controller_cpu": 176.3}
+}
