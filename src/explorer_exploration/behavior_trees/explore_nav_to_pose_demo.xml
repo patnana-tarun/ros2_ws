@@ -1,5 +1,5 @@
 <!--
-  Demo tree (2026-10-19) = explore_nav_to_pose_smooth.xml without the Spin recovery.
+  Demo tree (2026-10-19): identical to explore_nav_to_pose_smooth.xml (Spin removal was tried and reverted).
 
   Variant of explore_nav_to_pose.xml (exp/tunnel-tracking, 2026-10-18): every new NavFn path is
   passed through smoother_server's simple_smoother before the controller gets it. NavFn's raw
@@ -60,9 +60,11 @@
             <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
             <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
           </Sequence>
-          <!-- Spin removed (demo fix, 2026-10-19): the LiDAR already sees 360 deg, so turning on
-               the spot gives no new information. It only adds rotation: Spin ran in 9 of the 14
-               >= 300 deg rotation events of 2026-10-19. -->
+          <!-- Spin kept. Removing it was tried on 2026-10-19 and made things worse: Spin is the only
+               behaviour that turns the robot round when MPPI deadlocks facing a wall in a dead end
+               (stuck time 7 % -> 31 %, goal success 59 % -> 35 %), and the >= 300 deg rotation
+               events did not drop (2.7 per run with and without it). -->
+          <Spin spin_dist="1.57"/>
           <Wait wait_duration="3.0"/>
         </RoundRobin>
       </ReactiveFallback>

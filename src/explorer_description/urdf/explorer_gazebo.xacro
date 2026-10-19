@@ -10,7 +10,13 @@
       <mu2>1.0</mu2>
     </gazebo>
   </xacro:macro>
-  <xacro:property name="skid_track" value="0.43"/>
+  <!-- Effective skid-steer track for Gazebo's DiffDrive (exp/tunnel-tracking, 2026-10-19: was 0.43).
+       0.43 was calibrated turning on the spot in empty.sdf (0.90-1.08x of the command). On the
+       cave floor the robot turned 1.2-1.3x the commanded yaw rate (Gazebo true pose, 4 GUI runs,
+       all command sizes, 0.15-0.25 s delay allowed), so MPPI swung past the path heading and
+       turned 300+ deg to settle. 0.43 / 1.25 = 0.34. The real robot keeps its own value
+       (explorer_bringup track_width). -->
+  <xacro:property name="skid_track" value="0.34"/>
 
   <xacro:wheel_grip name="left_front"/>
   <xacro:wheel_grip name="left_middle"/>
