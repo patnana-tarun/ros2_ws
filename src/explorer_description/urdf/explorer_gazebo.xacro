@@ -16,7 +16,8 @@
        all command sizes, 0.15-0.25 s delay allowed), so MPPI swung past the path heading and
        turned 300+ deg to settle. 0.43 / 1.25 = 0.34. The real robot keeps its own value
        (explorer_bringup track_width). -->
-  <xacro:property name="skid_track" value="0.34"/>
+  <xacro:arg name="skid_track" default="0.34"/>   <!-- launch argument, for the 2026-10-20 ablation -->
+  <xacro:property name="skid_track" value="$(arg skid_track)"/>
 
   <xacro:wheel_grip name="left_front"/>
   <xacro:wheel_grip name="left_middle"/>

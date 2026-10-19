@@ -50,7 +50,7 @@ def generate_launch_description():
     ])
 
     robot_description = ParameterValue(
-        Command(["xacro ", XACRO_FILE]), value_type=str
+        Command(["xacro ", XACRO_FILE, " skid_track:=", LaunchConfiguration("skid_track")]), value_type=str
     )
 
     # 1. Gazebo (-r = start playing immediately)
@@ -131,7 +131,9 @@ def generate_launch_description():
                                   description="Also open RViz"),
             DeclareLaunchArgument("gui", default_value="true",
                                   description="Open the Gazebo window (false = headless server)"),
-            DeclareLaunchArgument("cmd_vel_stamped", default_value="true",
+            DeclareLaunchArgument("skid_track", default_value="0.34",
+                              description="effective skid-steer track for DiffDrive (m), see explorer_gazebo.xacro"),
+        DeclareLaunchArgument("cmd_vel_stamped", default_value="true",
                                   description="Bridge /cmd_vel as TwistStamped (true) or Twist (false)"),
             DeclareLaunchArgument("x", default_value="0.0", description="Spawn x (m)"),
             DeclareLaunchArgument("y", default_value="0.0", description="Spawn y (m)"),
