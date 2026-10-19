@@ -114,6 +114,12 @@ class FrontierTADNode(Node):
         self.bl_radius = self.get_parameter('blacklist_radius').value
         self.bl_duration = self.get_parameter('blacklist_duration').value
         self.blacklist = []     # (x, y, time added)
+        # publish_explored_map: also publish /map with the ray gaps filled (the same cells this
+        # node treats as explored, see unknown_gap_fill), latched like /map. The demo config
+        # points the global costmap at it, so a planner that may not cross unknown space
+        # (allow_unknown: false) still sees a tunnel mouth seen through sparse rays as open.
+        self.declare_parameter('publish_explored_map', False)
+        self.explored_pub = None
         self.create_subscription(PointStamped, '/frontier_blacklist', self.blacklist_cb, 10)
 
         # map topic from slam_toolbox is latched - match its QoS or you'll miss it
@@ -123,6 +129,8 @@ class FrontierTADNode(Node):
 
         self.map_sub = self.create_subscription(
             OccupancyGrid, '/map', self.map_callback, map_qos)
+        if self.get_parameter('publish_explored_map').value:
+            self.explored_pub = self.create_publisher(OccupancyGrid, '/map_explored', map_qos)
 
         self.goal_pub = self.create_publisher(PoseStamped, '/best_goal', 10)
         self.marker_pub = self.create_publisher(MarkerArray, '/frontier_markers', 10)
@@ -179,8 +187,16 @@ class FrontierTADNode(Node):
             mapped = ndimage.binary_closing(
                 free | obstacle, structure=np.ones((3, 3), dtype=bool),
                 iterations=self.gap_fill)
-            free = free | (unknown & mapped)
+            filled = unknown & mapped
+            free = free | filled
             unknown = unknown & ~mapped
+        else:
+            filled = np.zeros_like(free)
+        if self.explored_pub is not None:
+            out = OccupancyGrid(header=msg.header, info=msg.info)
+            g2 = grid.copy(); g2[filled] = 0
+            out.data = g2.astype(np.int8).ravel().tolist()
+            self.explored_pub.publish(out)
 
         # A frontier cell is a free cell with at least one unknown neighbor
         # (4-connectivity). Shifted boolean comparisons instead of a Python

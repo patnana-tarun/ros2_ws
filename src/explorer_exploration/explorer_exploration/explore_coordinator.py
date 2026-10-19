@@ -76,6 +76,7 @@ class ExploreCoordinator(Node):
         self.declare_parameter('precheck_path', False)
         self.precheck = self.get_parameter('precheck_path').value
         self.plan_client = ActionClient(self, ComputePathToPose, 'compute_path_to_pose')
+        self.precheck_fails = {}    # goal cell (0.5 m grid) -> failed pre-checks
 
         self.declare_parameter('override_timeout', 1.0)
         self.override_timeout = self.get_parameter('override_timeout').value
@@ -180,8 +181,15 @@ class ExploreCoordinator(Node):
             self.send_nav_goal(self.goal)
             return
         p = self.goal.pose.position
-        self.get_logger().warn(f'No path to frontier ({p.x:.2f}, {p.y:.2f}) - blacklisted, not sent')
-        self.publish_blacklist()
+        key = (round(p.x * 2), round(p.y * 2))
+        self.precheck_fails[key] = self.precheck_fails.get(key, 0) + 1
+        if self.precheck_fails[key] >= 2:
+            self.get_logger().warn(f'No path to frontier ({p.x:.2f}, {p.y:.2f}) - blacklisted, not sent')
+            self.publish_blacklist()
+        else:
+            # one failure can be a costmap that hasn't caught up yet (seen at start-up, when
+            # the global costmap refreshes at 1 Hz); the frontier node re-sends in ~3 s
+            self.get_logger().info(f'No path to frontier ({p.x:.2f}, {p.y:.2f}) yet - will check again')
         self.busy = False
 
     def publish_blacklist(self):

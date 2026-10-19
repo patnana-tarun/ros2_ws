@@ -1,0 +1,71 @@
+<!--
+  Demo tree (2026-10-19) = explore_nav_to_pose_smooth.xml without the Spin recovery.
+
+  Variant of explore_nav_to_pose.xml (exp/tunnel-tracking, 2026-10-18): every new NavFn path is
+  passed through smoother_server's simple_smoother before the controller gets it. NavFn's raw
+  path changes heading by 20-45 deg every 5 cm, and MPPI's path critics chase those kinks in
+  tunnels (docs/issues/Path tracking and stalls 2026-10-18.md). The smoother also gives every
+  pose a heading, so IsPathValid no longer checks the footprint at heading 0. Everything
+  else is the same as explore_nav_to_pose.xml.
+
+  Nav2 BT for frontier exploration in the cave. Based on Jazzy's
+  nav_to_pose_with_consistent_replanning_and_if_path_becomes_invalid.xml, with two changes:
+  - The path is kept for 4 s instead of 10 s (still replanned at once if it becomes
+    blocked). 10 s kept the robot on its first route after the growing map had shown a
+    better side passage; replanning every second (Nav2's default tree) made the path flip
+    around rocks and the robot kept turning (2026-09-26).
+  - BackUp is the first recovery, not the last. A skid-steer robot wedged between rocks
+    can't pivot out; before, the coordinator's goal timeout always fired after the
+    costmap-clearing recovery and before BackUp was ever tried (2026-10-05 logs).
+-->
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+      <PipelineSequence name="NavigateWithReplanning">
+        <ControllerSelector selected_controller="{selected_controller}" default_controller="FollowPath" topic_name="controller_selector"/>
+        <PlannerSelector selected_planner="{selected_planner}" default_planner="GridBased" topic_name="planner_selector"/>
+        <RateController hz="2.0">
+          <RecoveryNode number_of_retries="1" name="ComputePathToPose">
+            <Fallback>
+              <ReactiveSequence>
+                <Inverter>
+                  <PathExpiringTimer seconds="4" path="{path}"/>
+                </Inverter>
+                <Inverter>
+                  <GlobalUpdatedGoal/>
+                </Inverter>
+                <IsPathValid path="{path}"/>
+              </ReactiveSequence>
+              <Sequence name="PlanAndSmooth">
+                <!-- Smooth {path} in place. A separate {raw_path} left a stale {path} behind when
+                     planning failed: FollowPath then "reached" the old path's end, and the
+                     frontier was sent again and again (smooth_1, 2026-10-18). -->
+                <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}"/>
+                <SmoothPath unsmoothed_path="{path}" smoothed_path="{path}" smoother_id="simple_smoother" max_smoothing_duration="0.5" check_for_collisions="false" error_code_id="{smoother_error_code}"/>
+              </Sequence>
+            </Fallback>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
+          </RecoveryNode>
+        </RateController>
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="{selected_controller}" error_code_id="{follow_path_error_code}"/>
+          <ClearEntireCostmap name="ClearLocalCostmap-Context" service_name="local_costmap/clear_entirely_local_costmap"/>
+        </RecoveryNode>
+      </PipelineSequence>
+      <ReactiveFallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <BackUp backup_dist="0.30" backup_speed="0.15"/>
+          <Sequence name="ClearingActions">
+            <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
+          </Sequence>
+          <!-- Spin removed (demo fix, 2026-10-19): the LiDAR already sees 360 deg, so turning on
+               the spot gives no new information. It only adds rotation: Spin ran in 9 of the 14
+               >= 300 deg rotation events of 2026-10-19. -->
+          <Wait wait_duration="3.0"/>
+        </RoundRobin>
+      </ReactiveFallback>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>
