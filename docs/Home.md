@@ -53,6 +53,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Tunnel tracking 2026-10-18]]: NavFn + smoothing + MPPI tuning, GUI runs (branch `exp/tunnel-tracking`, verdict pending)
 - [[Run to 90 percent 2026-10-18]]: same 3 setups run until 90 % or stuck (GUI); 4 of 6 trapped in dead ends
 - [[Full comparison 2026-10-19]]: 3 setups × 3 GUI runs to 90 %; tuned drives straightest (p = 0.006), smooth explores fastest
+- [[Navigation fixes 2026-10-19]]: root causes (open-area drift, unknown-space paths, spins); tracking fixed, stuck regression open
 - [[Receiver (external)]]
 
 ## Log

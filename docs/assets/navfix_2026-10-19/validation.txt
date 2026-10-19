@@ -1,0 +1,78 @@
+metric                             base_1   base_2   base_3 smooth_1 smooth_2 smooth_3  tuned_1  tuned_2  tuned_3  demo2_1  demo2_2  demo2_3   demo_1   demo_2   demo_3
+stop                             reached_ reached_ reached_ reached_ stuck_af reached_ reached_ reached_ stuck_af reached_ stuck_af reached_ stuck_af reached_ reached_
+reached_90                            1.0      1.0      1.0      1.0      0.0      1.0      1.0      1.0      0.0      1.0      0.0      1.0      0.0      1.0      1.0
+time_to_90_min                       13.9     12.9     16.8     10.5      nan      7.6     15.3      9.0      nan     12.7      nan     19.9      nan     34.2     21.8
+final_cov_pct                        91.2     90.3     90.1     90.0     86.3     90.3     91.1     90.1     80.1     90.3     84.8     90.3     77.4     90.1     90.5
+open_big_pct                         34.6     43.6     35.0     45.3     24.6     24.5     11.1      6.4      3.7      7.0      0.9      1.8      6.0      6.8      8.7
+open_xte_p90_cm                      10.4     10.2     13.9     11.7     10.5      6.9      4.3      5.9      4.8      5.3      6.1      5.8      4.7      4.8      5.0
+open_hdev_p90                        44.7     47.2     40.9     41.1     35.3     40.5     29.6     21.9     18.6     24.9     20.5     16.7     20.6     26.7     27.2
+tun_hdev_p90                         18.3     30.0     35.7     32.7     22.1     14.7     17.1     11.1     11.8     11.3     18.9     16.4     13.4     16.6     12.6
+tun_xte_p90_cm                        5.4      6.1      4.8      7.1      5.8      3.1      3.2      3.3      3.1      4.1      4.2      3.6      3.2      3.2      3.3
+rotations_300                         3.0      1.0      2.0      0.0      0.0      0.0      5.0      1.0      2.0      0.0      0.0      0.0      0.0      5.0      3.0
+startup_turn_deg                    246.1    275.2    293.2    258.9    285.6     52.6    292.1    189.7    160.2     35.1     45.8     40.7    165.2    271.9    213.7
+stuck_pct                             5.9     14.9     16.4      2.1     10.6      1.3     12.0      2.6      7.6     21.6     29.6     49.0     27.1     50.4     15.2
+plans_notfree_2m_pct                  2.2      1.1     13.6      0.0      1.7      0.0      5.5      0.0      1.0      0.0      0.0      0.0      0.0      0.0      0.0
+notfree_longest_m                     8.6      7.2      8.4      0.6      3.6      0.0      7.4      0.0      4.2      0.6      1.0      0.2      0.6      0.2      0.4
+goal_success_pct                     43.8     50.0     31.8     73.3     53.3     80.0     41.2     71.4     63.6     45.0     45.0     27.6     50.0     20.0     36.0
+goals_reached                         7.0      8.0      7.0     11.0      8.0      8.0      7.0     10.0      7.0      9.0      9.0      8.0      8.0      9.0      9.0
+goals_given_up                        9.0      8.0     15.0      4.0      7.0      2.0     10.0      4.0      4.0     11.0     11.0     21.0      8.0     36.0     16.0
+refused_by_precheck                   0.0      0.0      0.0      0.0      0.0      0.0      0.0      0.0      0.0      1.0      0.0      2.0      0.0      5.0      2.0
+backup_per10                          5.0      3.9      5.4      2.9      2.3      1.3      5.9      2.2      3.1      3.9      7.4      7.0      6.4      9.1      4.6
+spin_per10                            2.9      0.8      0.0      0.0      1.5      0.0      2.6      0.0      1.0      0.0      0.0      0.0      0.0      0.0      0.0
+progress_fail_per10                   7.2     11.6     15.5      7.6      5.4      6.5      9.2      8.9      9.2     13.3     18.9     18.1     15.0     18.7     12.4
+B-E top time_s                        5.9    175.2    152.6    223.3    164.3     52.4    129.8     92.3    135.1     78.1    292.7    123.3    232.8     43.6     72.8
+B-E top stuck_pct                     0.0     40.8      4.5      0.0      0.0      0.0     35.7      0.0      0.0      0.0     54.4      0.0     62.3      0.0      4.7
+B-E top hdev_p90                     11.7     41.0     41.0     38.6     26.5     51.0     25.5     13.9     13.3     11.3     15.0     12.5     17.6     21.7     22.4
+C-F time_s                          151.9    163.5    170.2      0.0     94.6     12.2    199.1      6.9      0.0      5.9     31.5     10.9     41.5      0.0      0.0
+C-F stuck_pct                        12.2     25.8     25.9      nan      2.3      0.0     20.3      0.0      nan      0.0      0.0      0.0      0.0      nan      nan
+C-F hdev_p90                         23.5     16.2     21.5      nan     14.7      2.3     11.9      7.3      nan      4.9     21.8     19.0     36.2      nan      nan
+cmd_vx_max                            0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2      0.2
+cmd_vx_min                           -0.2     -0.1     -0.2     -0.2     -0.2     -0.1     -0.2     -0.2     -0.2     -0.2     -0.2     -0.2     -0.2     -0.2     -0.2
+cmd_wz_absmax                         0.6      0.6      0.6      0.6      0.6      0.6      0.6      0.6      0.6      0.1      0.2      0.2      0.6      0.6      0.6
+plantime_unknown_max_share            nan      nan      nan      nan      nan      nan      nan      nan      nan      0.1      0.0      0.1      0.1      0.1      0.1
+plantime_unknown_longest_m            nan      nan      nan      nan      nan      nan      nan      nan      nan      0.4      0.1      0.2      0.3      0.4      0.3
+plantime_blocked_max_share            nan      nan      nan      nan      nan      nan      nan      nan      nan      0.2      0.1      0.1      0.1      0.1      0.1
+m2o_jumps_gt5cm                       nan      nan      nan      nan      nan      nan      nan      nan      nan     19.0     15.0     20.0     15.0     20.0     30.0
+m2o_jump_max_cm                       nan      nan      nan      nan      nan      nan      nan      nan      nan     27.8     15.5     31.4     33.5    115.9     34.8
+m2o_yaw_jump_max_deg                  nan      nan      nan      nan      nan      nan      nan      nan      nan      1.2      2.2      3.6      1.8      9.4      1.6
+yaw_err_vs_truth_p50                  nan      nan      nan      nan      nan      nan      nan      nan      nan      0.2      1.1      0.9      0.7      0.8      0.3
+yaw_err_vs_truth_max                  nan      nan      nan      nan      nan      nan      nan      nan      nan      1.6      7.3      4.0      3.9     12.2      3.1
+
+metric (mean)                         base    smooth     tuned      demo     demo2
+reached_90                            1.00      0.67      0.67      0.67      0.67
+time_to_90_min                       14.55      9.07     12.15     28.02     16.32
+final_cov_pct                        90.50     88.87     87.10     85.98     88.48
+open_big_pct                         37.75     31.46      7.08      7.16      3.23
+open_xte_p90_cm                      11.50      9.71      5.01      4.83      5.74
+open_hdev_p90                        44.25     38.99     23.33     24.85     20.70
+tun_hdev_p90                         27.99     23.19     13.34     14.23     15.54
+tun_xte_p90_cm                        5.43      5.33      3.20      3.25      3.95
+rotations_300                         2.00      0.00      2.67      2.67      0.00
+startup_turn_deg                    271.50    199.01    213.97    216.94     40.50
+stuck_pct                            12.38      4.69      7.40     30.90     33.40
+plans_notfree_2m_pct                  5.63      0.58      2.14      0.00      0.00
+notfree_longest_m                     8.07      1.40      3.87      0.40      0.60
+goal_success_pct                     41.86     68.89     58.75     35.33     39.20
+goals_reached                         7.33      9.00      8.00      8.67      8.67
+goals_given_up                       10.67      4.33      6.00     20.00     14.33
+refused_by_precheck                   0.00      0.00      0.00      2.33      1.00
+backup_per10                          4.75      2.16      3.73      6.69      6.12
+spin_per10                            1.22      0.51      1.21      0.00      0.00
+progress_fail_per10                  11.42      6.51      9.09     15.35     16.79
+B-E top time_s                      111.23    146.67    119.07    116.40    164.70
+B-E top stuck_pct                    15.11      0.00     11.92     22.33     18.12
+B-E top hdev_p90                     31.22     38.68     17.59     20.58     12.93
+C-F time_s                          161.87     35.60     68.67     13.83     16.10
+C-F stuck_pct                        21.30      1.16     10.17      0.00      0.00
+C-F hdev_p90                         20.41      8.49      9.60     36.21     15.23
+cmd_vx_max                            0.18      0.18      0.18      0.19      0.18
+cmd_vx_min                           -0.12     -0.13     -0.15     -0.15     -0.15
+cmd_wz_absmax                         0.62      0.62      0.62      0.62      0.19
+plantime_unknown_max_share               -         -         -      0.08      0.07
+plantime_unknown_longest_m               -         -         -      0.33      0.23
+plantime_blocked_max_share               -         -         -      0.07      0.09
+m2o_jumps_gt5cm                          -         -         -     21.67     18.00
+m2o_jump_max_cm                          -         -         -     61.37     24.88
+m2o_yaw_jump_max_deg                     -         -         -      4.26      2.33
+yaw_err_vs_truth_p50                     -         -         -      0.62      0.75
+yaw_err_vs_truth_max                     -         -         -      6.37      4.31
