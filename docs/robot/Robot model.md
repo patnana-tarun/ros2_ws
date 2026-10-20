@@ -17,6 +17,12 @@ layout. What each layout can climb in simulation is in [[Rock climbing]].
 Frames follow REP-103: x forward, y left, z up. Units are metres, kg and rad. Package:
 [[explorer_description]]. Simulation: [[Gazebo simulation]].
 
+## Drawing
+![[explorer_rover_drawing.png]]
+*General arrangement: side, plan and front views with dimensions, plus a 3-D view. Generated from
+the URDF by `assets/robot/rover_drawing.py`, so it always matches the model; PDF and SVG versions
+are next to the PNG. Rerun it (workspace sourced) after any change to the xacro.*
+
 ## Dimensions
 | Quantity                 | Value                      | Source   |
 |--------------------------|----------------------------|----------|
