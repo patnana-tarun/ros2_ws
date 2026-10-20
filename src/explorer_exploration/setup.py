@@ -12,7 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch',
             ['launch/explore.launch.py', 'launch/bringup.launch.py',
-             'launch/benchmark_headless.launch.py']),
+             'launch/benchmark_headless.launch.py', 'launch/reverse_out.launch.py']),
         ('share/' + package_name + '/config',
             ['config/nav2_params.yaml', 'config/nav2_params_tunnel.yaml',
              'config/nav2_params_demo.yaml',
