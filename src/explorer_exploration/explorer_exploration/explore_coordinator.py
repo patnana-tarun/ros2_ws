@@ -415,8 +415,12 @@ class ExploreCoordinator(Node):
             r['moved_t'], r['moved_p'] = now, p[:2]
         tx, ty = pts[r['i']]
         done = r['i'] == len(pts) - 1 and math.hypot(tx - p[0], ty - p[1]) < 0.15
-        if done or now - r['moved_t'] > 6.0 or now - r['t0'] > self.retrace_timeout or self.paused:
-            reason = 'done' if done else 'paused' if self.paused else 'blocked' if now - r['moved_t'] > 6.0 else 'timeout'
+        # out of the tunnel: the switcher picked the open-space controller, so stop backing up there
+        # (a full 1 m retrace reversed 4.6 s into a chamber: 3 % of a run's open-space samples)
+        opened = bool(self.retrace_ctrl) and self.controller != self.retrace_ctrl
+        if done or opened or now - r['moved_t'] > 6.0 or now - r['t0'] > self.retrace_timeout or self.paused:
+            reason = ('done' if done else 'reached open space' if opened else 'paused' if self.paused
+                      else 'blocked' if now - r['moved_t'] > 6.0 else 'timeout')
             self.cmd_pub.publish(TwistStamped())
             # forget the retraced part of the track, so a second retrace goes further back
             k = min(range(len(self.crumbs)), key=lambda j: math.hypot(self.crumbs[j][0] - p[0], self.crumbs[j][1] - p[1]))

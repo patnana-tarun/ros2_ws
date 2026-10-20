@@ -24,6 +24,7 @@ def generate_launch_description():
     publish_explored_map = LaunchConfiguration('publish_explored_map')
     heading_weight = LaunchConfiguration('heading_weight')
     explored_cancel = LaunchConfiguration('explored_cancel')
+    unknown_margin = LaunchConfiguration('unknown_margin')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
@@ -59,6 +60,8 @@ def generate_launch_description():
         DeclareLaunchArgument('heading_weight', default_value='0.0'),
         # Drop a goal whose frontier was explored on the way. See explore_coordinator.py.
         DeclareLaunchArgument('explored_cancel', default_value='false'),
+        # Keep frontier goals this many cells inside known space (0 = off). See frontier_tad_node.py.
+        DeclareLaunchArgument('unknown_margin', default_value='0'),
 
         Node(
             package='explorer_exploration',
@@ -78,6 +81,7 @@ def generate_launch_description():
                 'selection_mode': ParameterValue(selection_mode, value_type=str),
                 'publish_explored_map': ParameterValue(publish_explored_map, value_type=bool),
                 'heading_weight': ParameterValue(heading_weight, value_type=float),
+                'unknown_margin': ParameterValue(unknown_margin, value_type=int),
             }],
         ),
         Node(

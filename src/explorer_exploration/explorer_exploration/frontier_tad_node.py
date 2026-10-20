@@ -105,6 +105,12 @@ class FrontierTADNode(Node):
         # rotation event at every start-up (nav-speed, 2026-10-21).
         self.declare_parameter('heading_weight', 0.0)
         self.declare_parameter('heading_lookahead', 0.6)
+        # unknown_margin (cells, 0 = off): send the goal from a reachable free cell at least this many
+        # cells away from unknown space (within 0.5 m of the frontier cell). A frontier cell borders
+        # unknown space, and NavFn's interpolated path into it clipped the unknown neighbour: single
+        # path points on unknown cells (up to 9 plans a run, nav-speed 2026-10-21). The goal
+        # tolerance (0.4 m) and the LiDAR make the 0.1 m difference irrelevant to what is seen.
+        self.declare_parameter('unknown_margin', 0)
 
         self.w_d = self.get_parameter('w_distance').value
         self.w_a = self.get_parameter('w_adjacency').value
@@ -124,6 +130,7 @@ class FrontierTADNode(Node):
         self.w_h = self.get_parameter('heading_weight').value
         self.h_look = self.get_parameter('heading_lookahead').value
         self.robot_yaw = None
+        self.unk_margin = self.get_parameter('unknown_margin').value
         self.last_clear_xy = None   # where the blacklist was last cleared (see 'all blacklisted')
         self.blacklist = []     # (x, y, time added)
         # publish_explored_map: also publish /map with the ray gaps filled (the same cells this
@@ -257,6 +264,10 @@ class FrontierTADNode(Node):
         if self.selection_mode == 'dfs':
             travel = self.travel_distances(free, obstacle, rrow, rcol, resolution)
 
+        inner = None
+        if self.unk_margin > 0 and travel is not None:
+            inner = free & np.isfinite(travel) & ~ndimage.binary_dilation(unknown, iterations=self.unk_margin)
+
         candidates = []
         n_blacklisted = 0
         for cluster_id in range(1, num_clusters + 1):
@@ -308,6 +319,8 @@ class FrontierTADNode(Node):
                 k = np.argmin(np.hypot(xs[ok] - centroid_col, ys[ok] - centroid_row))
                 gx = origin_x + xs[ok][k] * resolution
                 gy = origin_y + ys[ok][k] * resolution
+            if inner is not None and np.isfinite(travel_n):
+                gx, gy = self.inner_goal(gx, gy, inner, origin_x, origin_y, resolution)
             if self.blacklisted(gx, gy) or self.blacklisted(wx, wy):
                 n_blacklisted += 1
                 continue
@@ -420,6 +433,18 @@ class FrontierTADNode(Node):
         near = ndimage.grey_erosion(np.where(np.isfinite(dist), dist, 1e9), size=(3, 3)) + resolution
         dist = np.where(np.isfinite(dist), dist, np.where(near < 1e8, near, np.inf))
         return dist
+
+    def inner_goal(self, gx, gy, inner, origin_x, origin_y, resolution):
+        """Nearest cell of `inner` to (gx, gy) within 0.5 m; (gx, gy) if none."""
+        h, w = inner.shape
+        r0, c0 = int(round((gy - origin_y) / resolution)), int(round((gx - origin_x) / resolution))
+        k = int(0.5 / resolution)
+        rs, cs = np.nonzero(inner[max(r0 - k, 0):r0 + k + 1, max(c0 - k, 0):c0 + k + 1])
+        if len(rs) == 0:
+            return gx, gy
+        rs, cs = rs + max(r0 - k, 0), cs + max(c0 - k, 0)
+        i = int(np.argmin(np.hypot(rs - r0, cs - c0)))
+        return origin_x + cs[i] * resolution, origin_y + rs[i] * resolution
 
     def path_turn(self, gx, gy, origin_x, origin_y, resolution, width):
         """Angle (rad) between the robot's heading and the first heading_lookahead m of the

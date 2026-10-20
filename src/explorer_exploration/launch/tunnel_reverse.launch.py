@@ -51,6 +51,12 @@ def generate_launch_description():
                 # nav-speed: a frontier behind the robot must be worth a U-turn; without it every
                 # start-up was two U-turns within a minute (a >= 300 deg rotation event)
                 'heading_weight': '1.0',
+                # nav-speed: drop a goal whose frontier was explored on the way (screening: 95 % in
+                # 8.8 / 12.3 min, against 11.3 min and a run stuck at 93 % without it)
+                'explored_cancel': 'true',
+                # nav-speed: goals 2 cells inside known space, so the path into them does not clip
+                # the unknown cell next to the frontier
+                'unknown_margin': '2',
             }.items(),
         ),
         Node(

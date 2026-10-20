@@ -58,6 +58,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Stall ablation 2026-10-20]]: one demo fix undone per variant; the 0.34 sim track drives both the accuracy gain and the hesitation
 - [[Reverse-out 2026-10-20]]: back out instead of turning round; best tracking and least stuck so far (n = 2)
 - [[Tunnel-reverse 2026-10-20]]: reverse only in tunnels, turn round in the open; wedged in tight passages until the planner used a bigger robot and a guarded back-out along the own track (then 2 of 3 runs to 90 %, none wedged)
+- [[Nav speed 2026-10-21]]: full runs to 95 %: coverage ceiling 98.5 %; MPPI swing fix (az_max), no false "complete", heading-aware frontiers; 3 of 3 runs ≥ 90 % (6–8 min), 2 of 3 at 95 % (11–12 min); rotation-event gate still failing (out-and-back U-turn pairs)
 - [[Receiver (external)]]
 
 ## Log
