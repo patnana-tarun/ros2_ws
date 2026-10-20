@@ -372,7 +372,13 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_footprint
-      footprint: "[[0.16, 0.11], [0.16, -0.11], [-0.16, -0.11], [-0.16, 0.11]]"
+      # tunnel-reverse: the planner plans for a round robot of radius 0.22 m instead of the real
+      # 0.32 x 0.22 m footprint. NavFn plans for a point and blocks only cells within the inscribed
+      # radius of a wall, so with the footprint (inscribed 0.11 m) any gap over ~0.25 m counted as
+      # passable; the robot needs ~0.39 m (its diagonal) to turn round. With 0.22 m, gaps narrower
+      # than ~0.45 m are blocked (2026-10-20: a run ended wedged after a 0.30 m squeeze). The local
+      # costmap keeps the real footprint, so the controller can still drive where it has to.
+      robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -401,7 +407,9 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 12.0     # same as local_costmap, see the comment there
-        inflation_radius: 0.22
+        # tunnel-reverse: 0.22 -> 0.35, keeping the ~0.11 m cost band beyond the (now 0.22 m)
+        # inscribed zone, so paths still keep to the middle of a passage
+        inflation_radius: 0.35
       always_send_full_costmap: True
 
 map_saver:

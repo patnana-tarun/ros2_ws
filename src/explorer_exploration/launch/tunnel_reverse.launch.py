@@ -11,6 +11,8 @@ Same as reverse_out.launch.py, except:
   + drive_mode_switcher: picks FollowPathReverse when the LiDAR sees a passage narrower than
     1.2 m and FollowPath when it is wider than 1.8 m (1 s of consistent readings), through the
     BT's ControllerSelector on /controller_selector.
+  + planner plans for a round robot of radius 0.22 m (gaps under ~0.45 m are not planned through)
+  + retrace: stuck in a tunnel -> back out 1 m along the robot's own track
 bringup.launch.py keeps its defaults.
 """
 
@@ -43,6 +45,9 @@ def generate_launch_description():
                 'stall_timeout': '30.0',
                 'skid_track': '0.38',
                 'stall_angle': '0.5',      # a U-turn on the spot is progress, not a stall
+                # stuck in a tunnel: back out 1 m along the own track (known free)
+                'retrace_distance': '1.0',
+                'retrace_controller': 'FollowPathReverse',
             }.items(),
         ),
         Node(

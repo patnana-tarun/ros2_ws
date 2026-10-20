@@ -19,6 +19,8 @@ def generate_launch_description():
     precheck_path = LaunchConfiguration('precheck_path')
     stall_timeout = LaunchConfiguration('stall_timeout')
     stall_angle = LaunchConfiguration('stall_angle')
+    retrace_distance = LaunchConfiguration('retrace_distance')
+    retrace_controller = LaunchConfiguration('retrace_controller')
     publish_explored_map = LaunchConfiguration('publish_explored_map')
 
     return LaunchDescription([
@@ -46,6 +48,8 @@ def generate_launch_description():
         # See explore_coordinator.py.
         DeclareLaunchArgument('stall_timeout', default_value='0.0'),
         DeclareLaunchArgument('stall_angle', default_value='0.0'),
+        DeclareLaunchArgument('retrace_distance', default_value='0.0'),
+        DeclareLaunchArgument('retrace_controller', default_value=''),
         # Publish /map_explored (ray gaps filled) for a global costmap that plans only through
         # known space. See frontier_tad_node.py.
         DeclareLaunchArgument('publish_explored_map', default_value='false'),
@@ -79,6 +83,8 @@ def generate_launch_description():
                 'precheck_path': ParameterValue(precheck_path, value_type=bool),
                 'stall_timeout': ParameterValue(stall_timeout, value_type=float),
                 'stall_angle': ParameterValue(stall_angle, value_type=float),
+                'retrace_distance': ParameterValue(retrace_distance, value_type=float),
+                'retrace_controller': ParameterValue(retrace_controller, value_type=str),
             }],
         ),
     ])

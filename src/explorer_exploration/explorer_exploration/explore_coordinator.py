@@ -23,6 +23,15 @@ letting the navigator's recovery tree (clear, BackUp, Spin, Wait, up to 6 rounds
 goal the planner already refuses. Smac Lattice refuses goals the real footprint cannot reach
 (docs/issues/Planner comparison 2026-10-18.md).
 
+Retrace (retrace_distance, 0 = off; user's idea, 2026-10-20): when the robot gets stuck in a tight
+passage, it backs out along its own recorded track (known to be free: it just drove it) instead
+of waiting for a controller that may stand still there. Triggered by a stall give-up, or by
+retrace_after_fails failed goals in a row without the robot moving 0.5 m. With
+retrace_controller set (e.g. FollowPathReverse) it only runs while /controller_selector names
+that controller, i.e. in tunnels. Commands go to /cmd_vel_nav like manual_drive, so the velocity
+smoother and the collision monitor still apply. It stops after retrace_distance along the
+track, or when blocked (no movement for 6 s), or after retrace_timeout.
+
 Manual override: while `manual_drive` runs it publishes a heartbeat on
 /manual_override. On the first heartbeat this node cancels the current Nav2
 goal and stops sending goals; when heartbeats stop for override_timeout
@@ -35,10 +44,11 @@ import rclpy
 import tf2_ros
 from rclpy.node import Node
 from rclpy.action import ActionClient
-from geometry_msgs.msg import PointStamped, PoseStamped
+from geometry_msgs.msg import PointStamped, PoseStamped, TwistStamped
 from nav2_msgs.action import ComputePathToPose, NavigateToPose
 from action_msgs.msg import GoalStatus
-from std_msgs.msg import Bool
+from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
+from std_msgs.msg import Bool, String
 
 
 class ExploreCoordinator(Node):
@@ -61,6 +71,7 @@ class ExploreCoordinator(Node):
         self.robot_xy = None
         self.blacklist_pub = self.create_publisher(PointStamped, '/frontier_blacklist', 10)
         self.timed_out = False
+        self.stalled = False
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.create_timer(1.0, self.check_timeout)
@@ -81,6 +92,29 @@ class ExploreCoordinator(Node):
         self.precheck = self.get_parameter('precheck_path').value
         self.plan_client = ActionClient(self, ComputePathToPose, 'compute_path_to_pose')
         self.precheck_fails = {}    # goal cell (0.5 m grid) -> failed pre-checks
+
+        self.declare_parameter('retrace_distance', 0.0)
+        self.declare_parameter('retrace_speed', 0.08)
+        self.declare_parameter('retrace_timeout', 30.0)
+        self.declare_parameter('retrace_after_fails', 2)
+        self.declare_parameter('retrace_controller', '')
+        g = lambda n: self.get_parameter(n).value
+        self.retrace_dist, self.retrace_speed = g('retrace_distance'), g('retrace_speed')
+        self.retrace_timeout, self.retrace_after = g('retrace_timeout'), g('retrace_after_fails')
+        self.retrace_ctrl = g('retrace_controller')
+        self.crumbs = []            # (x, y) every 5 cm the robot drove, newest last
+        self.retrace = None         # active retrace: dict, see start_retrace()
+        self.fail_count, self.fail_spot = 0, None
+        self.controller = ''
+        if self.retrace_dist > 0.0:
+            self.cmd_pub = self.create_publisher(TwistStamped, '/cmd_vel_nav', 10)
+            latched = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL,
+                                 reliability=ReliabilityPolicy.RELIABLE)
+            self.create_subscription(String, '/controller_selector',
+                                     lambda m: setattr(self, 'controller', m.data), latched)
+            self.create_timer(0.1, self.retrace_step)
+            self.get_logger().info(f'Retrace on: back {self.retrace_dist:.1f} m along own track when stuck'
+                                   + (f' (only with {self.retrace_ctrl})' if self.retrace_ctrl else ''))
 
         self.declare_parameter('override_timeout', 1.0)
         self.override_timeout = self.get_parameter('override_timeout').value
@@ -150,6 +184,7 @@ class ExploreCoordinator(Node):
                 if moved < self.stall_radius and not (self.stall_angle > 0.0 and turned >= self.stall_angle):
                     self.get_logger().warn(
                         f'No progress: moved {moved:.2f} m in {self.stall_timeout:.0f} s - cancelling it')
+                    self.stalled = True
                     self.give_up()
 
     def give_up(self):
@@ -168,6 +203,7 @@ class ExploreCoordinator(Node):
         self.busy = True
         self.goal = msg
         self.timed_out = False
+        self.stalled = False
         if self.precheck and self.plan_client.server_is_ready():
             req = ComputePathToPose.Goal()
             req.goal = msg
@@ -194,6 +230,8 @@ class ExploreCoordinator(Node):
         if self.precheck_fails[key] >= 2:
             self.get_logger().warn(f'No path to frontier ({p.x:.2f}, {p.y:.2f}) - blacklisted, not sent')
             self.publish_blacklist()
+            if self.goal_failed(stalled=False):
+                return
         else:
             # one failure can be a costmap that hasn't caught up yet (seen at start-up, when
             # the global costmap refreshes at 1 Hz); the frontier node re-sends in ~3 s
@@ -236,6 +274,7 @@ class ExploreCoordinator(Node):
         status = future.result().status
         if status == GoalStatus.STATUS_SUCCEEDED:
             self.get_logger().info('Reached goal - ready for next frontier')
+            self.fail_count, self.fail_spot = 0, None
         else:
             names = {GoalStatus.STATUS_ABORTED: 'aborted', GoalStatus.STATUS_CANCELED: 'canceled'}
             reason = 'timed out' if self.timed_out else names.get(status, status)
@@ -243,9 +282,89 @@ class ExploreCoordinator(Node):
             # A manual-override cancel is not the frontier's fault; anything else is.
             if (status == GoalStatus.STATUS_ABORTED or self.timed_out) and self.goal is not None:
                 self.publish_blacklist()
+                self.goal_handle = None
+                self.deadline = None
+                if self.goal_failed(stalled=self.stalled):
+                    return              # retracing: stays busy until it is done
         self.goal_handle = None
         self.deadline = None
         self.busy = False
+
+    # ---------------- retrace: back out along the robot's own track ----------------
+    def goal_failed(self, stalled):
+        """Count a failed goal; start a retrace if stuck. True if a retrace started (stay busy)."""
+        if self.retrace_dist <= 0.0 or self.paused or (p := self.robot_position()) is None:
+            return False
+        if self.fail_spot is None or math.hypot(p[0] - self.fail_spot[0], p[1] - self.fail_spot[1]) > 0.5:
+            self.fail_count, self.fail_spot = 0, p[:2]
+        self.fail_count += 1
+        if not (stalled or self.fail_count >= self.retrace_after):
+            return False
+        if self.retrace_ctrl and self.controller != self.retrace_ctrl:
+            return False
+        return self.start_retrace(p, 'stalled' if stalled else f'{self.fail_count} failed goals here')
+
+    def start_retrace(self, p, why):
+        # walk back along the crumbs (newest first) until retrace_distance of track is covered
+        pts, run, last = [], 0.0, p[:2]
+        for c in reversed(self.crumbs):
+            run += math.hypot(c[0] - last[0], c[1] - last[1]); last = c
+            pts.append(c)
+            if run >= self.retrace_dist:
+                break
+        pts = [c for c in pts if math.hypot(c[0] - p[0], c[1] - p[1]) > 0.1] or pts
+        if run < 0.3:
+            self.get_logger().warn(f'Stuck ({why}) but no recorded track to back out along')
+            return False
+        # drive backwards if the track leads behind the robot (it drove in forwards), else forwards
+        a = math.atan2(pts[min(3, len(pts) - 1)][1] - p[1], pts[min(3, len(pts) - 1)][0] - p[0]) - p[2]
+        sign = -1.0 if math.cos(a) < 0.0 else 1.0
+        now = self.get_clock().now().nanoseconds / 1e9
+        self.retrace = {'pts': pts, 'i': 0, 'sign': sign, 't0': now, 'moved_t': now, 'moved_p': p[:2]}
+        self.fail_count, self.fail_spot = 0, None
+        self.get_logger().warn(f'Stuck ({why}) - retracing {run:.1f} m of own track '
+                               f'{"backwards" if sign < 0 else "forwards"}')
+        return True
+
+    def retrace_step(self):
+        p = self.robot_position()
+        if p is None:
+            return
+        r = self.retrace
+        if r is None:
+            # record the track (not while retracing, so a second retrace goes further back)
+            if not self.crumbs or math.hypot(p[0] - self.crumbs[-1][0], p[1] - self.crumbs[-1][1]) >= 0.05:
+                self.crumbs = (self.crumbs + [p[:2]])[-400:]          # last ~20 m
+            return
+        now = self.get_clock().now().nanoseconds / 1e9
+        pts = r['pts']
+        while r['i'] < len(pts) - 1 and math.hypot(pts[r['i']][0] - p[0], pts[r['i']][1] - p[1]) < 0.25:
+            r['i'] += 1
+        if math.hypot(p[0] - r['moved_p'][0], p[1] - r['moved_p'][1]) > 0.05:
+            r['moved_t'], r['moved_p'] = now, p[:2]
+        tx, ty = pts[r['i']]
+        done = r['i'] == len(pts) - 1 and math.hypot(tx - p[0], ty - p[1]) < 0.15
+        if done or now - r['moved_t'] > 6.0 or now - r['t0'] > self.retrace_timeout or self.paused:
+            reason = 'done' if done else 'paused' if self.paused else 'blocked' if now - r['moved_t'] > 6.0 else 'timeout'
+            self.cmd_pub.publish(TwistStamped())
+            # forget the retraced part of the track, so a second retrace goes further back
+            k = min(range(len(self.crumbs)), key=lambda j: math.hypot(self.crumbs[j][0] - p[0], self.crumbs[j][1] - p[1]))
+            self.crumbs = self.crumbs[:k + 1]
+            self.get_logger().info(f'Retrace {reason} - ready for next frontier')
+            self.retrace = None
+            self.busy = False
+            return
+        # pure pursuit on the track; err = angle between the driving direction and the target
+        err = math.atan2(ty - p[1], tx - p[0]) - p[2]
+        if r['sign'] < 0:
+            err += math.pi
+        err = math.atan2(math.sin(err), math.cos(err))
+        cmd = TwistStamped()
+        cmd.header.stamp = self.get_clock().now().to_msg()
+        cmd.header.frame_id = 'base_footprint'
+        cmd.twist.linear.x = r['sign'] * self.retrace_speed * max(0.0, math.cos(err)) ** 2
+        cmd.twist.angular.z = max(-0.5, min(0.5, 1.5 * err))
+        self.cmd_pub.publish(cmd)
 
 
 def main(args=None):
