@@ -54,6 +54,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Run to 90 percent 2026-10-18]]: same 3 setups run until 90 % or stuck (GUI); 4 of 6 trapped in dead ends
 - [[Full comparison 2026-10-19]]: 3 setups × 3 GUI runs to 90 %; tuned drives straightest (p = 0.006), smooth explores fastest
 - [[Navigation fixes 2026-10-19]]: root causes (open-area drift, unknown-space paths, spins); tracking fixed, stuck regression open
+- [[Stall ablation 2026-10-20]]: one demo fix undone per variant; the 0.34 sim track drives both the accuracy gain and the hesitation
 - [[Receiver (external)]]
 
 ## Log
@@ -71,6 +72,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[2026-10-17]]
 - [[2026-10-18]]
 - [[2026-10-19]]
+- [[2026-10-20]]
 
 ## Quick start
 ```bash

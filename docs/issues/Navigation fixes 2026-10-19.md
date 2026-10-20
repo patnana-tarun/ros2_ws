@@ -11,7 +11,7 @@ Root-cause analysis of the four problems the user saw in RViz:
 
 Then the fixes and two rounds of GUI validation. Branch `exp/tunnel-tracking`. **Interim:**
 path tracking is fixed and verified; a stuck regression is open. Raw data:
-`~/demo_runs_2026-10-19/`, `~/full_runs_2026-10-19/`. Scripts, figures and numbers:
+`docs/demo_runs_2026-10-19/` (moved there from `~/demo_runs_2026-10-19/`), `~/full_runs_2026-10-19/`. Scripts, figures and numbers:
 `assets/navfix_2026-10-19/`. Priority since 2026-10-19: following the path correctly first,
 speed second.
 
@@ -82,6 +82,8 @@ fixes with Spin removed (3 runs). Round 2 = Spin back, track 0.34 (3 runs).
 ![[demo_card_demo2_3.png]]
 
 ## Open
+Follow-up: [[Stall ablation 2026-10-20]].
+
 - **Stuck regression (round 1 and round 2).** MPPI outputs near zero while valid paths exist.
   In round 2 its turn commands never exceeded 0.22 rad/s (before: 0.62). At start-up it reverses
   slowly toward a goal behind it instead of turning. The spins are gone, but so is decisive
