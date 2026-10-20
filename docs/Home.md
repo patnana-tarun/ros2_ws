@@ -31,6 +31,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Relay placement protocol]]: how to collect data for the relay-drop threshold
 - [[Frontier exploration]]: TAD scoring and the gap filling
 - [[Navigation stack]]: SLAM Toolbox + Nav2 tuned for this robot
+- [[Tuning loop]]: how changes are tried and confirmed in simulation, with the `rover` MCP server
 
 ## Robot
 - [[Robot model]]

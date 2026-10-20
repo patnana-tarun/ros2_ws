@@ -28,6 +28,14 @@ ros2 run explorer_exploration manual_drive                         # manual over
 ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false   # real robot, on the Pi
 ```
 
+**Simulation work goes through the `rover` MCP server** (`tools/rover_mcp/`, `.mcp.json`): any
+request to run, watch, screenshot, debug, tune or compare the robot in Gazebo/RViz, or a report of
+it spinning, stalling, leaving the path or not starting. Follow the `rover-tune` skill
+(`.claude/skills/rover-tune/SKILL.md`): preflight → smoke_test → observe → diagnose → change one
+thing → smoke_test → experiment. Do not hand-write launch/recorder/`pkill` scripts for this. If the
+`mcp__rover__*` tools are not loaded, call them from a shell:
+`tools/rover_mcp/.venv/bin/python tools/rover_mcp/mcp_call.py 'sim_start {}' 'observe {"seconds":60}'`.
+
 There is no test suite or linter. The xacro include uses `$(find explorer_description)`, so
 source the workspace before running `xacro` or `check_urdf`.
 

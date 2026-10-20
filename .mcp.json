@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "rover": {
+      "type": "stdio",
+      "command": "/home/shadows/ros2_ws/tools/rover_mcp/run.sh",
+      "args": [],
+      "env": {}
+    }
+  }
+}
