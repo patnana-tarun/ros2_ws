@@ -58,9 +58,35 @@ direction (p90).
   Hybrid-A* with reversing) or a scripted manoeuvre.
 - Reversing relies on the 360° LiDAR and the collision monitor, which both cover the rear.
 
+## Confirmation runs (n = 4)
+Two more reverse-out runs under the same set-up. A first attempt at run 4 was stopped when the
+Gazebo window closed at 18:34 (no crash message: "Escalating to SIGKILL on [Gazebo Sim
+Server]"). It doesn't count and was rerun. The recorder now saves on Ctrl+C and stops by itself
+("sim_stopped") when sim time stops advancing for 30 s.
+
+| | run 1 | run 2 | run 3 | run 4 | before (rerun) | kept version (0.34) |
+|---|---|---|---|---|---|---|
+| Spins per run | 0 | 0 | 0 | 0 | 3.7 (p = 0.03) | 0 |
+| Start-up turning | 10° | 6° | 3° | 14° | 185° | 43° |
+| On-the-spot turning (commands) | 0.03 % | 0 % | 0 % | 0 % | 3 % | 0.5 % |
+| Large open-area deviations | 1 % | 0 % | 0.25 % | 14 %* | 8 % | 0.9 % |
+| Heading p90 in tunnels | 16° | 14° | 12° | 15° | 17° | 15° |
+| Time stuck | 19 % | 5 % | 21 % | 3 % | 17 % | 31 % |
+| Goal success | 63 % | 67 % | 53 % | 79 % | 36 % | 31 % |
+| Coverage / time to 90 % | 88 % | 90 % / 10.1 min | 90 % / 13.8 min | 90 % / 9.6 min | 80–90 % | 89–91 % |
+
+\* Run 4: all 68 flagged samples (6.8 s) are moments at two spots, (9.5, −0.8) and (14.1, 4.4),
+where a new path left at a right angle and the robot arced into it at 5–6 cm/s instead of
+pivoting. The heading counts as 80–90° off, but the cross-track error never exceeded 9 cm.
+This run drove forward in open areas for only 48 s, so 6.8 s weighs heavily. It is not drift.
+
+**Verdict (pending the user's confirmation):** reverse-out is confirmed on path behaviour: no
+spins in 4 of 4 runs, almost no turning on the spot, small start-up turns. It also has the best
+goal success and the fastest runs to 90 %. Its stuck time (3–21 %) varies like every other
+setup's, and is no worse than any of them.
+
 ## Open
-- **n = 2.** One more confirmation run is needed before this is called confirmed and added to
-  [[Comparisons]].
+- Adding it to [[Comparisons]] once the user accepts the verdict.
 - Whether forward is preferred enough over long distances: 23 % reversing is fine, but should
   not grow in open areas.
 - On the real robot, reversing speed and the rear-facing behaviour need checking (reverse
