@@ -67,9 +67,13 @@ class ExploreCoordinator(Node):
 
         self.declare_parameter('stall_timeout', 0.0)
         self.declare_parameter('stall_radius', 0.3)
+        # stall_angle (rad, 0 = off): turning this much within the window also counts as progress,
+        # so a U-turn on the spot is not given up as a stall (tunnel_reverse.launch.py)
+        self.declare_parameter('stall_angle', 0.0)
+        self.stall_angle = self.get_parameter('stall_angle').value
         self.stall_timeout = self.get_parameter('stall_timeout').value
         self.stall_radius = self.get_parameter('stall_radius').value
-        self.track = []             # (t, x, y) of the robot while a goal is active
+        self.track = []             # (t, x, y, yaw) of the robot while a goal is active
         if self.stall_timeout > 0.0:
             self.get_logger().info(f'Stall give-up on: < {self.stall_radius:.2f} m in {self.stall_timeout:.0f} s')
 
@@ -121,7 +125,9 @@ class ExploreCoordinator(Node):
     def robot_position(self):
         try:
             t = self.tf_buffer.lookup_transform('map', 'base_footprint', rclpy.time.Time())
-            return t.transform.translation.x, t.transform.translation.y
+            q = t.transform.rotation
+            yaw = math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+            return t.transform.translation.x, t.transform.translation.y, yaw
         except Exception:
             return None
 
@@ -139,7 +145,9 @@ class ExploreCoordinator(Node):
             if old:
                 self.track = [q for q in self.track if q[0] >= old[-1][0]]
                 moved = math.hypot(p[0] - old[-1][1], p[1] - old[-1][2])
-                if moved < self.stall_radius:
+                win = [q for q in self.track if q[0] >= old[-1][0]]
+                turned = sum(abs(math.atan2(math.sin(b[3] - a[3]), math.cos(b[3] - a[3]))) for a, b in zip(win, win[1:]))
+                if moved < self.stall_radius and not (self.stall_angle > 0.0 and turned >= self.stall_angle):
                     self.get_logger().warn(
                         f'No progress: moved {moved:.2f} m in {self.stall_timeout:.0f} s - cancelling it')
                     self.give_up()

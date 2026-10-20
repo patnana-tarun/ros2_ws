@@ -18,6 +18,7 @@ def generate_launch_description():
     selection_mode = LaunchConfiguration('selection_mode')
     precheck_path = LaunchConfiguration('precheck_path')
     stall_timeout = LaunchConfiguration('stall_timeout')
+    stall_angle = LaunchConfiguration('stall_angle')
     publish_explored_map = LaunchConfiguration('publish_explored_map')
 
     return LaunchDescription([
@@ -44,6 +45,7 @@ def generate_launch_description():
         # Abandon a goal when the robot moved < 0.3 m in this many seconds (0 = off).
         # See explore_coordinator.py.
         DeclareLaunchArgument('stall_timeout', default_value='0.0'),
+        DeclareLaunchArgument('stall_angle', default_value='0.0'),
         # Publish /map_explored (ray gaps filled) for a global costmap that plans only through
         # known space. See frontier_tad_node.py.
         DeclareLaunchArgument('publish_explored_map', default_value='false'),
@@ -76,6 +78,7 @@ def generate_launch_description():
                 'use_sim_time': ParameterValue(use_sim_time, value_type=bool),
                 'precheck_path': ParameterValue(precheck_path, value_type=bool),
                 'stall_timeout': ParameterValue(stall_timeout, value_type=float),
+                'stall_angle': ParameterValue(stall_angle, value_type=float),
             }],
         ),
     ])
