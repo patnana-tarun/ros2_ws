@@ -267,12 +267,12 @@ controller_server:
       ax_min: -1.0
       ay_max: 0.0
       ay_min: 0.0
-      az_max: 2.0
+      az_max: 6.0                     # nav-speed (was 2.0): same momentum fix as FollowPath; reverse swings 0.7-1.2/min -> 0 in a probe
       vx_std: 0.1
       vy_std: 0.0
       wz_std: 0.2                     # tunnel candidate (was 0.3): less random turning in the samples
       vx_max: 0.2
-      vx_min: -0.15                   # reverse variant (was -0.1): back out at the BackUp speed
+      vx_min: -0.15                  # reverse variant (was -0.1): back out at the BackUp speed
       vy_max: 0.0
       wz_max: 0.6                     # the skid-steer tracks up to ~0.6 rad/s exactly
       iteration_count: 1

@@ -89,6 +89,8 @@ def generate_launch_description():
                               description='navigate_to_pose BT file in behavior_trees/'),
         DeclareLaunchArgument('skid_track', default_value='0.34',
                               description='sim only: effective skid-steer track (m) for Gazebo DiffDrive'),
+        DeclareLaunchArgument('explored_cancel', default_value='false',
+                              description='coordinator drops a goal whose frontier was explored on the way'),
         DeclareLaunchArgument('heading_weight', default_value='0.0',
                               description='frontier score penalty per 180 deg of turn (0 = off)'),
         DeclareLaunchArgument('publish_explored_map', default_value='false',
@@ -188,6 +190,7 @@ def generate_launch_description():
                 'retrace_controller': LaunchConfiguration('retrace_controller'),
                 'publish_explored_map': LaunchConfiguration('publish_explored_map'),
                 'heading_weight': LaunchConfiguration('heading_weight'),
+                'explored_cancel': LaunchConfiguration('explored_cancel'),
             }.items(),
         ),
 

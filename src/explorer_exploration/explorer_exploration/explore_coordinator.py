@@ -39,6 +39,12 @@ that controller, i.e. in tunnels. Commands go to /cmd_vel_nav like manual_drive,
 smoother and the collision monitor still apply. It stops after retrace_distance along the
 track, or when blocked (no movement for 6 s), or after retrace_timeout.
 
+Explored goals (explored_cancel, off by default): the frontier node republishes its candidate frontiers
+(/frontier_markers) on every map update. When no candidate has been within 1 m of the current goal
+for two updates in a row, the LiDAR has already explored it: the goal is cancelled (not blacklisted)
+and the next frontier is taken from where the robot is, instead of driving into the pocket and turning
+round. Frontier goals are often LiDAR shadows behind boulders that disappear on the way there.
+
 Manual override: while `manual_drive` runs it publishes a heartbeat on
 /manual_override. On the first heartbeat this node cancels the current Nav2
 goal and stops sending goals; when heartbeats stop for override_timeout
@@ -57,6 +63,7 @@ from nav2_msgs.srv import ClearEntireCostmap
 from action_msgs.msg import GoalStatus
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 from std_msgs.msg import Bool, String
+from visualization_msgs.msg import MarkerArray
 
 
 class ExploreCoordinator(Node):
@@ -117,6 +124,7 @@ class ExploreCoordinator(Node):
         self.crumbs = []            # (x, y) every 5 cm the robot drove, newest last
         self.retrace = None         # active retrace: dict, see start_retrace()
         self.fail_count, self.fail_spot = 0, None
+        self.last_reached = None    # (x, y, robot pose) of the last reached goal, see check_reached_again
         self.controller = ''
         if self.retrace_dist > 0.0:
             self.cmd_pub = self.create_publisher(TwistStamped, '/cmd_vel_nav', 10)
@@ -127,6 +135,13 @@ class ExploreCoordinator(Node):
             self.create_timer(0.1, self.retrace_step)
             self.get_logger().info(f'Retrace on: back {self.retrace_dist:.1f} m along own track when stuck'
                                    + (f' (only with {self.retrace_ctrl})' if self.retrace_ctrl else ''))
+
+        self.declare_parameter('explored_cancel', False)
+        self.explored_misses = 0
+        self.explored_cancelled = False
+        if self.get_parameter('explored_cancel').value:
+            self.create_subscription(MarkerArray, '/frontier_markers', self.frontiers_callback, 10)
+            self.get_logger().info('Explored-goal cancel on: a goal no longer near any frontier is dropped')
 
         self.declare_parameter('override_timeout', 1.0)
         self.override_timeout = self.get_parameter('override_timeout').value
@@ -176,6 +191,21 @@ class ExploreCoordinator(Node):
             return t.transform.translation.x, t.transform.translation.y, yaw
         except Exception:
             return None
+
+    def frontiers_callback(self, msg: MarkerArray):
+        if self.goal_handle is None or self.goal is None or self.retrace is not None:
+            self.explored_misses = 0
+            return
+        g = self.goal.pose.position
+        near = any(m.action == m.ADD and math.hypot(m.pose.position.x - g.x, m.pose.position.y - g.y) < 1.0
+                   for m in msg.markers)
+        self.explored_misses = 0 if near else self.explored_misses + 1
+        if self.explored_misses >= 2:
+            self.get_logger().info(f'Frontier at ({g.x:.2f}, {g.y:.2f}) explored on the way - next frontier')
+            self.explored_misses = 0
+            self.explored_cancelled = True
+            self.deadline = None
+            self.goal_handle.cancel_goal_async()
 
     def check_timeout(self):
         if self.deadline is None or self.goal_handle is None:
@@ -255,6 +285,19 @@ class ExploreCoordinator(Node):
                 self.clear_global.call_async(ClearEntireCostmap.Request())
         self.busy = False
 
+    def check_reached_again(self):
+        """A frontier inside the goal tolerance that the LiDAR can't see into stays a frontier: it was
+        'reached' at once, every 3 s, 62 times in a row while the run stood still (nav-speed,
+        2026-10-21). Reached twice without the robot moving 0.3 m: blacklist it."""
+        p, g = self.robot_position(), self.goal.pose.position
+        last, self.last_reached = self.last_reached, (g.x, g.y, p)
+        if last is None or p is None or last[2] is None:
+            return
+        if math.hypot(g.x - last[0], g.y - last[1]) < 0.3 and math.hypot(p[0] - last[2][0], p[1] - last[2][1]) < 0.3:
+            self.get_logger().warn(f'Reached frontier ({g.x:.2f}, {g.y:.2f}) again without it clearing - blacklisted')
+            self.publish_blacklist()
+            self.last_reached = None
+
     def publish_blacklist(self):
         bl = PointStamped()
         bl.header = self.goal.header
@@ -280,6 +323,7 @@ class ExploreCoordinator(Node):
 
         self.goal_handle = goal_handle
         self.track = []
+        self.explored_misses, self.explored_cancelled = 0, False
         dist = self.distance_to(self.goal)
         self.deadline = self.get_clock().now().nanoseconds / 1e9 + max(self.t_min, self.t_per_m * dist)
         if self.paused:                 # override began while the goal was in flight
@@ -292,6 +336,9 @@ class ExploreCoordinator(Node):
         if status == GoalStatus.STATUS_SUCCEEDED:
             self.get_logger().info('Reached goal - ready for next frontier')
             self.fail_count, self.fail_spot = 0, None
+            self.check_reached_again()
+        elif self.explored_cancelled:
+            self.fail_count, self.fail_spot = 0, None     # not a failure: nothing left to see there
         else:
             names = {GoalStatus.STATUS_ABORTED: 'aborted', GoalStatus.STATUS_CANCELED: 'canceled'}
             reason = 'timed out' if self.timed_out else names.get(status, status)

@@ -46,7 +46,8 @@ GOAL_EVENTS = [('sent', r'Sending goal'), ('reached', r'Reached goal'), ('gave_u
                ('no_path_blacklisted', r'No path to frontier .* blacklisted'), ('rejected', r'Goal rejected'),
                # "retracing" alone also matches "not retracing again" (nav-lessons)
                ('retrace_refused', r'not retracing again'), ('retrace', r'of own track'),
-               ('retrace_end', r'^Retrace .* ready for next frontier'), ('stuck_no_track', r'no recorded track')]
+               ('retrace_end', r'^Retrace .* ready for next frontier'), ('stuck_no_track', r'no recorded track'),
+               ('explored', r'explored on the way'), ('reached_again', r'again without it clearing')]
 ALERTS_STOP = ('not_moving', 'rotation', 'node_died', 'no_map', 'no_pose', 'no_clock', 'launch_exited')
 
 

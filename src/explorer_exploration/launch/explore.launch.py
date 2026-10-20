@@ -23,6 +23,7 @@ def generate_launch_description():
     retrace_controller = LaunchConfiguration('retrace_controller')
     publish_explored_map = LaunchConfiguration('publish_explored_map')
     heading_weight = LaunchConfiguration('heading_weight')
+    explored_cancel = LaunchConfiguration('explored_cancel')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
@@ -56,6 +57,8 @@ def generate_launch_description():
         DeclareLaunchArgument('publish_explored_map', default_value='false'),
         # Score penalty for frontiers behind the robot (0 = off). See frontier_tad_node.py.
         DeclareLaunchArgument('heading_weight', default_value='0.0'),
+        # Drop a goal whose frontier was explored on the way. See explore_coordinator.py.
+        DeclareLaunchArgument('explored_cancel', default_value='false'),
 
         Node(
             package='explorer_exploration',
@@ -89,6 +92,7 @@ def generate_launch_description():
                 'stall_angle': ParameterValue(stall_angle, value_type=float),
                 'retrace_distance': ParameterValue(retrace_distance, value_type=float),
                 'retrace_controller': ParameterValue(retrace_controller, value_type=str),
+                'explored_cancel': ParameterValue(explored_cancel, value_type=bool),
             }],
         ),
     ])
