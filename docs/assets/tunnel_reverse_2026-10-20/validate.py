@@ -18,7 +18,7 @@ import json, re, sys, glob, os, math
 import numpy as np
 
 BEF, AFT = sys.argv[1:3]
-ARMS = ['tunedR', 'track', 'refR', 'rev38', 'tr']   # tr = tunnel-reverse (2026-10-20)
+ARMS = ['refR', 'rev38', 'tr', 'trr', 'trg']   # tr = tunnel-reverse, trr = + planner radius 0.22 and retrace, trg = retrace only when really stuck (2026-10-20)
 TUN = {'B-E top': [(5, 3), (8.2, 5.6), (11.5, 5.9), (14.5, 4.5)], 'C-F': [(10, -1), (12.8, -3.8), (15, -5.5)]}
 
 
@@ -44,6 +44,27 @@ def run(dirn, tag):
     lo = np.searchsorted(t, t - 30); hi = np.clip(np.searchsorted(t, t + 30), 0, len(t) - 1)
     stuck = np.hypot(x[hi] - x[lo], y[hi] - y[lo]) < 0.5
     drive = (vx > 0.05) & ~stuck; opn = drive & (width > 2.0); tun = drive & (width < 1.2)
+    # retrace windows (explore_coordinator backs out along its own track; Nav2's path is stale then):
+    # left out of the path-tracking metrics, measured against the recorded track instead
+    win, st = [], None
+    for l in open(f'{dirn}/{tag}.launch.log', errors='ignore'):
+        l = re.sub(r'\x1b\[[0-9;]*m', '', l); m = re.search(r'\[(\d{10}\.\d+)\]', l)
+        if not m: continue
+        if 'of own track' in l: st = float(m.group(1)) - w0
+        elif 'Retrace ' in l and 'Retrace on' not in l and st is not None: win.append((st, float(m.group(1)) - w0 + 3.0)); st = None   # +3 s: stale path until the next goal
+    wl = np.array([s['w'] for s in S]); inret = np.zeros(len(S), bool)
+    for a0, b0 in win: inret |= (wl >= a0) & (wl <= b0)
+    rerr = []
+    for a0, b0 in win:
+        k = np.where((wl >= a0) & (wl <= b0))[0]; pre = np.where(wl < a0)[0]
+        if len(pre):    # the last 20 m driven before it (what the coordinator keeps as its track)
+            seg = np.r_[0, np.cumsum(np.hypot(np.diff(x[pre]), np.diff(y[pre])))]
+            pre = pre[seg >= seg[-1] - 20.0]
+        if len(k) and len(pre):
+            P = np.c_[x[pre], y[pre]]
+            rerr += [float(np.min(np.hypot(P[:, 0] - x[j], P[:, 1] - y[j]))) for j in k]
+    drive &= ~inret; xte = np.where(inret, np.nan, xte); hd = np.where(inret, np.nan, hd)
+    opn = drive & (width > 2.0); tun = drive & (width < 1.2)
     big = (xte > 0.10) | (hd > 30)
     # rotation events
     dt = np.r_[np.diff(t), 0.1].clip(0, 0.5); rot = 0; i = 0
@@ -68,12 +89,14 @@ def run(dirn, tag):
     nfr = np.array(nfr)
     sp = [p['space'] for p in d['paths'] if p.get('space')]
     # events
-    ev = {'reached': 0, 'failed': 0, 'backup': 0, 'spin': 0, 'progress_fail': 0, 'refused': 0}
+    ev = {'reached': 0, 'failed': 0, 'backup': 0, 'spin': 0, 'progress_fail': 0, 'refused': 0,
+          'retrace': 0, 'retrace_done': 0, 'retrace_blocked': 0}
     for l in open(f'{dirn}/{tag}.launch.log', errors='ignore'):
         l = re.sub(r'\x1b\[[0-9;]*m', '', l); m = re.search(r'\[(\d{10}\.\d+)\]', l)
         if not m or not (0 <= float(m.group(1)) - w0 <= d['wall_s']): continue
         for k, pat in (('reached', 'Reached goal'), ('failed', 'gave up on the goal'), ('backup', 'Running backup'), ('spin', 'Running spin'),
-                       ('progress_fail', 'Failed to make progress'), ('refused', 'blacklisted, not sent')):
+                       ('progress_fail', 'Failed to make progress'), ('refused', 'blacklisted, not sent'),
+                       ('retrace', 'of own track'), ('retrace_done', 'Retrace done'), ('retrace_blocked', 'Retrace blocked')):
             if pat in l: ev[k] += 1
     dur = d['dur'] / 60; per10 = lambda n: 10 * n / max(dur, 0.1)
     cov = d['cov']
@@ -86,7 +109,10 @@ def run(dirn, tag):
            'plans_notfree_2m_pct': 100 * float((nfr >= 2.0).mean()) if nfr.size else float('nan'), 'notfree_longest_m': float(nfr.max()) if nfr.size else float('nan'),
            'goal_success_pct': 100 * ev['reached'] / max(ev['reached'] + ev['failed'], 1), 'goals_reached': ev['reached'], 'goals_given_up': ev['failed'],
            'refused_by_precheck': ev['refused'], 'backup_per10': per10(ev['backup']), 'spin_per10': per10(ev['spin']),
-           'progress_fail_per10': per10(ev['progress_fail'])}
+           'progress_fail_per10': per10(ev['progress_fail']),
+           'retrace_time_s': float(sum(b0 - a0 for a0, b0 in win)),
+           'retrace_track_err_p90_cm': 100 * float(np.percentile(rerr, 90)) if rerr else float('nan'),
+           'retraces': ev['retrace'], 'retraces_done': ev['retrace_done'], 'retraces_blocked': ev['retrace_blocked']}
     for name, pts in TUN.items():
         k = np.array([near_tunnel(a, b, pts) for a, b in zip(x, y)])
         dk = k & (vx > 0.05) & ~stuck

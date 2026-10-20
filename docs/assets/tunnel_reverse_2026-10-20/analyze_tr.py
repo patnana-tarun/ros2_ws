@@ -21,8 +21,8 @@ from matplotlib.colors import LinearSegmentedColormap
 
 D, F = sys.argv[1:3]; os.makedirs(F, exist_ok=True)
 TUNNEL_W = 1.2; STUCK_WIN = 30.0; STUCK_R = 0.5
-ARMS = [('refR', 'Kept version (track 0.34)', '#2a78d6'), ('rev38', 'Reverse-out (track 0.38)', '#1baf7a'), ('tr', 'Tunnel-reverse (track 0.38)', '#eb6834')]
-SHORT = {'refR': 'kept\n0.34', 'rev38': 'reverse\n0.38', 'tr': 'tunnel-rev\n0.38'}
+ARMS = [('refR', 'Kept version (track 0.34)', '#2a78d6'), ('rev38', 'Reverse-out (track 0.38)', '#1baf7a'), ('tr', 'Tunnel-reverse (track 0.38)', '#eb6834'), ('trr', 'Tunnel-reverse + radius + retrace', '#8a5cd0'), ('trg', 'Tunnel-reverse + radius + guarded retrace', '#c2417a')]
+SHORT = {'refR': 'kept\n0.34', 'rev38': 'reverse\n0.38', 'tr': 'tunnel-rev\n0.38', 'trr': 'tunnel-rev\n+retrace', 'trg': 'tunnel-rev\n+guarded'}
 SURF, T1, T2, GRID = '#fcfcfb', '#0b0b0b', '#52514e', '#e4e3df'
 plt.rcParams.update({'font.size': 9.5, 'axes.edgecolor': T2, 'axes.labelcolor': T2, 'xtick.color': T2,
                      'ytick.color': T2, 'axes.titlecolor': T1, 'legend.frameon': False})
@@ -60,6 +60,15 @@ def run_metrics(tag):
     lo = np.searchsorted(t, t - STUCK_WIN); hi = np.clip(np.searchsorted(t, t + STUCK_WIN), 0, len(t) - 1)
     stuck = np.hypot(x[hi] - x[lo], y[hi] - y[lo]) < STUCK_R
     tun = width < TUNNEL_W; fwd = vx > 0.05; drive = tun & fwd & ~stuck
+    # retrace (coordinator backs out along its own track; Nav2's path is stale): not path tracking
+    w0 = d['wall_start']; st = None; inret = np.zeros(len(S), bool)
+    for l in open(f'{D}/{tag}.launch.log', errors='ignore'):
+        l = re.sub(r'\x1b\[[0-9;]*m', '', l); mm = re.search(r'\[(\d{10}\.\d+)\]', l)
+        if not mm: continue
+        if 'of own track' in l: st = float(mm.group(1)) - w0
+        elif 'Retrace ' in l and 'Retrace on' not in l and st is not None:
+            inret |= (w >= st) & (w <= float(mm.group(1)) - w0 + 3.0); st = None   # +3 s: until the next goal's path arrives
+    drive &= ~inret; hdev = np.where(inret, np.nan, hdev); xte = np.where(inret, np.nan, xte)
     step = np.r_[np.hypot(np.diff(x), np.diff(y)), 0]; dt = np.r_[np.diff(t), 0.1].clip(0, 0.5)
     dist_t = float(step[tun & ~stuck].sum())
     sg = np.sign(wz[tun & ~stuck & (np.abs(wz) > 0.1)]); rev = int((np.diff(sg) != 0).sum()) if sg.size > 1 else 0

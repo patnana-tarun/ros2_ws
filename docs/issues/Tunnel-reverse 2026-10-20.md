@@ -81,18 +81,96 @@ trapped tunnel-reverse.*
   different order and reached them earlier. Why MPPI stands still there is not yet known.
   Likely: every sampled move scores worse on the cost critics than standing still. Not verified.
 
-**Verdict (pending the user):** the switching works and keeps the open-area behaviour forward,
-as asked. It is not better overall than reverse-out yet: it brings back a U-turn at start-up, and
-3 of 3 runs ended wedged before 90 %. Fix the tight-passage stand-still first (see Open), then
-compare again. Not added to [[Comparisons]].
+## Why the planner sent the robot into gaps it couldn't turn in
+NavFn plans for a point. It blocks only cells closer to a wall than the inscribed radius of the
+footprint (half the width, 0.11 m), so any gap wider than about 0.25 m counted as passable. The
+robot needs about 0.39 m (its diagonal) to turn round. Measured on the final maps (passage ≈ 2 ×
+distance to the nearest wall):
+
+| Run | Gap where it stopped | Narrowest gap on the last 1.5 m in |
+|---|---|---|
+| 1 | 0.67 m | 0.41 m |
+| 2 | 0.71 m | 0.50 m |
+| 3 | 0.41 m | 0.30 m |
+
+Run 3's 0.30 m squeeze was too tight to manoeuvre in. In runs 1–2 there was room, and the
+stand-still was the controller's.
+
+## Fixes (both only in `tunnel_reverse.launch.py`; bringup defaults unchanged)
+| Fix | Commit | What |
+|---|---|---|
+| Plan for a bigger robot | e271dac | Global costmap `robot_radius` 0.22 m instead of the footprint (inflation 0.22 → 0.35 m, keeping the cost band). NavFn no longer plans through gaps under about 0.45 m. The local costmap keeps the real footprint, so the controller can still squeeze through |
+| Back out along the own track (retrace) | e271dac, aa50154 | `explore_coordinator` records the track every 5 cm (last ~20 m). When stuck in a tunnel (`/controller_selector` = FollowPathReverse), it drives 1 m back along that track with a simple pure-pursuit at 0.08 m/s on `/cmd_vel_nav`, so the velocity smoother and collision monitor still apply. It reverses if the robot came in forwards, and vice versa. Stops after 1 m, if blocked 6 s, or after 30 s |
+| Retrace trigger (aa50154) | | A stall give-up in which the robot moved **< 0.1 m** in 30 s, or 2 failed goals at one spot (planner or pre-check failures). Loop guard: no new retrace starting within 0.5 m of the last one for 300 s |
+
+The first trigger (e271dac) retraced after **every** stall give-up. In run 3 of that round, at the
+0.55 m gap at the chamber-B mouth (3.4, 3.1), the robot crept 0.24–0.30 m per 30 s (all setups
+creep there, 0.03–0.07 m/s), gave up just under the 0.3 m limit, and backed out 1 m: 39
+retraces in 36 min, 30 % coverage at the 40 min cap. The < 0.1 m trigger and the loop guard
+(aa50154) fix this: in the wedges the robot had moved 0.00–0.09 m, and creeping is progress.
+
+## Results after the fixes (3 GUI runs each)
+| | reverse-out (n = 4) | tunnel-reverse (round 1) | + radius + retrace (every stall) | **+ radius + guarded retrace** |
+|---|---|---|---|---|
+| Reached 90 % | 3 of 4 (9.6–13.8 min) | 0 of 3 | 1 of 3 (16.0 min) | **2 of 3 (16.6, 21.2 min)** |
+| Final coverage | 88–90 % | 78–86 % | 30 / 84 / 91 % | 81 / 90 / 91 % |
+| Ended wedged | 1 of 4 | 3 of 3 | 0 (1 retrace loop) | **0** |
+| Spins (≥ 300° in 60 s) | 0 | 0 | 0 / 0 / 1 | 0 / 1 / 0 (Nav2 Spin recovery) |
+| Reversing in open space | 25–36 % | 0–0.7 % | 0.6–1.6 % | 1.3–2.9 % |
+| Large open-area deviations | 0–1.1 % (run 4: 14 %) | 0–4.5 % | 1.8–5.4 % | **0.4–2.1 %** |
+| Heading p90, open areas | 6–13° (run 4: 82°) | 18–23° | 18–22° | 13–20° |
+| Cross-track p90, open areas | 2.8–5.8 cm | 6.4–8.2 cm | 5.6–7.0 cm | 5.4–6.7 cm |
+| Heading p90, tunnels | 12–16° | 12–17° | 13–19° | 14–21° |
+| Cross-track p90, tunnels | 3.1–3.5 cm | 2.9–3.7 cm | 2.8–4.7 cm | 4.0–4.5 cm |
+| Time stuck | 3–21 % | 20–27 % | 14–60 % | 10–33 % |
+| Goal success | 53–79 % | 53–65 % | 9–59 % | 55–60 % |
+| Retraces per run (finished) | – | – | 4 / 3 / 39 | 2 / 6 / 6 (13 of 14 "done", 1 ended by a goal timeout) |
+| Retrace: distance from own track, p90 | – | – | 0.5–4.4 cm | **1.9–2.6 cm** |
+
+Retrace time (plus 3 s after it, until the next goal's path arrives) is left out of the
+path-tracking rows: Nav2's path is stale then. The retrace row measures it against the last 20 m
+the robot drove instead.
+
+![[trg_card_1.png]]
+*Guarded retrace, run 1: 90 % in 16.6 min.*
+
+![[trg_card_3.png]]
+![[trg_card_2.png]]
+*Run 2 was not trapped: it stopped at 81 % because nothing new was in reach for 3 min (the stop
+rule), after the C-F fan and the east pocket frontiers were refused as too narrow.*
+
+![[trr_card_3.png]]
+*Retrace after every stall: 39 back-and-forth retraces at the chamber-B mouth.*
+
+## Reading (after the fixes)
+- **The wedges are gone.** No run of the guarded version ended stuck in a tight passage. The
+  bigger planning robot keeps paths out of gaps under about 0.45 m, and where the robot still
+  stood still (5 times, moved 0.00–0.09 m in 30 s), the retrace backed it out. It held its own
+  track within 2–3 cm.
+- **The retrace must not fire when the robot is only slow.** Backing out after every give-up
+  undid the progress at a slow squeeze (39 retraces, 30 % coverage). The < 0.1 m trigger and the
+  loop guard fixed this. The guard fired 14 times in 3 runs.
+- **Path accuracy:** open-area tracking improved over round 1 (large deviations 0.4–2.1 %,
+  heading p90 13–20°). It is still behind reverse-out's best runs (6–13°). Tunnel cross-track p90
+  grew from about 3.4 to 4.0–4.5 cm. Likely cause: the larger inscribed zone moves paths
+  around rocks, so there are more bends. Not verified.
+- **Speed:** 90 % in 16.6–21.2 min, against 9.6–13.8 min for reverse-out. U-turns at start-up
+  (about 200°) and turning on the spot in open areas (5 %) cost time. Reverse-out avoids both by
+  driving backwards.
+
+**Verdict (pending the user):** the guarded version does what the user asked (forward in open
+space, reverse in tunnels) and no longer gets wedged: 2 of 3 runs reached 90 %, and the third
+was not stuck. Reverse-out is still faster and tracks slightly better. The fixes themselves
+(planner radius, guarded retrace) could also help reverse-out, which got wedged once in 4 runs.
+Not added to [[Comparisons]].
 
 ## Open
-- Reproduce the stand-still without a full run: put the robot at (13.6, −4.2) facing into the
-  C-F end, send the goal (7.5, −3.7), and record MPPI's critic costs.
-- Candidate fixes, path accuracy first:
-  - (a) a retrace recovery that backs out along the robot's own recorded track (known to be
-    free) when it stalls in a tunnel;
-  - (b) MPPI cost-critic tuning for tight passages;
-  - (c) keep frontier goals out of passages narrower than the robot can turn in.
-- Hysteresis between 1.2 and 1.8 m keeps the previous mode. In run 2, the forward controller
-  was still active at 1.5 m width on the way into C-F (1 s dwell); it switched at 1.0 m.
+- Try the planner radius and the guarded retrace on reverse-out (one config change and two
+  launch arguments).
+- Why MPPI stands still in tight passages with a valid path behind it ([[Known limitations]]
+  #26). The retrace works around it, but doesn't explain it.
+- Hysteresis between 1.2 and 1.8 m keeps the previous mode. In run 2 of round 1, the forward
+  controller was still active at 1.5 m width on the way into C-F (1 s dwell); it switched at
+  1.0 m.
+- The robot's own track is only "known free" if nothing moved. On the real robot, the collision
+  monitor is what protects the retrace.
