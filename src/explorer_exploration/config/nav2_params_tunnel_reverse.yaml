@@ -139,7 +139,27 @@ controller_server:
       # Regulated Pure Pursuit was tried first (lighter), but its rotate-in-place flips
       # direction every cycle when the goal is directly behind the robot (heading error
       # near +/-180 deg) and the robot never turns round - common at a dead end.
-      plugin: "nav2_mppi_controller::MPPIController"
+      # tunnel-reverse (2026-10-20): MPPI wrapped in the Rotation Shim. In 3 runs MPPI stood still
+      # 1.7-3.4 min per run with the robot on the path but the path leaving 25-145 deg off its
+      # heading (it rarely samples a long in-place turn: wz_std 0.2, Twirling 10). The shim turns
+      # in place towards the path first (collision-checked), then hands over to MPPI, whose
+      # parameters stay below under FollowPath.
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      primary_controller: "nav2_mppi_controller::MPPIController"
+      # smoke test with 45 / 22.5 deg: MPPI took over still turning, overshot to 35-50 deg the other
+      # way and stood there (its weakness again), the shim swung it back: hand over aligned instead
+      angular_dist_threshold: 0.5           # rotate first when the path leaves > 29 deg off the heading
+      angular_disengage_threshold: 0.1      # hand over to MPPI within 6 deg
+      forward_sampling_distance: 0.5        # path direction = towards the path point 0.5 m ahead
+      rotate_to_heading_angular_vel: 0.3    # rad/s (0.4-0.5 overshot to 1.1 rad/s in the sim's stick-slip)
+      max_angular_accel: 1.5
+      simulate_ahead_time: 1.0              # collision-check the rotation 1 s ahead
+      rotate_to_goal_heading: false         # frontier goals carry no meaningful heading
+      rotate_to_heading_once: false
+      # false: limit acceleration from the last command, not from odometry. With true, the sim's
+      # over-rotation (1.06 rad/s measured for 0.4 commanded) kept the command high: 50 deg overshoot
+      closed_loop: false
+      use_path_orientations: false
       time_steps: 40
       model_dt: 0.07                  # must be >= 1 / controller_frequency
       batch_size: 1000
@@ -223,10 +243,10 @@ controller_server:
       PathAngleCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 2.0
+        cost_weight: 4.0          # tunnel-reverse (was 2.0)
         offset_from_furthest: 4
         threshold_to_consider: 0.5
-        max_angle_to_furthest: 1.0
+        max_angle_to_furthest: 0.35    # tunnel-reverse (was 1.0 since the Jazzy port): below 57 deg nothing pulled the heading to the path, and MPPI stood still at 45-55 deg off
         mode: 0
     FollowPathReverse:
       # Used inside tunnels (drive_mode_switcher): the confirmed reverse-out settings
@@ -318,10 +338,10 @@ controller_server:
       PathAngleCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 2.0
+        cost_weight: 4.0          # tunnel-reverse (was 2.0)
         offset_from_furthest: 4
         threshold_to_consider: 0.5
-        max_angle_to_furthest: 1.0
+        max_angle_to_furthest: 0.35    # tunnel-reverse (was 1.0 since the Jazzy port): below 57 deg nothing pulled the heading to the path, and MPPI stood still at 45-55 deg off
         mode: 1                         # reverse variant (was 0 = must face along the path): drive forward or backward
 
 local_costmap:

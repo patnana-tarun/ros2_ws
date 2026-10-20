@@ -28,8 +28,12 @@ passage, it backs out along its own recorded track (known to be free: it just dr
 of waiting for a controller that may stand still there. Triggered by a stall give-up in which the
 robot moved less than retrace_max_moved (really stuck, not creeping: 2026-10-20 a run backed out
 of every slow squeeze and undid its own progress for 36 min), or by retrace_after_fails failed
-goals in a row without the robot moving 0.5 m. Loop guard: no second retrace starting within
-0.5 m of the last one for 300 s. With
+goals in a row without the robot moving 0.5 m. Loop guard (stall trigger only): no second
+retrace starting within 0.5 m of the last one for 300 s. Failed goals at one spot are about the
+robot's position, so they may retrace again there (a run sat 4 min with the guard blocking it).
+
+Pre-check failures clear the global costmap before the frontier's second check, like Nav2's own
+recovery does: a stale obstacle near the robot otherwise fails every frontier in turn. With
 retrace_controller set (e.g. FollowPathReverse) it only runs while /controller_selector names
 that controller, i.e. in tunnels. Commands go to /cmd_vel_nav like manual_drive, so the velocity
 smoother and the collision monitor still apply. It stops after retrace_distance along the
@@ -49,6 +53,7 @@ from rclpy.node import Node
 from rclpy.action import ActionClient
 from geometry_msgs.msg import PointStamped, PoseStamped, TwistStamped
 from nav2_msgs.action import ComputePathToPose, NavigateToPose
+from nav2_msgs.srv import ClearEntireCostmap
 from action_msgs.msg import GoalStatus
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 from std_msgs.msg import Bool, String
@@ -95,6 +100,7 @@ class ExploreCoordinator(Node):
         self.precheck = self.get_parameter('precheck_path').value
         self.plan_client = ActionClient(self, ComputePathToPose, 'compute_path_to_pose')
         self.precheck_fails = {}    # goal cell (0.5 m grid) -> failed pre-checks
+        self.clear_global = self.create_client(ClearEntireCostmap, 'global_costmap/clear_entirely_global_costmap')
 
         self.declare_parameter('retrace_distance', 0.0)
         self.declare_parameter('retrace_speed', 0.08)
@@ -242,8 +248,11 @@ class ExploreCoordinator(Node):
                 return
         else:
             # one failure can be a costmap that hasn't caught up yet (seen at start-up, when
-            # the global costmap refreshes at 1 Hz); the frontier node re-sends in ~3 s
+            # the global costmap refreshes at 1 Hz), or a stale obstacle near the robot: clear
+            # the global costmap (the static map comes back at once) and check again in ~3 s
             self.get_logger().info(f'No path to frontier ({p.x:.2f}, {p.y:.2f}) yet - will check again')
+            if self.clear_global.service_is_ready():
+                self.clear_global.call_async(ClearEntireCostmap.Request())
         self.busy = False
 
     def publish_blacklist(self):
@@ -312,7 +321,7 @@ class ExploreCoordinator(Node):
         if self.retrace_ctrl and self.controller != self.retrace_ctrl:
             return False
         now = self.get_clock().now().nanoseconds / 1e9
-        if (self.last_retrace is not None and now - self.last_retrace[0] < 300.0 and
+        if (stuck and self.last_retrace is not None and now - self.last_retrace[0] < 300.0 and
                 math.hypot(p[0] - self.last_retrace[1], p[1] - self.last_retrace[2]) < 0.5):
             self.get_logger().info('Stuck again where the last retrace started - not retracing again')
             return False
