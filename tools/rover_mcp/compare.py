@@ -50,6 +50,8 @@ def load(dirs):
     runs = []
     for d in dirs:
         for f in sorted(glob.glob(os.path.join(d, '**', 'summary.json'), recursive=True)):
+            if '_void_' in os.path.basename(os.path.dirname(f)):
+                continue        # sim_stopped / no_start runs were repeated and do not count
             s = json.load(open(f))
             if 'arm' not in s:        # a run folder made by sim_start: treat as its own arm
                 s = {'arm': os.path.basename(os.path.dirname(f)), 'tag': os.path.basename(os.path.dirname(f)),
@@ -77,10 +79,13 @@ def compare(dirs, out=None):
         row = []
         for a in arms:
             v = [get(r, path) for r in runs if r['arm'] == a]
+            if path[:2] == ('metrics', 'goals'):    # the goals dict holds only the kinds that occurred
+                v = [0 if x is None and get(r, path[:2]) is not None else x
+                     for x, r in zip(v, [r for r in runs if r['arm'] == a])]
             v = [x * SCALE.get(label, 1) for x in v if x is not None]
             vals[(label, a)] = v
-            row.append('-' if not v else f'{np.mean(v):.2f} ± {np.std(v, ddof=1) if len(v) > 1 else 0:.2f}'
-                       f'  ({", ".join(f"{x:.3g}" for x in v)})')
+            row.append('-' if not v else f'{v[0]:.3g}' if len(v) == 1 else
+                       f'{np.mean(v):.2f} ± {np.std(v, ddof=1):.2f}  ({", ".join(f"{x:.3g}" for x in v)})')
         L.append(f'| {label} | ' + ' | '.join(row) + ' |')
     L += ['', '## Runs', '', '| run | stop | minutes | coverage % |', '|---|---|---|---|']
     for r in runs:

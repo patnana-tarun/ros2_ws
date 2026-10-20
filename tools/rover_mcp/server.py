@@ -49,6 +49,16 @@ SCALE = {}          # window id -> scale of the last screenshot (image px = wind
 
 
 def run_dir():
+    # during an experiment, journal entries and pictures belong to its current run, not the last sim_start
+    if exp_running():
+        try:
+            with open(os.path.join(EXP['dir'], 'progress.json')) as f:
+                d = os.path.join(EXP['dir'], json.load(f).get('run') or '')
+            if os.path.isdir(d):
+                return d
+        except (OSError, ValueError):
+            pass
+        return EXP['dir']
     if SIM['dir'] is None:
         SIM['dir'] = os.path.join(RUNS, datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + '_external')
         os.makedirs(SIM['dir'], exist_ok=True)
@@ -60,9 +70,11 @@ def stamp():
 
 
 def journal(kind, **kw):
+    # at sim_start the node clock still holds the previous sim's last /clock
+    sim_t = None if kind == 'sim_start' else round(rosview.watcher().now(), 1)
     with open(os.path.join(run_dir(), 'journal.jsonl'), 'a') as f:
         f.write(json.dumps({'wall': datetime.datetime.now().isoformat(timespec='seconds'), 'kind': kind,
-                            'sim_t': round(rosview.watcher().now(), 1), **kw}, default=str) + '\n')
+                            'sim_t': sim_t, **kw}, default=str) + '\n')
 
 
 def jdump(o):
@@ -301,8 +313,10 @@ def sim_status():
 async def smoke_test(ctx: Context, launch: str = 'tunnel_reverse.launch.py', args: str = '',
                      seconds: float = 150.0, keep_running: bool = False):
     """Pass/fail gate after any change, before longer runs: launch, then within `seconds` of sim time
-    check robot spawned + TF, /map, Nav2 planned, drove >= 1.5 m, no node died, no rotation event.
-    Returns the verdict, metrics, map and a Gazebo screenshot. Stops the sim unless keep_running."""
+    check robot spawned + TF, /map, Nav2 planned, drove >= 1.5 m, no node died. Rotation events,
+    large deviation, stalls and plans through unknown are warnings, not failures (the start-up
+    U-turn of tunnel_reverse counts as a rotation event). Returns the verdict, metrics, map and a
+    Gazebo screenshot. Stops the sim unless keep_running."""
     ok, msg = await _start(ctx, launch, args, 'explorer_exploration', 'smoke', True)
     w = rosview.watcher()
     t0 = w.now()
@@ -454,8 +468,11 @@ async def set_params(node: str, params: dict, note: str = ''):
                 v = yaml.safe_load(v)
             except Exception:
                 pass
-        val = json.dumps(v) if not isinstance(v, str) else v
         old = await _sh(['ros2', 'param', 'get', node, k], 10)
+        # MCP clients send 0.0 as the JSON number 0; ROS refuses an integer for a double parameter
+        if 'Double value is' in old and isinstance(v, int) and not isinstance(v, bool):
+            v = float(v)
+        val = json.dumps(v) if not isinstance(v, str) else v
         r = await _sh(['ros2', 'param', 'set', node, k, val], 15)
         res[k] = {'old': old.split('\n', 1)[-1].strip(), 'new': v, 'result': r.split('\n', 1)[-1].strip()}
     journal('set_params', node=node, params=res, note=note)
@@ -626,7 +643,13 @@ def _tile(frames, max_width=1600, label_color=(255, 255, 0)):
     sheet = PILImage.new('RGB', (tw * cols, th * rows), 'white')
     for k, (img, lab) in enumerate(frames):
         tile = img.convert('RGB').resize((tw, th), PILImage.LANCZOS)
-        ImageDraw.Draw(tile).text((8, 8), f'#{k + 1}  {lab}', fill=label_color)
+        d = ImageDraw.Draw(tile)
+        text = f'#{k + 1}  {lab}'
+        # contrasting box: yellow on RViz's light toolbar was unreadable
+        box = d.textbbox((8, 8), text)
+        d.rectangle((box[0] - 4, box[1] - 3, box[2] + 4, box[3] + 3),
+                    fill='white' if sum(label_color) < 300 else 'black')
+        d.text((8, 8), text, fill=label_color)
         sheet.paste(tile, ((k % cols) * tw, (k // cols) * th))
     buf = io.BytesIO()
     sheet.save(buf, 'JPEG', quality=80)
@@ -663,20 +686,30 @@ async def record_gif(target: str = 'gazebo', seconds: float = 10.0, fps: float =
     for the user and the docs when a still does not show the behaviour (oscillation, wedge, U-turn).
     Returns a tiled sheet of 9 evenly spaced frames (Claude sees stills, not animation)."""
     n = max(2, min(int(seconds * fps), 240))
-    frames = []
+    frames, wall = [], []
+    t_end = time.time() + seconds
     for i in range(n):
         t0 = time.time()
+        if i and t0 >= t_end:
+            break
         img, _, _ = await anyio.to_thread.run_sync(x11win.capture, target, False)
+        wall.append(t0)
         s = width / img.width
         frames.append((img.resize((width, round(img.height * s)), PILImage.LANCZOS),
                        f't={rosview.watcher().now():.1f}s'))
         await asyncio.sleep(max(0.0, 1.0 / fps - (time.time() - t0)))
+    # real frame spacing (capture can be slower than 1/fps in the server process), so the GIF
+    # plays at real speed instead of fast-forwarding
+    dur = [int(1000 * (b - a)) for a, b in zip(wall, wall[1:])]
+    dur.append(dur[-1] if dur else int(1000 / fps))
+    span = wall[-1] - wall[0] + dur[-1] / 1000
     path = os.path.join(run_dir(), f'gif_{re.sub(r"[^A-Za-z0-9]+", "_", target)}_{stamp()}.gif')
     pal = [f.convert('P', palette=PILImage.ADAPTIVE, colors=128) for f, _ in frames]
-    pal[0].save(path, save_all=True, append_images=pal[1:], duration=int(1000 / fps), loop=0, optimize=True)
+    pal[0].save(path, save_all=True, append_images=pal[1:], duration=dur, loop=0, optimize=True)
     sheet = _tile(_pick(frames))
     return [Image(data=sheet, format='jpeg'),
-            f'GIF {n} frames @ {fps} fps, {os.path.getsize(path) // 1024} KB: {path}']
+            f'GIF {len(frames)} frames over {span:.1f} s wall ({len(frames) / span:.1f} fps real time), '
+            f'{os.path.getsize(path) // 1024} KB: {path}']
 
 
 @mcp.tool()

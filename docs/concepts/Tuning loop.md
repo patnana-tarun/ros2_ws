@@ -61,6 +61,14 @@ Stop rules of [[Full comparison 2026-10-19]]: start at the first `/plan`; stop a
 ≥ 75 % with < 0.5 m² gained in 180 s, the cap (40 min), exploration complete, or the launch dying.
 Arms run interleaved. Each run writes `launch.log`, `summary.json`, `track.npz`, `trajectory.png`;
 the experiment writes `comparison.md`, `comparison.png` and `comparison_trajectories.png`.
+A run whose sim time stands still for 30 s of wall time (Gazebo paused or closed) ends as
+`sim_stopped`, its folder is renamed `<tag>_void_sim_stopped` and the run is repeated; it does not
+count (checked with a forced 40 s pause, [[2026-10-21]]).
+
+## Live parameters
+`set_params` records old and new values in the run's `journal.jsonl`. The Claude Code client sends
+a whole-number float such as `0.0` as the integer `0`, which ROS refuses for a double parameter;
+the server converts it when the parameter is a double (since [[2026-10-21]]).
 
 ## Windows and pictures
 Gazebo and RViz are native Qt/OpenGL windows, so browser tools (Playwright, Chrome DevTools)
@@ -68,6 +76,13 @@ cannot reach them. The server reads the window pixels through X11 (works while t
 covered) and sends clicks, drags, wheel and keys through XTEST (raises the window and moves the real
 mouse). Window aliases `gazebo` / `rviz` match the exact titles (`Gazebo Sim`, `… - RViz`). The
 Gazebo camera is moved through its GUI services (`/gui/follow`, `/gui/move_to/pose`).
+
+Launches built on `bringup.launch.py` open two RViz windows: the Nav2 view
+(`nav2_default_view.rviz`) and `explorer.rviz`, because bringup's `rviz:=true` also reaches the
+included `explorer_gazebo.launch.py`. The `rviz` alias takes the larger one (the Nav2 view); the
+other is reached by its id from `list_windows`. The Nav2 view starts centred near the origin, so
+the robot can sit behind the side panel: wheel (`scroll`, zoom) and middle-drag (`drag`, pan) move
+it (both checked [[2026-10-21]]).
 
 When a still can't show the behaviour, `map_gif` animates the track growing on the map and
 `record_gif` records a window (follow the robot with `gz_camera` first, or it is a few pixels).
