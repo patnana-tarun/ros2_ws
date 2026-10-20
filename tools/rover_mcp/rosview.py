@@ -101,6 +101,7 @@ class Watcher(Node):
             # diagnostic only (not a metric): for plans with points on -1 costmap cells, how many were
             # outside the costmap bounds vs unknown inside it, and how old our costmap copy was
             self.plan_unknown_detail = []
+            self.unknown_recheck = []   # [(index in plan_unknown_detail, pts)] waiting for a newer costmap
             self.costmap_t = None
             self.goals = []
             self.ctrl_log = []
@@ -176,6 +177,10 @@ class Watcher(Node):
         with self.lock:
             self.costmap = m
             self.costmap_t = self.now()
+            for k, pts in self.unknown_recheck:      # same plan against the next costmap
+                unk, _ = self.path_space(pts)
+                self.plan_unknown_detail[k] = self.plan_unknown_detail[k] + (int(round(unk * len(pts))),)
+            self.unknown_recheck = []
 
     def on_odom(self, m):
         self._hit('/odom')
@@ -240,6 +245,7 @@ class Watcher(Node):
                 self.plans.append((self.now(), L, unk, leth))
                 if unk > 0:
                     self.plan_unknown_detail.append(self._unknown_detail(pts))
+                    self.unknown_recheck.append((len(self.plan_unknown_detail) - 1, pts))
 
     def on_plan(self, m):
         self._on_path(m, 'plan')
@@ -495,8 +501,9 @@ class Watcher(Node):
             out['cov'] = np.array(list(self.cov), float).reshape(-1, 4)
             out['plans'] = np.array(list(self.plans), float).reshape(-1, 4)
             # (t, points out of costmap bounds, unknown points inside, last point bad, first bad index,
-            #  points, costmap age s)
-            out['plan_unknown_detail'] = np.array(self.plan_unknown_detail, float).reshape(-1, 7)
+            #  points, costmap age s, -1 points against the NEXT costmap (-1 = none arrived))
+            out['plan_unknown_detail'] = np.array([r + (-1,) * (8 - len(r)) for r in self.plan_unknown_detail],
+                                                  float).reshape(-1, 8)
             out['goal_events'] = np.array([f'{t:.1f}|{k}|{m}' for t, k, m in self.events])
             return out
 

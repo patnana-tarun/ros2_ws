@@ -23,7 +23,6 @@ def generate_launch_description():
     retrace_controller = LaunchConfiguration('retrace_controller')
     publish_explored_map = LaunchConfiguration('publish_explored_map')
     heading_weight = LaunchConfiguration('heading_weight')
-    goal_clearance = LaunchConfiguration('goal_clearance')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
@@ -57,8 +56,6 @@ def generate_launch_description():
         DeclareLaunchArgument('publish_explored_map', default_value='false'),
         # Score penalty for frontiers behind the robot (0 = off). See frontier_tad_node.py.
         DeclareLaunchArgument('heading_weight', default_value='0.0'),
-        # Move goals off the walls to a cell with this clearance (m, 0 = off). See frontier_tad_node.py.
-        DeclareLaunchArgument('goal_clearance', default_value='0.0'),
 
         Node(
             package='explorer_exploration',
@@ -78,7 +75,6 @@ def generate_launch_description():
                 'selection_mode': ParameterValue(selection_mode, value_type=str),
                 'publish_explored_map': ParameterValue(publish_explored_map, value_type=bool),
                 'heading_weight': ParameterValue(heading_weight, value_type=float),
-                'goal_clearance': ParameterValue(goal_clearance, value_type=float),
             }],
         ),
         Node(

@@ -104,15 +104,6 @@ class FrontierTADNode(Node):
         # it, backed out of that dead end and turned round again within a minute: a >= 300 deg
         # rotation event at every start-up (nav-speed, 2026-10-21).
         self.declare_parameter('heading_weight', 0.0)
-        # goal_clearance (m, 0 = off): a frontier cell nearer a wall than this is not sent as the goal
-        # itself; the goal moves to the nearest reachable cell within goal_shift_max that has this
-        # clearance and a clear line of sight to the frontier cell (the LiDAR still sees past the
-        # frontier from there). Frontier cells hug the walls at tunnel ends: with the planner's
-        # robot_radius 0.22 every failed goal of a run was one with < 0.22 m clearance (5 of 10 such
-        # goals failed, 454 s spent on them; Nav2's Spin recovery then turned the robot in the
-        # tunnel, nav-speed 2026-10-21).
-        self.declare_parameter('goal_clearance', 0.0)
-        self.declare_parameter('goal_shift_max', 1.0)
         self.declare_parameter('heading_lookahead', 0.6)
 
         self.w_d = self.get_parameter('w_distance').value
@@ -133,8 +124,6 @@ class FrontierTADNode(Node):
         self.w_h = self.get_parameter('heading_weight').value
         self.h_look = self.get_parameter('heading_lookahead').value
         self.robot_yaw = None
-        self.goal_clear = self.get_parameter('goal_clearance').value
-        self.shift_max = self.get_parameter('goal_shift_max').value
         self.last_clear_xy = None   # where the blacklist was last cleared (see 'all blacklisted')
         self.blacklist = []     # (x, y, time added)
         # publish_explored_map: also publish /map with the ray gaps filled (the same cells this
@@ -268,11 +257,6 @@ class FrontierTADNode(Node):
         if self.selection_mode == 'dfs':
             travel = self.travel_distances(free, obstacle, rrow, rcol, resolution)
 
-        safe = None
-        if self.goal_clear > 0.0 and travel is not None:
-            clearance = ndimage.distance_transform_edt(~obstacle) * resolution
-            safe = free & np.isfinite(travel) & (clearance >= self.goal_clear)
-
         candidates = []
         n_blacklisted = 0
         for cluster_id in range(1, num_clusters + 1):
@@ -324,10 +308,7 @@ class FrontierTADNode(Node):
                 k = np.argmin(np.hypot(xs[ok] - centroid_col, ys[ok] - centroid_row))
                 gx = origin_x + xs[ok][k] * resolution
                 gy = origin_y + ys[ok][k] * resolution
-            fx, fy = gx, gy
-            if safe is not None and np.isfinite(travel_n):
-                gx, gy = self.safe_goal(gx, gy, safe, free, origin_x, origin_y, resolution)
-            if self.blacklisted(gx, gy) or self.blacklisted(fx, fy) or self.blacklisted(wx, wy):
+            if self.blacklisted(gx, gy) or self.blacklisted(wx, wy):
                 n_blacklisted += 1
                 continue
             if self.selection_mode == 'dfs' and a_n < self.min_pocket:
@@ -439,27 +420,6 @@ class FrontierTADNode(Node):
         near = ndimage.grey_erosion(np.where(np.isfinite(dist), dist, 1e9), size=(3, 3)) + resolution
         dist = np.where(np.isfinite(dist), dist, np.where(near < 1e8, near, np.inf))
         return dist
-
-    def safe_goal(self, gx, gy, safe, free, origin_x, origin_y, resolution):
-        """Nearest cell to (gx, gy) within goal_shift_max that is in `safe` and sees (gx, gy) over
-        free cells; (gx, gy) itself if it is safe or no such cell exists."""
-        h, w = safe.shape
-        r0, c0 = int(round((gy - origin_y) / resolution)), int(round((gx - origin_x) / resolution))
-        if not (0 <= r0 < h and 0 <= c0 < w) or safe[r0, c0]:
-            return gx, gy
-        k = int(self.shift_max / resolution)
-        rs, cs = np.nonzero(safe[max(r0 - k, 0):r0 + k + 1, max(c0 - k, 0):c0 + k + 1])
-        rs, cs = rs + max(r0 - k, 0), cs + max(c0 - k, 0)
-        d = np.hypot(rs - r0, cs - c0)
-        for i in np.argsort(d):
-            if d[i] > k:
-                break
-            n = int(np.ceil(d[i] * 2)) + 1
-            lr = np.round(np.linspace(rs[i], r0, n)).astype(int)
-            lc = np.round(np.linspace(cs[i], c0, n)).astype(int)
-            if free[lr, lc].all():
-                return origin_x + cs[i] * resolution, origin_y + rs[i] * resolution
-        return gx, gy
 
     def path_turn(self, gx, gy, origin_x, origin_y, resolution, width):
         """Angle (rad) between the robot's heading and the first heading_lookahead m of the

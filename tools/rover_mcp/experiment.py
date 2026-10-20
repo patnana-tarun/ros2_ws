@@ -12,6 +12,8 @@ Spec:
     arms:
       trr:  {launch: tunnel_reverse.launch.py, args: ""}
       demo: {launch: bringup.launch.py, args: "params_file:=... bt_xml:=explore_nav_to_pose_demo.xml"}
+      old:  {launch: tunnel_reverse.launch.py, overlay: /path/to/other_ws/install}   # source this
+            # install space first (e.g. an older commit built in a git worktree) to run its code
 
 Protocol as the 2026-10-18..20 comparisons: GUI runs; a run starts at the first /plan and stops at
 the first of 90 % true-floor coverage ('reached_90'), >= 75 % with < 0.5 m2 gained in 180 s
@@ -21,6 +23,7 @@ map, coverage curve, goal events) and trajectory.png. At the end: comparison.md 
 """
 import json
 import math
+import shlex
 import os
 import signal
 import sys
@@ -58,6 +61,9 @@ def one_run(w, spec, arm, tag, out, idx, total, done):
         (spec.get('common_args', '') + ' ' + a.get('args', '')).split()
     log = os.path.join(rd, 'launch.log')
     w.reset(launch_log=log)
+    if a.get('overlay'):
+        argv = ['bash', '-c', f'source {shlex.quote(os.path.join(a["overlay"], "setup.bash"))} && exec '
+                + ' '.join(shlex.quote(x) for x in argv)]
     p = simproc.start(argv, log)
     w0 = time.time()
     print(f'{tag}: start {time.strftime("%H:%M:%S")}  {" ".join(argv)}', flush=True)
