@@ -73,6 +73,34 @@ pre-check, `/map`, `skid_track:=0.43`), 3 GUI runs on 2026-10-20 under the same 
 - **The remaining extra comes from the 0.34 track width.** It is also the source of the
   accuracy gain. The trade-off is now in one place: how the robot turns.
 
+## Gentler turning in the navigation config (tested, rejected)
+The aim was to keep the kept version's accuracy without a modified sim robot: track back to 0.43,
+turning limited in MPPI (`az_max`), the velocity smoother and the behaviour server together.
+`config/nav2_params_turn_mild.yaml` halves the turn acceleration (2.0 → 1.0 rad/s²).
+`config/nav2_params_turn_strong.yaml` quarters it (0.5 rad/s²) and lowers the top turn rate to
+0.45 rad/s. 3 GUI runs each, interleaved with 3 fresh runs of the kept version (track 0.34).
+
+| | kept version (0.34) | all fixes at 0.43 | mild | strong |
+|---|---|---|---|---|
+| Spins per run | **0** (0/0/0) | 3.3 | 49 (62/43/43) | 46 (39/42/56) |
+| Start-up turning | **43°** | 142° | 486° | 181° |
+| Large open-area deviations | **0.9 %** | 7.6 % | 24 % | 26 % |
+| Heading p90, B–E tunnel | **13°** | 25° | 33° | 41° |
+| Time stuck | 31 % | 21 % | **9 %** | 36 % |
+| Reached 90 % | 2 of 3 | 2 of 3 | **3 of 3** | 2 of 3 |
+
+![[turning.png]]
+
+- **Limiting turn acceleration makes spinning far worse.** It delays the robot's response to
+  each command. A controller that corrects 15 times a second then keeps over-correcting, and the
+  robot circles (486° before leaving the start in the mild runs).
+- **The kept version reproduces exactly** on a second day (0 spins, 43°, 0.9 %), so its
+  behaviour is stable, not luck.
+- So the 0.34 track can't be acting as a slower response. It must act as a *smaller* response
+  per command. Not yet measured directly (a step-response test at 0.34 vs 0.43 would show it).
+- Mild had the least stuck time (9 %) and reached 90 % in all 3 runs, but with 49 spins per run
+  it fails the path-accuracy priority.
+
 ## Open
 - Can path accuracy be kept without the hesitation? For example a track width between 0.34 and
   0.43, or limiting the robot's turn acceleration in the velocity smoother instead, so the
