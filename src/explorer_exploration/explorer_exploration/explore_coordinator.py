@@ -25,8 +25,11 @@ goal the planner already refuses. Smac Lattice refuses goals the real footprint 
 
 Retrace (retrace_distance, 0 = off; user's idea, 2026-10-20): when the robot gets stuck in a tight
 passage, it backs out along its own recorded track (known to be free: it just drove it) instead
-of waiting for a controller that may stand still there. Triggered by a stall give-up, or by
-retrace_after_fails failed goals in a row without the robot moving 0.5 m. With
+of waiting for a controller that may stand still there. Triggered by a stall give-up in which the
+robot moved less than retrace_max_moved (really stuck, not creeping: 2026-10-20 a run backed out
+of every slow squeeze and undid its own progress for 36 min), or by retrace_after_fails failed
+goals in a row without the robot moving 0.5 m. Loop guard: no second retrace starting within
+0.5 m of the last one for 300 s. With
 retrace_controller set (e.g. FollowPathReverse) it only runs while /controller_selector names
 that controller, i.e. in tunnels. Commands go to /cmd_vel_nav like manual_drive, so the velocity
 smoother and the collision monitor still apply. It stops after retrace_distance along the
@@ -98,10 +101,13 @@ class ExploreCoordinator(Node):
         self.declare_parameter('retrace_timeout', 30.0)
         self.declare_parameter('retrace_after_fails', 2)
         self.declare_parameter('retrace_controller', '')
+        self.declare_parameter('retrace_max_moved', 0.1)
         g = lambda n: self.get_parameter(n).value
         self.retrace_dist, self.retrace_speed = g('retrace_distance'), g('retrace_speed')
         self.retrace_timeout, self.retrace_after = g('retrace_timeout'), g('retrace_after_fails')
-        self.retrace_ctrl = g('retrace_controller')
+        self.retrace_ctrl, self.retrace_max_moved = g('retrace_controller'), g('retrace_max_moved')
+        self.last_retrace = None    # (t, x, y) where the last retrace started (loop guard)
+        self.stall_moved = None
         self.crumbs = []            # (x, y) every 5 cm the robot drove, newest last
         self.retrace = None         # active retrace: dict, see start_retrace()
         self.fail_count, self.fail_spot = 0, None
@@ -185,6 +191,7 @@ class ExploreCoordinator(Node):
                     self.get_logger().warn(
                         f'No progress: moved {moved:.2f} m in {self.stall_timeout:.0f} s - cancelling it')
                     self.stalled = True
+                    self.stall_moved = moved
                     self.give_up()
 
     def give_up(self):
@@ -204,6 +211,7 @@ class ExploreCoordinator(Node):
         self.goal = msg
         self.timed_out = False
         self.stalled = False
+        self.stall_moved = None
         if self.precheck and self.plan_client.server_is_ready():
             req = ComputePathToPose.Goal()
             req.goal = msg
@@ -298,11 +306,17 @@ class ExploreCoordinator(Node):
         if self.fail_spot is None or math.hypot(p[0] - self.fail_spot[0], p[1] - self.fail_spot[1]) > 0.5:
             self.fail_count, self.fail_spot = 0, p[:2]
         self.fail_count += 1
-        if not (stalled or self.fail_count >= self.retrace_after):
+        stuck = stalled and self.stall_moved is not None and self.stall_moved < self.retrace_max_moved
+        if not (stuck or self.fail_count >= self.retrace_after):
             return False
         if self.retrace_ctrl and self.controller != self.retrace_ctrl:
             return False
-        return self.start_retrace(p, 'stalled' if stalled else f'{self.fail_count} failed goals here')
+        now = self.get_clock().now().nanoseconds / 1e9
+        if (self.last_retrace is not None and now - self.last_retrace[0] < 300.0 and
+                math.hypot(p[0] - self.last_retrace[1], p[1] - self.last_retrace[2]) < 0.5):
+            self.get_logger().info('Stuck again where the last retrace started - not retracing again')
+            return False
+        return self.start_retrace(p, f'moved {self.stall_moved:.2f} m' if stuck else f'{self.fail_count} failed goals here')
 
     def start_retrace(self, p, why):
         # walk back along the crumbs (newest first) until retrace_distance of track is covered
@@ -321,6 +335,7 @@ class ExploreCoordinator(Node):
         sign = -1.0 if math.cos(a) < 0.0 else 1.0
         now = self.get_clock().now().nanoseconds / 1e9
         self.retrace = {'pts': pts, 'i': 0, 'sign': sign, 't0': now, 'moved_t': now, 'moved_p': p[:2]}
+        self.last_retrace = (now, p[0], p[1])
         self.fail_count, self.fail_spot = 0, None
         self.get_logger().warn(f'Stuck ({why}) - retracing {run:.1f} m of own track '
                                f'{"backwards" if sign < 0 else "forwards"}')
