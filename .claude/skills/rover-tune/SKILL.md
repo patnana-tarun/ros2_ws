@@ -37,8 +37,8 @@ as the report (`validate.py`). If the tools are not loaded, run the same calls f
 - Never pause Gazebo during a run you need: > ~4 s kills Nav2 (lifecycle bond on wall time).
 - Read the memory note `nav-lessons` before analysing: retrace windows are excluded from tracking
   metrics, `stuck_after_most` is not "wedged", report per-run ranges, not one mean.
-- Never commit `build/`, `install/`, `log/`, `tools/rover_mcp/runs/`; `build` restores the tracked
-  `__pycache__` files itself.
+- `build/`, `install/`, `log/`, `__pycache__/`, `tools/rover_mcp/runs/` and
+  `docs/demo_runs_2026-10-19/` are git-ignored (since 2026-10-21); never force-add them.
 
 ## Alert -> first suspects
 | Alert / symptom | Check first | Note |

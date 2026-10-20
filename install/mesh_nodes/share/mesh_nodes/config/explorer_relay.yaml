@@ -1,9 +1,0 @@
-# Parameters for explorer_relay_node. Defaults match the values hard-coded in the node.
-explorer_relay_node:
-  ros__parameters:
-    # 0 = forward each /map as it arrives (SLAM publishes every 3 s, map_update_interval).
-    # > 0 = publish the latest /map on this period instead.
-    map_publish_period_sec: 0.0
-    # 1 of every tf_decimation /tf messages (per tf source) is forwarded. 3: the robot uses /tf
-    # at full rate, the mesh gets a third of it.
-    tf_decimation: 3

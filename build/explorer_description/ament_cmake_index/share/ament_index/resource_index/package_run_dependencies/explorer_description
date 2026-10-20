@@ -1,1 +1,0 @@
-xacro;robot_state_publisher;ros_gz_sim;ros_gz_bridge;rviz2;robot_localization;launch;launch_ros

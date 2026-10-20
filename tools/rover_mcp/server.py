@@ -229,8 +229,6 @@ async def build(packages: str = 'explorer_exploration'):
     """colcon build --packages-select <packages> (space-separated) in the workspace. Needed after editing
     YAML/launch/Python in src/ (no symlink install): a running sim keeps the old files until restarted."""
     out = await _sh(['colcon', 'build', '--packages-select'] + packages.split(), 900, cwd=WS)
-    # the build touches tracked __pycache__/*.pyc files; restore them so they never get committed
-    await _sh(['git', '-C', WS, 'checkout', '--', 'src/explorer_exploration/explorer_exploration/__pycache__/'], 10)
     journal('build', packages=packages, ok=out.startswith('exit 0'))
     st = await anyio.to_thread.run_sync(_stale_installs)
     return out[-3000:] + f'\nsrc files still differing from install/: {st[:20] or "none"}'
