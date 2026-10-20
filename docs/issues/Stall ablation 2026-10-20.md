@@ -54,10 +54,26 @@ Mean, with per-run values in brackets.
   to the committed one, unchanged since 2026-10-06), and timing (RTF 1.000 and 13–14.5
   controller commands/s in every run).
 
+## Control: "before" rerun today
+The tuned setup of 2026-10-19 (`nav2_params_tunnel.yaml`, smoothing BT, 30 s give-up, no
+pre-check, `/map`, `skid_track:=0.43`), 3 GUI runs on 2026-10-20 under the same protocol.
+
+| | before 10-19 | **before rerun 10-20** | C: all fixes at 0.43 | demo v2 (0.34) |
+|---|---|---|---|---|
+| Time stuck | 7 % (12/3/8) | **17 %** (22/9/19) | 21 % (30/14/18) | 33 % (22/30/49) |
+| Goal success | 59 % | 36 % | 43 % | 39 % |
+| Spins per run | 2.7 | 3.7 | 3.3 | **0** |
+| Start-up turning | 214° | 185° | 142° | **41°** |
+| Large open-area deviations | 7.1 % | 7.4 % | 7.6 % | **3.2 %** |
+
+- **The planner fixes cost no stuck time.** The rerun and C, which has every planner fix
+  (explored-space planning, 0.5 m hand-over, pre-check), are indistinguishable (p = 1.00).
+- **The 10-19 "before" runs were on the low side.** Part of the 7 % → 33 % gap was run-to-run
+  spread.
+- **The remaining extra comes from the 0.34 track width.** It is also the source of the
+  accuracy gain. The trade-off is now in one place: how the robot turns.
+
 ## Open
-- Is "before" still 3–12 % stuck when rerun today? It was run on 2026-10-19 with the code of that
-  time. If it reproduces, the remaining stall excess at 0.43 (C: 21 %) comes from a combination of
-  the planner changes, and needs undoing pairs at 0.43.
 - Can path accuracy be kept without the hesitation? For example a track width between 0.34 and
   0.43, or limiting the robot's turn acceleration in the velocity smoother instead, so the
   damping is explicit in the configuration rather than hidden in the sim model.
