@@ -48,6 +48,9 @@ def generate_launch_description():
                 # stuck in a tunnel: back out 1 m along the own track (known free)
                 'retrace_distance': '1.0',
                 'retrace_controller': 'FollowPathReverse',
+                # nav-speed: a frontier behind the robot must be worth a U-turn; without it every
+                # start-up was two U-turns within a minute (a >= 300 deg rotation event)
+                'heading_weight': '1.0',
             }.items(),
         ),
         Node(

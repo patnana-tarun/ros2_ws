@@ -98,6 +98,10 @@ class Watcher(Node):
             self.rosout = collections.deque(maxlen=10000)
             self.events = []
             self.plans = collections.deque(maxlen=5000)
+            # diagnostic only (not a metric): for plans with points on -1 costmap cells, how many were
+            # outside the costmap bounds vs unknown inside it, and how old our costmap copy was
+            self.plan_unknown_detail = []
+            self.costmap_t = None
             self.goals = []
             self.ctrl_log = []
             self.cov = collections.deque(maxlen=20000)
@@ -171,6 +175,7 @@ class Watcher(Node):
     def on_global_costmap_costmap(self, m):
         with self.lock:
             self.costmap = m
+            self.costmap_t = self.now()
 
     def on_odom(self, m):
         self._hit('/odom')
@@ -233,12 +238,27 @@ class Watcher(Node):
                 L = float(np.linalg.norm(np.diff(pts, axis=0), axis=1).sum())
                 unk, leth = self.path_space(pts)
                 self.plans.append((self.now(), L, unk, leth))
+                if unk > 0:
+                    self.plan_unknown_detail.append(self._unknown_detail(pts))
 
     def on_plan(self, m):
         self._on_path(m, 'plan')
 
     def on_plan_smoothed(self, m):
         self._on_path(m, 'plan_smoothed')
+
+    def _unknown_detail(self, pts):
+        c = self.costmap
+        g = _grid(c)
+        res, ox, oy = c.info.resolution, c.info.origin.position.x, c.info.origin.position.y
+        j = np.floor((pts[:, 0] - ox) / res).astype(int)
+        i = np.floor((pts[:, 1] - oy) / res).astype(int)
+        ok = (i >= 0) & (i < g.shape[0]) & (j >= 0) & (j < g.shape[1])
+        inb = np.zeros(len(pts), bool)
+        inb[ok] = g[i[ok], j[ok]] < 0
+        bad = inb | ~ok
+        return (self.now(), int((~ok).sum()), int(inb.sum()), int(bad[-1]), int(np.nonzero(bad)[0][0]), len(pts),
+                round(self.now() - self.costmap_t, 2) if self.costmap_t is not None else -1.0)
 
     def path_space(self, pts):
         c = self.costmap
@@ -474,6 +494,9 @@ class Watcher(Node):
             out['ctrl'] = np.array([s['ctrl'] or '' for s in self.samples])
             out['cov'] = np.array(list(self.cov), float).reshape(-1, 4)
             out['plans'] = np.array(list(self.plans), float).reshape(-1, 4)
+            # (t, points out of costmap bounds, unknown points inside, last point bad, first bad index,
+            #  points, costmap age s)
+            out['plan_unknown_detail'] = np.array(self.plan_unknown_detail, float).reshape(-1, 7)
             out['goal_events'] = np.array([f'{t:.1f}|{k}|{m}' for t, k, m in self.events])
             return out
 

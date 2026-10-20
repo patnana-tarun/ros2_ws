@@ -469,11 +469,16 @@ async def set_params(node: str, params: dict, note: str = ''):
             except Exception:
                 pass
         old = await _sh(['ros2', 'param', 'get', node, k], 10)
+        if 'Node not found' in old:     # a fresh ros2 CLI can miss the node on first discovery
+            old = await _sh(['ros2', 'param', 'get', node, k], 10)
         # MCP clients send 0.0 as the JSON number 0; ROS refuses an integer for a double parameter
         if 'Double value is' in old and isinstance(v, int) and not isinstance(v, bool):
             v = float(v)
         val = json.dumps(v) if not isinstance(v, str) else v
         r = await _sh(['ros2', 'param', 'set', node, k, val], 15)
+        if 'of type {double}' in r and isinstance(v, int) and not isinstance(v, bool):
+            v = float(v)               # type lookup failed above; the refusal names the type
+            r = await _sh(['ros2', 'param', 'set', node, k, json.dumps(v)], 15)
         res[k] = {'old': old.split('\n', 1)[-1].strip(), 'new': v, 'result': r.split('\n', 1)[-1].strip()}
     journal('set_params', node=node, params=res, note=note)
     return jdump(res)

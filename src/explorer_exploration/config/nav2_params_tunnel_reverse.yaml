@@ -167,12 +167,17 @@ controller_server:
       ax_min: -1.0
       ay_max: 0.0
       ay_min: 0.0
-      az_max: 2.0
+      # nav-speed (was 2.0): MPPI starts its rollouts at the MEASURED yaw rate, and the sim turns
+      # ~1.4x what is commanded. At 2.0 the rollouts could slow a turn by only 0.14 rad/s per step,
+      # so MPPI kept turning past the path after the shim's hand-over and swung +-30-40 deg
+      # (9 swings/min in a smoke test). 6.0 removes that inherited momentum; the velocity smoother
+      # still limits the real command to 2.0 rad/s^2. Probe 2026-10-21: 0 swings in 5.4 min.
+      az_max: 6.0
       vx_std: 0.1
       vy_std: 0.0
       wz_std: 0.2                     # tunnel candidate (was 0.3): less random turning in the samples
       vx_max: 0.2
-      vx_min: 0.0                     # tunnel-reverse: no reversing in open space, turn round instead (was -0.1)
+      vx_min: 0.0                    # tunnel-reverse: no reversing in open space, turn round instead (was -0.1)
       vy_max: 0.0
       wz_max: 0.6                     # the skid-steer tracks up to ~0.6 rad/s exactly
       iteration_count: 1

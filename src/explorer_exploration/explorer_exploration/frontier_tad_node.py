@@ -97,6 +97,23 @@ class FrontierTADNode(Node):
         # (explore_coordinator reports failures on /frontier_blacklist).
         self.declare_parameter('blacklist_radius', 0.5)
         self.declare_parameter('blacklist_duration', 300.0)
+        # heading_weight (0 = off): subtract heading_weight x |turn| / 180 deg from a frontier's score,
+        # where turn is the angle between the robot's heading and the first heading_lookahead metres
+        # of its free-space path to the frontier. A frontier behind the robot then has to be worth a
+        # U-turn. Without it the robot spawned facing east, turned round for a frontier 1.9 m behind
+        # it, backed out of that dead end and turned round again within a minute: a >= 300 deg
+        # rotation event at every start-up (nav-speed, 2026-10-21).
+        self.declare_parameter('heading_weight', 0.0)
+        # goal_clearance (m, 0 = off): a frontier cell nearer a wall than this is not sent as the goal
+        # itself; the goal moves to the nearest reachable cell within goal_shift_max that has this
+        # clearance and a clear line of sight to the frontier cell (the LiDAR still sees past the
+        # frontier from there). Frontier cells hug the walls at tunnel ends: with the planner's
+        # robot_radius 0.22 every failed goal of a run was one with < 0.22 m clearance (5 of 10 such
+        # goals failed, 454 s spent on them; Nav2's Spin recovery then turned the robot in the
+        # tunnel, nav-speed 2026-10-21).
+        self.declare_parameter('goal_clearance', 0.0)
+        self.declare_parameter('goal_shift_max', 1.0)
+        self.declare_parameter('heading_lookahead', 0.6)
 
         self.w_d = self.get_parameter('w_distance').value
         self.w_a = self.get_parameter('w_adjacency').value
@@ -113,6 +130,12 @@ class FrontierTADNode(Node):
         self.min_pocket = self.get_parameter('min_pocket_area').value
         self.bl_radius = self.get_parameter('blacklist_radius').value
         self.bl_duration = self.get_parameter('blacklist_duration').value
+        self.w_h = self.get_parameter('heading_weight').value
+        self.h_look = self.get_parameter('heading_lookahead').value
+        self.robot_yaw = None
+        self.goal_clear = self.get_parameter('goal_clearance').value
+        self.shift_max = self.get_parameter('goal_shift_max').value
+        self.last_clear_xy = None   # where the blacklist was last cleared (see 'all blacklisted')
         self.blacklist = []     # (x, y, time added)
         # publish_explored_map: also publish /map with the ray gaps filled (the same cells this
         # node treats as explored, see unknown_gap_fill), latched like /map. The demo config
@@ -159,6 +182,8 @@ class FrontierTADNode(Node):
     def get_robot_pose(self):
         try:
             t = self.tf_buffer.lookup_transform('map', self.robot_frame, Time())
+            q = t.transform.rotation
+            self.robot_yaw = np.arctan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
             return t.transform.translation.x, t.transform.translation.y
         except TransformException as ex:
             self.get_logger().warn(f'Could not get robot pose yet: {ex}')
@@ -243,7 +268,13 @@ class FrontierTADNode(Node):
         if self.selection_mode == 'dfs':
             travel = self.travel_distances(free, obstacle, rrow, rcol, resolution)
 
+        safe = None
+        if self.goal_clear > 0.0 and travel is not None:
+            clearance = ndimage.distance_transform_edt(~obstacle) * resolution
+            safe = free & np.isfinite(travel) & (clearance >= self.goal_clear)
+
         candidates = []
+        n_blacklisted = 0
         for cluster_id in range(1, num_clusters + 1):
             ys, xs = np.where(labeled == cluster_id)
             cell_count = len(xs)
@@ -293,16 +324,35 @@ class FrontierTADNode(Node):
                 k = np.argmin(np.hypot(xs[ok] - centroid_col, ys[ok] - centroid_row))
                 gx = origin_x + xs[ok][k] * resolution
                 gy = origin_y + ys[ok][k] * resolution
-            if self.blacklisted(gx, gy) or self.blacklisted(wx, wy):
+            fx, fy = gx, gy
+            if safe is not None and np.isfinite(travel_n):
+                gx, gy = self.safe_goal(gx, gy, safe, free, origin_x, origin_y, resolution)
+            if self.blacklisted(gx, gy) or self.blacklisted(fx, fy) or self.blacklisted(wx, wy):
+                n_blacklisted += 1
                 continue
             if self.selection_mode == 'dfs' and a_n < self.min_pocket:
                 continue    # LiDAR shadow behind a rock, not an opening
 
+            turn = 0.0
+            if self.w_h > 0.0 and travel is not None and np.isfinite(travel_n):
+                turn = self.path_turn(gx, gy, origin_x, origin_y, resolution, width)
             candidates.append({
                 'x': gx, 'y': gy, 'd': d_n, 'a': a_n, 't': t_n,
-                'cell_count': cell_count, 'travel': travel_n,
+                'cell_count': cell_count, 'travel': travel_n, 'turn': turn,
             })
 
+        if not candidates and n_blacklisted > 0:
+            # Every frontier left failed recently. That is not "explored": a run declared itself
+            # complete at 33 % after three stalls and two pre-check failures in a row
+            # (nav-speed baseline, 2026-10-21). Try them again once the robot has moved 1 m since
+            # the last clearing; until then wait for the blacklist to expire (clearing on every map
+            # update retried the same refused frontiers 17 times in a row).
+            if self.last_clear_xy is None or np.hypot(rx - self.last_clear_xy[0], ry - self.last_clear_xy[1]) > 1.0:
+                self.get_logger().warn(
+                    f'All {n_blacklisted} frontier clusters left are blacklisted - clearing the blacklist')
+                self.blacklist = []
+                self.last_clear_xy = (rx, ry)
+            return
         if not candidates:
             self.get_logger().info(
                 'No frontier clusters above min size - exploration complete')
@@ -325,6 +375,8 @@ class FrontierTADNode(Node):
             a_vals = normalize([c['a'] for c in candidates])
             t_vals = normalize([c['t'] for c in candidates])
             scores = self.w_d * d_vals + self.w_a * a_vals + self.w_t * t_vals
+        if self.w_h > 0.0:
+            scores = scores - self.w_h * np.abs([c['turn'] for c in candidates]) / np.pi
 
         # Which candidates may be chosen. TAD scores above are unchanged; 'dfs'
         # only restricts the choice to frontiers along the current branch.
@@ -346,7 +398,8 @@ class FrontierTADNode(Node):
 
         self.get_logger().info(
             f'Chose frontier at ({best["x"]:.2f}, {best["y"]:.2f}) '
-            f'score={scores[best_idx]:.2f} travel={best["travel"]:.1f} m, '
+            f'score={scores[best_idx]:.2f} travel={best["travel"]:.1f} m '
+            f'turn={np.degrees(best["turn"]):.0f} deg, '
             f'{int(eligible.sum())} of {len(candidates)} candidates eligible')
 
     def travel_distances(self, free, obstacle, rrow, rcol, resolution):
@@ -378,13 +431,66 @@ class FrontierTADNode(Node):
             wts.append(np.full(m.sum(), cost))
         graph = sparse.csr_matrix(
             (np.concatenate(wts), (np.concatenate(rows), np.concatenate(cols))), shape=(h * w, h * w))
-        dist = dijkstra(graph, directed=False, indices=start)
+        dist, self.pred = dijkstra(graph, directed=False, indices=start, return_predecessors=True)
+        self.pred_start = start
         # Frontier cells themselves may touch an obstacle: give them the distance
         # of their best passable neighbour plus one step.
         dist = dist.reshape(h, w) * resolution
         near = ndimage.grey_erosion(np.where(np.isfinite(dist), dist, 1e9), size=(3, 3)) + resolution
         dist = np.where(np.isfinite(dist), dist, np.where(near < 1e8, near, np.inf))
         return dist
+
+    def safe_goal(self, gx, gy, safe, free, origin_x, origin_y, resolution):
+        """Nearest cell to (gx, gy) within goal_shift_max that is in `safe` and sees (gx, gy) over
+        free cells; (gx, gy) itself if it is safe or no such cell exists."""
+        h, w = safe.shape
+        r0, c0 = int(round((gy - origin_y) / resolution)), int(round((gx - origin_x) / resolution))
+        if not (0 <= r0 < h and 0 <= c0 < w) or safe[r0, c0]:
+            return gx, gy
+        k = int(self.shift_max / resolution)
+        rs, cs = np.nonzero(safe[max(r0 - k, 0):r0 + k + 1, max(c0 - k, 0):c0 + k + 1])
+        rs, cs = rs + max(r0 - k, 0), cs + max(c0 - k, 0)
+        d = np.hypot(rs - r0, cs - c0)
+        for i in np.argsort(d):
+            if d[i] > k:
+                break
+            n = int(np.ceil(d[i] * 2)) + 1
+            lr = np.round(np.linspace(rs[i], r0, n)).astype(int)
+            lc = np.round(np.linspace(cs[i], c0, n)).astype(int)
+            if free[lr, lc].all():
+                return origin_x + cs[i] * resolution, origin_y + rs[i] * resolution
+        return gx, gy
+
+    def path_turn(self, gx, gy, origin_x, origin_y, resolution, width):
+        """Angle (rad) between the robot's heading and the first heading_lookahead m of the
+        shortest free-space path to the goal cell (Dijkstra predecessors from travel_distances)."""
+        if self.robot_yaw is None:
+            return 0.0
+        pred, start = self.pred, self.pred_start
+        r, c = int(round((gy - origin_y) / resolution)), int(round((gx - origin_x) / resolution))
+        node = r * width + c
+        if node != start and (node < 0 or node >= len(pred) or pred[node] < 0):
+            # goal cell not passable itself (it may touch an obstacle): use a passable neighbour
+            nb = [(r + dr) * width + c + dc for dr in (-1, 0, 1) for dc in (-1, 0, 1)]
+            nb = [n for n in nb if 0 <= n < len(pred) and (n == start or pred[n] >= 0)]
+            if not nb:
+                return 0.0
+            node = nb[0]
+        chain = []
+        while node != start and node >= 0 and len(chain) < 100000:
+            chain.append(node)
+            node = pred[node]
+        if not chain:
+            return 0.0
+        sr, sc = divmod(start, width)
+        tr, tc = divmod(chain[0], width)
+        for n in reversed(chain):           # from the robot outwards
+            nr, nc = divmod(n, width)
+            if np.hypot(nr - sr, nc - sc) * resolution >= self.h_look:
+                tr, tc = nr, nc
+                break
+        bearing = np.arctan2(tr - sr, tc - sc)
+        return float(np.arctan2(np.sin(bearing - self.robot_yaw), np.cos(bearing - self.robot_yaw)))
 
     def publish_goal(self, best):
         goal = PoseStamped()

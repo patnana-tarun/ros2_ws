@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""Gates table for full exploration runs (nav-speed task, 2026-10-21).
+
+    gates.py RUN_OR_EXPERIMENT_DIR [...]
+
+Per run (a folder with summary.json + track.npz): coverage at 17 and 25 min, time to 90 / 95 %,
+rotation events, stall episodes, stuck_pct, large_dev_pct and xte_p95 / hdev_p95 (all / tunnel /
+open), open-space reversing (track.npz: vx < -0.05 among samples with LiDAR width > 2.0 m, from the
+first /plan on), plans through unknown cells, and PASS/FAIL per Must gate. Reads only; the metric
+definitions stay in rosview.py.
+"""
+import glob
+import json
+import os
+import sys
+
+import numpy as np
+
+
+def cov_at(curve, s):
+    v = [pc for t, pc in curve if t <= s]
+    return v[-1] if v else None
+
+
+def t_to(curve, pct):
+    return next((t for t, pc in curve if pc >= pct), None)
+
+
+def run_row(rd):
+    s = json.load(open(os.path.join(rd, 'summary.json')))
+    m, curve = s['metrics'], s['coverage_curve']
+    tr = np.load(os.path.join(rd, 'track.npz'), allow_pickle=True)
+    t0 = tr['t'][-1] - s['duration_s']
+    k = tr['t'] >= t0
+    open_ = k & (tr['width'] > 2.0)
+    rev_open = 100.0 * float((open_ & (tr['vx'] < -0.05)).sum()) / max(1, int(open_.sum()))
+    t90, t95 = t_to(curve, 90), t_to(curve, 95)
+    r = {'run': os.path.basename(rd), 'stop': s['stop_reason'], 'min': round(s['duration_s'] / 60, 1),
+         'final': s['final_coverage_pct'], 'cov17': cov_at(curve, 1020), 'cov25': cov_at(curve, 1500),
+         't90_min': round(t90 / 60, 1) if t90 is not None else None,
+         't95_min': round(t95 / 60, 1) if t95 is not None else None,
+         'rot': m['rotation_events']['count'], 'stalls': m['stall_episodes']['count'],
+         'stuck': m['stuck_pct'], 'rev_open': round(rev_open, 1),
+         'unknown_plans': m['plans']['with_unknown_cells'], 'still': m['time_budget_pct'].get('still')}
+    for z in ('all', 'tunnel', 'open'):
+        tz = m.get('tracking_' + z) or {}
+        r[f'ld_{z}'], r[f'xte_{z}'], r[f'hdev_{z}'] = tz.get('large_dev_pct'), tz.get('xte_p95'), tz.get('hdev_p95')
+    r['g_cov'] = r['cov25'] is not None and r['cov25'] >= 90.0
+    r['g_rot'] = r['rot'] == 0
+    r['g_rev'] = r['rev_open'] <= 3.0
+    r['g_unk'] = r['unknown_plans'] == 0
+    r['g_stretch'] = r['cov17'] is not None and r['cov17'] >= 95.0
+    return r
+
+
+def main():
+    rows = []
+    for a in sys.argv[1:]:
+        dirs = [a] if os.path.exists(os.path.join(a, 'summary.json')) else \
+            sorted(d for d in glob.glob(os.path.join(a, '*')) if os.path.exists(os.path.join(d, 'summary.json')) and '_void_' not in d)
+        rows += [run_row(d) for d in dirs]
+    pf = lambda b: 'PASS' if b else 'FAIL'
+    hdr = ('run', 'stop', 'cov17', 'cov25', 't90', 't95', 'rot', 'stalls', 'stuck%', 'ld% all/tun/open',
+           'xte95 all/tun/open', 'hdev95 all/tun/open', 'rev_open%', 'unk', 'still%', 'Must cov/rot/rev/unk', 'stretch')
+    print('| ' + ' | '.join(hdr) + ' |')
+    print('|' + '---|' * len(hdr))
+    for r in rows:
+        f3 = lambda p: '/'.join('-' if r[f'{p}_{z}'] is None else f'{r[f"{p}_{z}"]:g}' for z in ('all', 'tunnel', 'open'))
+        print('| ' + ' | '.join(str(x) for x in (
+            r['run'], r['stop'], r['cov17'], r['cov25'], r['t90_min'], r['t95_min'], r['rot'], r['stalls'],
+            r['stuck'], f3('ld'), f3('xte'), f3('hdev'), r['rev_open'], r['unknown_plans'], r['still'],
+            '/'.join(pf(r[g]) for g in ('g_cov', 'g_rot', 'g_rev', 'g_unk')), pf(r['g_stretch']))) + ' |')
+    if '--json' in os.environ.get('GATES', ''):
+        print(json.dumps(rows, indent=1))
+
+
+if __name__ == '__main__':
+    main()
