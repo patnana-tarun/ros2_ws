@@ -5,7 +5,7 @@ tags: [issue]
 
 The user's idea, following [[Reverse-out 2026-10-20]]: reverse **only inside tunnels**. Once out
 in open space, where there is room, turn round and explore forward as usual instead of carrying
-on backwards. Branch `exp/tunnel-reverse` (1d68307, from tag `nav-reverse-v1`). Raw data:
+on backwards. Branch `exp/tunnel-reverse` (1d68307, from tag `nav-reverse-v1`; fixes e271dac, aa50154). Raw data:
 `~/tunnelrev_runs_2026-10-20/`. Figures, numbers and scripts: `assets/tunnel_reverse_2026-10-20/`.
 
 ## Set-up
@@ -23,7 +23,7 @@ Smoke tests (4 min): with forward-only `vx_min` −0.1, the open-space controlle
 `vx_min` 0.0 fixed that. After counting rotation as progress, the first goal (behind the robot)
 was reached after one U-turn, and coverage at 4 min went from 26 % to 33 %.
 
-## Results (3 GUI runs, same protocol: 90 %, stuck above 75 %, 40 min cap)
+## Round 1 results (3 GUI runs, same protocol: 90 %, stuck above 75 %, 40 min cap)
 | | reverse-out (n = 4) | **tunnel-reverse** run 1 | run 2 | run 3 |
 |---|---|---|---|---|
 | Reversing in open space (share of samples) | 25–36 % | **0 %** | **0 %** | **0.7 %** |
@@ -52,7 +52,7 @@ trapped tunnel-reverse.*
 ![[tr_tracking.png]]
 ![[tr_coverage.png]]
 
-## Reading
+## Round 1 reading
 - **It behaves as asked.** In open space the robot no longer drives backwards (0–0.7 % against
   25–36 % for reverse-out). It turns round and drives forward. It still reverses inside tunnels
   (11–14 %). No spins in any run. In tunnels, path tracking is the same as reverse-out's.
