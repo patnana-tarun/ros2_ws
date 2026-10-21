@@ -1,5 +1,5 @@
-"""Coverage ceiling: share of the true floor a LiDAR can see from poses a robot_radius-R planner can reach."""
-import glob, sys, numpy as np
+"""Coverage ceiling (nav-speed 2026-10-21; usage: ceiling.py RADIUS [OUT.npz]): share of the true floor a LiDAR can see from poses a robot_radius-R planner can reach."""
+import glob, os, sys, numpy as np
 from scipy import ndimage as ndi
 R = float(sys.argv[1]) if len(sys.argv) > 1 else 0.22
 f = np.load('/home/shadows/ros2_ws/docs/demo_runs_2026-10-19/field.npz')
@@ -25,7 +25,7 @@ for m in maps:
     occ_n += o; known_any |= k; per[m.split('/')[-1][:-8]] = k
 import json
 stal = np.zeros_like(F)
-for sx, sy, sh, sr in json.load(open('/tmp/claude-1000/-home-shadows-ros2-ws/44c7a986-c104-4e55-b575-d768f65f891c/scratchpad/stalagmites.json')): stal |= np.hypot(X - sx, Y - sy) < sr
+for sx, sy, sh, sr in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'stalagmites.json'))): stal |= np.hypot(X - sx, Y - sy) < sr
 O = ~F | rock | stal
 dist = ndi.distance_transform_edt(~O) * res
 free = dist > R
@@ -57,4 +57,4 @@ sz = ndi.sum(miss, lab2, range(1, n2 + 1)) * res**2
 for idx in np.argsort(sz)[::-1][:8]:
     cy, cx = ndi.center_of_mass(lab2 == idx + 1)
     print(f'  unseen blob {sz[idx]:.2f} m2 at ({x0+cx*res:.1f}, {y0+cy*res:.1f})')
-np.savez_compressed(sys.argv[2] if len(sys.argv) > 2 else '/tmp/claude-1000/-home-shadows-ros2-ws/44c7a986-c104-4e55-b575-d768f65f891c/scratchpad/ceiling.npz', seen=seen, reach=reach, F=F, O=O, known_any=known_any)
+np.savez_compressed(sys.argv[2] if len(sys.argv) > 2 else 'ceiling.npz', seen=seen, reach=reach, F=F, O=O, known_any=known_any)
