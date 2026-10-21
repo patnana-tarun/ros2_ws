@@ -6,7 +6,8 @@
 Per run (a folder with summary.json + track.npz): coverage at 17 and 25 min, time to 90 / 95 %,
 rotation events (path driven < 1 m; in brackets the old net-displacement count), stall episodes, stuck_pct, large_dev_pct and xte_p95 / hdev_p95 (all / tunnel /
 open), open-space reversing (track.npz: vx < -0.05 among samples with LiDAR width > 2.0 m, from the
-first /plan on), plans through unknown cells, and PASS/FAIL per Must gate. Reads only; the metric
+first /plan on), plans through unknown cells (still unknown in the next costmap; in brackets the raw
+count), and PASS/FAIL per Must gate. Reads only; the metric
 definitions stay in rosview.py.
 """
 import glob
@@ -49,6 +50,17 @@ def rotation_events(tr, t0):
     return out
 
 
+def unknown_plans(tr, m):
+    """(counted, raw): plans with points on unknown cells; counted = still unknown in the next costmap
+    or no later costmap (definition since 2026-10-21, from plan_unknown_detail column 7). Runs recorded
+    before that diagnostic existed fall back to the raw count."""
+    raw = m['plans']['with_unknown_cells_raw'] if 'with_unknown_cells_raw' in m['plans'] else m['plans']['with_unknown_cells']
+    d = tr['plan_unknown_detail'] if 'plan_unknown_detail' in tr.files else None
+    if d is None or (len(d) and d.shape[1] < 8):
+        return raw, raw
+    return int((d[:, 7] != 0).sum()) if len(d) else 0, raw
+
+
 def run_row(rd):
     s = json.load(open(os.path.join(rd, 'summary.json')))
     m, curve = s['metrics'], s['coverage_curve']
@@ -65,7 +77,8 @@ def run_row(rd):
          'rot': rotation_events(tr, t0)[0], 'rot_net': rotation_events(tr, t0)[1],
          'stalls': m['stall_episodes']['count'],
          'stuck': m['stuck_pct'], 'rev_open': round(rev_open, 1),
-         'unknown_plans': m['plans']['with_unknown_cells'], 'still': m['time_budget_pct'].get('still')}
+         'still': m['time_budget_pct'].get('still')}
+    r['unknown_plans'], r['unknown_plans_raw'] = unknown_plans(tr, m)
     for z in ('all', 'tunnel', 'open'):
         tz = m.get('tracking_' + z) or {}
         r[f'ld_{z}'], r[f'xte_{z}'], r[f'hdev_{z}'] = tz.get('large_dev_pct'), tz.get('xte_p95'), tz.get('hdev_p95')
@@ -85,14 +98,14 @@ def main():
         rows += [run_row(d) for d in dirs]
     pf = lambda b: 'PASS' if b else 'FAIL'
     hdr = ('run', 'stop', 'cov17', 'cov25', 't90', 't95', 'rot (net)', 'stalls', 'stuck%', 'ld% all/tun/open',
-           'xte95 all/tun/open', 'hdev95 all/tun/open', 'rev_open%', 'unk', 'still%', 'Must cov/rot/rev/unk', 'stretch')
+           'xte95 all/tun/open', 'hdev95 all/tun/open', 'rev_open%', 'unk (raw)', 'still%', 'Must cov/rot/rev/unk', 'stretch')
     print('| ' + ' | '.join(hdr) + ' |')
     print('|' + '---|' * len(hdr))
     for r in rows:
         f3 = lambda p: '/'.join('-' if r[f'{p}_{z}'] is None else f'{r[f"{p}_{z}"]:g}' for z in ('all', 'tunnel', 'open'))
         print('| ' + ' | '.join(str(x) for x in (
             r['run'], r['stop'], r['cov17'], r['cov25'], r['t90_min'], r['t95_min'], f"{r['rot']} ({r['rot_net']})", r['stalls'],
-            r['stuck'], f3('ld'), f3('xte'), f3('hdev'), r['rev_open'], r['unknown_plans'], r['still'],
+            r['stuck'], f3('ld'), f3('xte'), f3('hdev'), r['rev_open'], f"{r['unknown_plans']} ({r['unknown_plans_raw']})", r['still'],
             '/'.join(pf(r[g]) for g in ('g_cov', 'g_rot', 'g_rev', 'g_unk')), pf(r['g_stretch']))) + ' |')
     if '--json' in os.environ.get('GATES', ''):
         print(json.dumps(rows, indent=1))

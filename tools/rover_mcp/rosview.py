@@ -15,7 +15,10 @@ LiDAR left+right < 1.2 m, open > 2.0 m; tracking uses forward (vx > 0.05), not-s
 large deviation = xte > 0.10 m or |heading| > 30 deg; rotation event = >= 300 deg of turning
 within 60 s while the robot drives < 1 m (path length; user's decision 2026-10-21, was < 1 m net
 displacement: that also counted out-and-back trips into short pockets, which are not spinning;
-the old count stays as rotation_events_net).
+the old count stays as rotation_events_net); plan through unknown = a /plan point on a cell that is
+unknown in the global costmap AND still unknown in the next costmap we receive (user's decision
+2026-10-21: our 1 Hz copy lags the planner's by 1-2 s, so cells revealed just before planning looked
+unknown; a plan with no later costmap still counts; the old count stays as with_unknown_cells_raw).
 """
 import collections
 import io
@@ -104,7 +107,8 @@ class Watcher(Node):
             # diagnostic only (not a metric): for plans with points on -1 costmap cells, how many were
             # outside the costmap bounds vs unknown inside it, and how old our costmap copy was
             self.plan_unknown_detail = []
-            self.unknown_recheck = []   # [(index in plan_unknown_detail, pts)] waiting for a newer costmap
+            self.unknown_recheck = []   # [(index in plan_unknown_detail, pts, plan t)] waiting for a newer costmap
+            self.plan_persist = {}      # plan t -> its unknown points against the next costmap
             self.costmap_t = None
             self.goals = []
             self.ctrl_log = []
@@ -180,9 +184,11 @@ class Watcher(Node):
         with self.lock:
             self.costmap = m
             self.costmap_t = self.now()
-            for k, pts in self.unknown_recheck:      # same plan against the next costmap
+            for k, pts, tp in self.unknown_recheck:      # same plan against the next costmap
                 unk, _ = self.path_space(pts)
-                self.plan_unknown_detail[k] = self.plan_unknown_detail[k] + (int(round(unk * len(pts))),)
+                n = int(round(unk * len(pts)))
+                self.plan_unknown_detail[k] = self.plan_unknown_detail[k] + (n,)
+                self.plan_persist[tp] = n
             self.unknown_recheck = []
 
     def on_odom(self, m):
@@ -248,13 +254,18 @@ class Watcher(Node):
                 self.plans.append((self.now(), L, unk, leth))
                 if unk > 0:
                     self.plan_unknown_detail.append(self._unknown_detail(pts))
-                    self.unknown_recheck.append((len(self.plan_unknown_detail) - 1, pts))
+                    self.unknown_recheck.append((len(self.plan_unknown_detail) - 1, pts, self.plans[-1][0]))
 
     def on_plan(self, m):
         self._on_path(m, 'plan')
 
     def on_plan_smoothed(self, m):
         self._on_path(m, 'plan_smoothed')
+
+    def through_unknown(self, p):
+        """Plan record p counts as 'through unknown' if it touched -1 cells and they were still unknown in
+        the next costmap (or no later costmap arrived)."""
+        return p[2] > 0 and self.plan_persist.get(p[0], 1) > 0
 
     def _unknown_detail(self, pts):
         c = self.costmap
@@ -465,7 +476,8 @@ class Watcher(Node):
         out['controller_switches'] = [(round(t, 1), c) for t, c in ctrl][:20]
         if plans:
             out['plans'] = {'count': len(plans), 'mean_len_m': round(float(np.mean([p[1] for p in plans])), 2),
-                            'with_unknown_cells': int(sum(1 for p in plans if p[2] > 0)),
+                            'with_unknown_cells': int(sum(1 for p in plans if self.through_unknown(p))),
+                            'with_unknown_cells_raw': int(sum(1 for p in plans if p[2] > 0)),
                             'with_lethal_cells': int(sum(1 for p in plans if p[3] > 0))}
         if cov:
             out['coverage_pct'] = {'start': round(cov0[-1][3], 1) if cov0 else 0.0, 'end': round(cov[-1][3], 1)}
@@ -614,7 +626,7 @@ def smoke_verdict(w, launch_running, min_move=1.5):
         warnings['rotation events'] = m['rotation_events']
         warnings['large deviation % (all)'] = (m.get('tracking_all') or {}).get('large_dev_pct')
         warnings['stall episodes'] = m['stall_episodes']['count']
-    warnings['plans through unknown'] = sum(1 for p in plans if p[2] > 0)
+    warnings['plans through unknown'] = sum(1 for p in plans if w.through_unknown(p))
     return all(checks.values()), {'checks': checks, 'warnings': warnings}
 
 

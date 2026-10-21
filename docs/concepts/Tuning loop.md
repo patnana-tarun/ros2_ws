@@ -47,7 +47,7 @@ Same definitions as `docs/demo_runs_2026-10-19/validate.py`, computed live from 
 | stall episode | ≥ 3 s with a velocity command but no motion |
 | time budget | forward / reverse / turn on the spot / creep / still (as `budget.py`) |
 | coverage | true cave floor (`field.npz`) seen as known in `/map` |
-| plans through unknown / lethal | share of `/plan` points on unknown or inscribed+ global-costmap cells |
+| plans through unknown / lethal | share of `/plan` points on unknown or inscribed+ global-costmap cells. A plan counts as through unknown only if the cell is still unknown in the next costmap rosview receives (or none arrives): rosview's 1 Hz copy lags the planner's by 1–2 s (user's decision, [[Nav speed 2026-10-21]]); the raw count is `with_unknown_cells_raw` |
 | goal outcomes | `explore_coordinator` messages: sent, reached, gave_up, timeout, no_progress, no_path_blacklisted, retrace |
 
 ## Alerts
