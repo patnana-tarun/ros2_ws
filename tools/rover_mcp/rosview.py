@@ -13,7 +13,9 @@ Metric definitions follow docs/demo_runs_2026-10-19/validate.py and the tunnel-r
 so live numbers compare with the report: stuck = < 0.5 m net over the surrounding 60 s; tunnel =
 LiDAR left+right < 1.2 m, open > 2.0 m; tracking uses forward (vx > 0.05), not-stuck samples;
 large deviation = xte > 0.10 m or |heading| > 30 deg; rotation event = >= 300 deg of turning
-within 60 s while < 1 m net.
+within 60 s while the robot drives < 1 m (path length; user's decision 2026-10-21, was < 1 m net
+displacement: that also counted out-and-back trips into short pockets, which are not spinning;
+the old count stays as rotation_events_net).
 """
 import collections
 import io
@@ -420,9 +422,9 @@ class Watcher(Node):
                 if path < 0.3:
                     A.append({'kind': 'not_moving', 'msg': f'moved {path:.2f} m in the last 60 s'})
                 turned = math.degrees(sum(abs(wrap(b['yaw'] - a['yaw'])) for a, b in zip(win, win[1:])))
-                if turned >= 300 and net < 1.0:
-                    A.append({'kind': 'rotation', 'msg': f'turned {turned:.0f} deg in 60 s with {net:.2f} m net '
-                                                         '(rotation event)'})
+                if turned >= 300 and path < 1.0:
+                    A.append({'kind': 'rotation', 'msg': f'turned {turned:.0f} deg in 60 s while driving {path:.2f} m '
+                                                         f'({net:.2f} m net; rotation event)'})
             rtf_win = [s for s in S if s['w'] >= wall - 20]
             if len(rtf_win) > 20:
                 rtf = (rtf_win[-1]['t'] - rtf_win[0]['t']) / max(rtf_win[-1]['w'] - rtf_win[0]['w'], 1e-6)
@@ -560,18 +562,21 @@ def motion_metrics(allS, S, exclude=()):
                 'n': int(sel.sum()), 'xte_mean': _r(xte[sel].mean()), 'xte_p95': _r(np.percentile(xte[sel], 95)),
                 'hdev_mean': _r(hdev[sel].mean(), 1), 'hdev_p95': _r(np.percentile(hdev[sel], 95), 1),
                 'large_dev_pct': round(100 * float(large.mean()), 1)}
-    # rotation events: >= 300 deg of turning within 60 s while < 1 m net (non-overlapping)
-    cum = np.cumsum(dyaw)
-    ev, i = [], 0
-    while i < len(S):
-        j = np.searchsorted(t, t[i] + 60, side='right') - 1
-        if j > i and math.degrees(cum[j] - cum[i]) >= 300 and np.linalg.norm(xy[j] - xy[i]) < 1.0:
-            ev.append({'t': round(t[i], 1), 'x': round(xy[i, 0], 2), 'y': round(xy[i, 1], 2),
-                       'width': _r(width[i], 2)})
-            i = j + 1
-        else:
-            i += 1
-    out['rotation_events'] = {'count': len(ev), 'first': ev[:8]}
+    # rotation events: >= 300 deg of turning within 60 s while driving < 1 m (path length; non-overlapping).
+    # rotation_events_net: the definition before 2026-10-21 (< 1 m net displacement), for comparisons.
+    cum, cpath = np.cumsum(dyaw), np.cumsum(seg)
+    for key, short in (('rotation_events', lambda i, j: cpath[j] - cpath[i] < 1.0),
+                       ('rotation_events_net', lambda i, j: np.linalg.norm(xy[j] - xy[i]) < 1.0)):
+        ev, i = [], 0
+        while i < len(S):
+            j = np.searchsorted(t, t[i] + 60, side='right') - 1
+            if j > i and math.degrees(cum[j] - cum[i]) >= 300 and short(i, j):
+                ev.append({'t': round(t[i], 1), 'x': round(xy[i, 0], 2), 'y': round(xy[i, 1], 2),
+                           'width': _r(width[i], 2)})
+                i = j + 1
+            else:
+                i += 1
+        out[key] = {'count': len(ev), 'first': ev[:8]}
     # stall episodes: >= 3 s commanded but not moving
     stall = commanded & ~moving
     eps, st = [], None

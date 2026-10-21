@@ -27,6 +27,7 @@ Built for the presentation and the report.
 | 11 | Which GPU renders the sim? | Intel iGPU · RTX 4060 (PRIME offload) | **RTX** | CPU busy 29 % → 11 %; nav metrics unchanged | 1 run each |
 | 12 | Which global planner? | NavFn · Smac Lattice (+ pre-check, + wide inflation) | **NavFn** | Smac: paths −47 % turning, but area −16 %, 2.4× recoveries | 6 runs each |
 | 13 | Does a repeater extend the mesh? | direct link · via the Pi Zero repeater | **only behind obstacles** | worked into a room (2 hops); not in line of sight | 3 walk tests |
+| 14 | How to explore faster without losing the path? | tag tunnel-reverse · rotation-shim WIP · nav-speed fixes | **nav-speed (e547cf2)** | 95 % in 7.9–12.6 min in 4 of 4 runs (never reached before); open heading p90 10–16° | 3 + 8 + 4 runs |
 
 ---
 
@@ -129,3 +130,17 @@ Details: [[Planner comparison 2026-10-18]], [[Planner follow-ups 2026-10-18]].
 A repeater helps only where an obstacle kills the direct link. Then BATMAN has one route, and it
 goes through the repeater. Distances and TQ weren't recorded, so the explanations are not yet
 verified. Details: [[Relay field tests 2026-10-17]], [[Relay placement protocol]].
+
+## 14. Exploration speed (tunnel-reverse)
+![[cmp_nav_speed.png]]
+The rotation shim (2026-10-20) removed most of the standing still, but MPPI then swung ±30–40°
+after every shim turn, and the explorer stopped early as "complete" in 2 of 8 runs. Letting MPPI
+change its turn rate faster (`az_max` 6.0), never declaring the cave explored while frontiers are
+only blacklisted, preferring frontiers ahead, and dropping goals that were explored on the way made
+the speed reliable. Every run reached 95 %, 90 % came in 5–9 min (the tag: 17–21 min), and the
+robot drove straighter than either earlier setup. Time stuck is far below the tag's and about the
+same as the WIP's. Rotation events (≥ 300° in 60 s while driving < 1 m): 0 in all 4 runs.
+![[confirm2_trajectories.png]]
+*Final confirmation, interleaved: base_1–3 = this morning's code, cand_1–3 = nav-speed (read left to right, top to bottom); all six reached 95 %.*
+Details: [[Nav speed 2026-10-21]].
+

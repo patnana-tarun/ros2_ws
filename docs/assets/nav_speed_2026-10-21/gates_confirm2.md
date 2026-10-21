@@ -1,8 +1,8 @@
-| run | stop | cov17 | cov25 | t90 | t95 | rot | stalls | stuck% | ld% all/tun/open | xte95 all/tun/open | hdev95 all/tun/open | rev_open% | unk | still% | Must cov/rot/rev/unk | stretch |
+| run | stop | cov17 | cov25 | t90 | t95 | rot (net) | stalls | stuck% | ld% all/tun/open | xte95 all/tun/open | hdev95 all/tun/open | rev_open% | unk | still% | Must cov/rot/rev/unk | stretch |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| base_1 | reached_95 | 95.01 | 95.01 | 9.5 | 11.5 | 2 | 0 | 2.4 | 4.3/4.6/5.6 | 0.055/0.051/0.064 | 26.8/28.2/28.3 | 1.5 | 0 | 20.3 | PASS/FAIL/PASS/PASS | PASS |
-| base_2 | reached_95 | 95.05 | 95.05 | 9.1 | 9.7 | 2 | 0 | 1.8 | 2.1/3/0.6 | 0.044/0.046/0.039 | 22.1/23/20.4 | 0.8 | 4 | 13.9 | PASS/FAIL/PASS/FAIL | PASS |
-| base_3 | reached_95 | 95.07 | 95.07 | 9.7 | 10.0 | 1 | 0 | 1.8 | 2.3/1.5/2.6 | 0.056/0.045/0.065 | 21.8/19.1/23.5 | 2.0 | 4 | 13.2 | PASS/FAIL/PASS/FAIL | PASS |
-| cand_1 | reached_95 | 95.13 | 95.13 | 5.3 | 7.9 | 1 | 0 | 1.9 | 1.3/1.7/0.7 | 0.043/0.042/0.04 | 16.7/17.3/14.4 | 0.0 | 2 | 17.0 | PASS/FAIL/PASS/FAIL | PASS |
-| cand_2 | reached_95 | 95.01 | 95.01 | 8.7 | 12.6 | 1 | 0 | 7.0 | 1.2/0.9/1.7 | 0.039/0.032/0.042 | 17.6/15.5/19.1 | 1.6 | 78 | 18.8 | PASS/FAIL/PASS/FAIL | PASS |
-| cand_3 | reached_95 | 95.18 | 95.18 | 6.1 | 8.3 | 1 | 0 | 2.4 | 1.2/1.3/0.4 | 0.045/0.038/0.054 | 17.8/18.4/15.1 | 0.7 | 1 | 13.0 | PASS/FAIL/PASS/FAIL | PASS |
+| base_1 | reached_95 | 95.01 | 95.01 | 9.5 | 11.5 | 0 (2) | 0 | 2.4 | 4.3/4.6/5.6 | 0.055/0.051/0.064 | 26.8/28.2/28.3 | 1.5 | 0 | 20.3 | PASS/PASS/PASS/PASS | PASS |
+| base_2 | reached_95 | 95.05 | 95.05 | 9.1 | 9.7 | 0 (2) | 0 | 1.8 | 2.1/3/0.6 | 0.044/0.046/0.039 | 22.1/23/20.4 | 0.8 | 4 | 13.9 | PASS/PASS/PASS/FAIL | PASS |
+| base_3 | reached_95 | 95.07 | 95.07 | 9.7 | 10.0 | 0 (1) | 0 | 1.8 | 2.3/1.5/2.6 | 0.056/0.045/0.065 | 21.8/19.1/23.5 | 2.0 | 4 | 13.2 | PASS/PASS/PASS/FAIL | PASS |
+| cand_1 | reached_95 | 95.13 | 95.13 | 5.3 | 7.9 | 0 (1) | 0 | 1.9 | 1.3/1.7/0.7 | 0.043/0.042/0.04 | 16.7/17.3/14.4 | 0.0 | 2 | 17.0 | PASS/PASS/PASS/FAIL | PASS |
+| cand_2 | reached_95 | 95.01 | 95.01 | 8.7 | 12.6 | 0 (1) | 0 | 7.0 | 1.2/0.9/1.7 | 0.039/0.032/0.042 | 17.6/15.5/19.1 | 1.6 | 78 | 18.8 | PASS/PASS/PASS/FAIL | PASS |
+| cand_3 | reached_95 | 95.18 | 95.18 | 6.1 | 8.3 | 0 (1) | 0 | 2.4 | 1.2/1.3/0.4 | 0.045/0.038/0.054 | 17.8/18.4/15.1 | 0.7 | 1 | 13.0 | PASS/PASS/PASS/FAIL | PASS |

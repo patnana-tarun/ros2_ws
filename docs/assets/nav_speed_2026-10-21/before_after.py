@@ -52,6 +52,7 @@ def metrics(rd):
         'tun_xte_p90_cm': round(100 * float(np.percentile(d['xte'][tu], 90)), 1),
         'tun_hdev_p90': round(float(np.percentile(hd[tu], 90)), 1),
         'rotations_300': rot,
+        'rotations_300_net': rot_net,
         'stuck_pct': round(100 * float(dt[k & stuck].sum() / dt[k].sum()), 1),
         'goal_success_pct': round(100 * reached / max(sent, 1), 1),
         'open_reverse_pct': round(100 * float((openk & (d['vx'] < -0.05)).sum() / max(openk.sum(), 1)), 1),

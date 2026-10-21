@@ -43,7 +43,7 @@ Same definitions as `docs/demo_runs_2026-10-19/validate.py`, computed live from 
 | stuck | < 0.5 m net over the surrounding 60 s |
 | tunnel / open | LiDAR left + right clearance < 1.2 m / > 2.0 m |
 | large deviation | xte > 0.10 m or heading > 30° |
-| rotation event | ≥ 300° of turning within 60 s while < 1 m net |
+| rotation event | ≥ 300° of turning within 60 s while the robot drives < 1 m (path length). Before 2026-10-21: < 1 m *net* displacement, which also counted out-and-back trips into short pockets; the user changed it ([[Nav speed 2026-10-21]]). The old count is kept as `rotation_events_net` |
 | stall episode | ≥ 3 s with a velocity command but no motion |
 | time budget | forward / reverse / turn on the spot / creep / still (as `budget.py`) |
 | coverage | true cave floor (`field.npz`) seen as known in `/map` |

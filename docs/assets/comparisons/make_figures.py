@@ -127,4 +127,28 @@ for ax, (t, a, s) in zip(axs, pooled):
     ax.set_xticks([0, 1]); ax.set_xticklabels(['NavFn', 'Smac']); ax.set_title(t, loc='left', fontsize=9.5); ax.set_ylim(0, max(a, s) * 1.25)
 save(fig, 'cmp_planner_pooled.png', 'NavFn vs Smac Lattice, 6 runs each: better paths, but no better exploration')
 
+# 10. Exploration speed (issues/Nav speed 2026-10-21.md, "Before and after"; one dot per run).
+# None = the run never got there (it stopped earlier, or the tag's protocol stopped at 90 %).
+fig, axs = new(10.5, 3.9, 1, 4)
+setups = ['tag\n(2026-10-20)', 'shim WIP\n(HEAD)', 'nav-speed\n(e547cf2)']
+data = [('Time to 90 % (min)', [[16.6, 21.2, None], [10.6, 8.0, 9.5, 9.1, 9.7, None, None, None], [5.3, 8.7, 6.1, 7.2]]),
+        ('Time to 95 % (min)', [[None, None, None], [10.9, 11.5, 9.7, 10.0, None, None, None, None], [7.9, 12.6, 8.3, 9.7]]),
+        ('Heading error p90, open (°)', [[16.3, 13.2, 19.6], [25.9, 18.5, 19.5, 19.2, 21.2, 19.9, 16.1, 19.3], [9.8, 14.0, 10.8, 15.8]]),
+        ('Time stuck (%)', [[27.1, 10.1, 33.3], [24.9, 5.1, 4.7, 6.4, 3.3, 2.4, 1.8, 1.8], [1.9, 7.0, 2.4, 8.0]])]
+for ax, (ttl, runs) in zip(axs, data):
+    top = max(v for r in runs for v in r if v is not None) * 1.25
+    for i, (r, c) in enumerate(zip(runs, [C[1], C[3], C[0]])):
+        got = [v for v in r if v is not None]
+        xs = i + np.linspace(-0.12, 0.12, max(len(got), 1))[:len(got)]
+        ax.scatter(xs, got, s=28, color=c, zorder=3, edgecolor=SURF, lw=0.8)
+        if got:
+            ax.hlines(np.median(got), i - 0.25, i + 0.25, color=T1, lw=1.2, zorder=4)
+        miss = len(r) - len(got)
+        note = 'run stopped\nat 90 %' if ttl.startswith('Time to 95') and i == 0 else f'{miss} of {len(r)}\nnever'
+        if miss:
+            ax.annotate(note, (i, top * 0.93), ha='center', va='top', fontsize=7.5, color=T2)
+    ax.set_xticks(range(3)); ax.set_xticklabels(setups, fontsize=8); ax.set_xlim(-0.6, 2.6); ax.set_ylim(0, top)
+    ax.set_title(ttl, loc='left', fontsize=9.5)
+save(fig, 'cmp_nav_speed.png', 'Exploration speed: 95 % in every run and sooner, with the straightest driving (dots = runs, bar = median)')
+
 print('figures written to', OUT)
