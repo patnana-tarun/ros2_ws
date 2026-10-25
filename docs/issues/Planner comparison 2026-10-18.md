@@ -16,7 +16,7 @@ the rectangular footprint can't follow, and the robot replans every 0.53 s.
 | Runs | 3 pairs × 10 min of sim time each, from the first plan. Cave world, spawn (0, 0), TAD + DFS exploration, `bringup.launch.py gui:=false rviz:=false` |
 | Fairness | A and B ran **side by side** in each pair, so both had the same machine load. Each had its own `ROS_DOMAIN_ID` and `GZ_PARTITION`, with local-only discovery. Rendering was on the RTX 4060 |
 | Measured | A recorder node per run (`/map`, `/plan`, `/odom`, `/cmd_vel_nav`, TF, `global_costmap`, `is_path_valid`) plus counts from the launch log within the same 600 s window |
-| Reproduce | `PAIRS=3 DUR=600 bash run_ab.sh`, then `python3 analyze.py`, then `figures.py`. All are in `assets/planner_ab_2026-10-18/`, with `summary.json` holding every per-run number |
+| Reproduce | `PAIRS=3 DUR=600 bash run_ab.sh`, then `python3 analyze.py`, then `figures.py`. All are in `assets/navigation/planner-comparison/`, with `summary.json` holding every per-run number |
 
 ## Results
 Mean ± sd over 3 runs. "Pairs" counts the pairs where Smac was better. p is Welch's t-test; with
@@ -114,3 +114,5 @@ branch `exp/planner-tuning`, so `feat/demo` stays clean.
 - `planner_server` CPU includes its global-costmap thread, so the CPU per plan isn't the pure
   planning time. Planning times come from Nav2's own "Planner loop missed" warnings, which only
   report plans over 50 ms.
+
+All figures of this note, each with a one-line meaning: [[Planner comparison figures]].

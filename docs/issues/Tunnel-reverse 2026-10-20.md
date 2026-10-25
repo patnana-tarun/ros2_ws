@@ -6,7 +6,7 @@ tags: [issue]
 The user's idea, following [[Reverse-out 2026-10-20]]: reverse **only inside tunnels**. Once out
 in open space, where there is room, turn round and explore forward as usual instead of carrying
 on backwards. Branch `exp/tunnel-reverse` (1d68307, from tag `nav-reverse-v1`; fixes e271dac, aa50154). Raw data:
-`~/tunnelrev_runs_2026-10-20/`. Figures, numbers and scripts: `assets/tunnel_reverse_2026-10-20/`.
+`~/tunnelrev_runs_2026-10-20/`. Figures, numbers and scripts: `assets/navigation/tunnel-reverse/`.
 
 ## Set-up
 `ros2 launch explorer_exploration tunnel_reverse.launch.py` (bringup defaults unchanged). Same as
@@ -174,3 +174,5 @@ Not added to [[Comparisons]].
   1.0 m.
 - The robot's own track is only "known free" if nothing moved. On the real robot, the collision
   monitor is what protects the retrace.
+
+All figures of this note, each with a one-line meaning: [[Tunnel-reverse figures]].

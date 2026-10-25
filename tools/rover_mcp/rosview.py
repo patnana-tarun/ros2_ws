@@ -9,7 +9,7 @@ Kept:
 - /map, /global_costmap/costmap, /best_goal history, controller switches, message rates
 - /rosout of every node (ring buffer); goal outcomes parsed from explore_coordinator's messages
 
-Metric definitions follow docs/demo_runs_2026-10-19/validate.py and the tunnel-reverse analysis,
+Metric definitions follow data/demo_runs_2026-10-19/validate.py and the tunnel-reverse analysis,
 so live numbers compare with the report: stuck = < 0.5 m net over the surrounding 60 s; tunnel =
 LiDAR left+right < 1.2 m, open > 2.0 m; tracking uses forward (vx > 0.05), not-stuck samples;
 large deviation = xte > 0.10 m or |heading| > 30 deg; rotation event = >= 300 deg of turning
@@ -42,7 +42,7 @@ LEVELS = {10: 'DEBUG', 20: 'INFO', 30: 'WARN', 40: 'ERROR', 50: 'FATAL'}
 WANT = ['/map', '/odom', '/plan', '/plan_smoothed', '/best_goal', '/cmd_vel_nav', '/controller_selector',
         '/scan', '/global_costmap/costmap', '/rosout', '/exploration_complete', '/manual_override']
 FIELD = os.environ.get('ROVER_MCP_FIELD',
-                       os.path.expanduser('~/ros2_ws/docs/demo_runs_2026-10-19/field.npz'))
+                       os.path.expanduser('~/ros2_ws/data/demo_runs_2026-10-19/field.npz'))
 ROBOT_R = 0.22
 # expected rates: scan 7 Hz (URDF), controller 15 Hz (nav2 params); alert well below
 MIN_HZ = {'/scan': 4.0, '/odom': 10.0, '/cmd_vel_nav': 10.0}

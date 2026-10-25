@@ -144,3 +144,4 @@ same as the WIP's. Rotation events (≥ 300° in 60 s while driving < 1 m): 0 in
 *Final confirmation, interleaved: base_1–3 = this morning's code, cand_1–3 = nav-speed (read left to right, top to bottom); all six reached 95 %.*
 Details: [[Nav speed 2026-10-21]].
 
+All figures of this note, each with a one-line meaning: [[Comparisons figures]].

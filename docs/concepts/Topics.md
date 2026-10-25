@@ -1,5 +1,5 @@
 ---
-tags: [concept, reference]
+tags: [concept]
 ---
 # Topics
 
@@ -56,3 +56,13 @@ from `explorer_base`, `/imu` from `mpu9250_imu`, and `/scan` from `ydlidar_ros2_
 | pub | `/cmd_vel_nav` | `TwistStamped` | `manual_drive` (Nav2's controller output, into the velocity smoother) |
 | action | `navigate_to_pose` | `nav2_msgs/NavigateToPose` | `explore_coordinator` → Nav2 |
 | pub | `/cmd_vel` | `TwistStamped` | Nav2 collision monitor ([[Navigation stack]]) |
+
+## Demo recording ([[Demo recording]])
+| Dir | Topic | Type | Node |
+|-----|-------|------|------|
+| pub | TF `map → view_anchor` | `tf2_msgs/TFMessage` | `demo_view_box` (30 Hz; RViz view centre) |
+| pub | `/demo/view_box` | `visualization_msgs/Marker` | `demo_view_box` (box outline) |
+| pub/sub | `/demo_hud/update`, `/demo_hud/feedback` | interactive markers | `demo_hud` ↔ RViz (explored %, time; the drag comes back as feedback) |
+| sub | `/map`, `/odom`, `/exploration_complete` | | `demo_hud` |
+| sub | `/world/<world>/dynamic_pose/info` (Gazebo) | `gz.msgs.Pose_V` | `demo_chase_cam` |
+| pub | `/gui/track` (Gazebo) | `gz.msgs.CameraTrack` | `demo_chase_cam` (30 Hz, FOLLOW mode) |

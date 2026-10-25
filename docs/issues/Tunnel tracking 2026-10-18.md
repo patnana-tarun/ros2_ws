@@ -33,7 +33,7 @@ Definitions, fixed before the runs:
 | Turn reversals per m | sign changes of yaw rate between \|wz\| > 0.1 rad/s episodes, per metre driven in tunnels |
 | Yaw per m | ∫\|wz\| dt in tunnels, per metre driven in tunnels |
 
-Scripts, figures and per-run numbers are in `assets/tunnel_2026-10-18/`.
+Scripts, figures and per-run numbers are in `assets/navigation/tunnel-tracking/`.
 
 ## Results
 Mean, with the per-run values in brackets.
@@ -112,3 +112,5 @@ outcomes. n = 2 per setup.
 - MPPI tuning without smoothing, to separate the two effects.
 - The progress failures (9.5–14 per run) remain, because MPPI still stalls where the path hugs
   rocks ([[Path tracking and stalls 2026-10-18]]).
+
+All figures of this note, each with a one-line meaning: [[Tunnel tracking figures]].

@@ -14,6 +14,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 
 ## Results
 - [[Comparisons]]: every design choice that was settled by comparing options, with charts (confirmed results only)
+- Figures, one note per folder in `assets/` (each picture with a one-line meaning): [[Comparisons figures]], [[Robot figures]], [[Frontier exploration figures]], [[Navigation stack figures]], [[Baseline runs figures]], [[Planner comparison figures]], [[Planner follow-ups figures]], [[Tunnel tracking figures]], [[Run to 90 percent figures]], [[Full comparison figures]], [[Navigation fixes figures]], [[Stall ablation figures]], [[Reverse-out figures]], [[Tunnel-reverse figures]], [[Nav speed figures]], [[Rover MCP figures]]
 
 ## Packages
 - [[my_mesh_interfaces]]: the custom mesh messages
@@ -29,9 +30,11 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Topics]]: every topic, in one table
 - [[Mesh network setup]]: IBSS + BATMAN-adv settings, node addresses, start/stop scripts
 - [[Relay placement protocol]]: how to collect data for the relay-drop threshold
+- [[Map freshness requirement]]: at most one map missed in a row (about 6 s), never more than two (about 9 s)
 - [[Frontier exploration]]: TAD scoring and the gap filling
 - [[Navigation stack]]: SLAM Toolbox + Nav2 tuned for this robot
 - [[Tuning loop]]: how changes are tried and confirmed in simulation, with the `rover` MCP server
+- [[Demo recording]]: chase camera in Gazebo, box-following RViz view, side-by-side backup video
 
 ## Robot
 - [[Robot model]]
@@ -78,6 +81,10 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[2026-10-19]]
 - [[2026-10-20]]
 - [[2026-10-21]]
+- [[2026-10-22]]
+- [[2026-10-23]]
+- [[2026-10-24]]
+- [[2026-10-25]]
 
 ## Quick start
 ```bash

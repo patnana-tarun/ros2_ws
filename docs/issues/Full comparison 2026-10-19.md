@@ -6,7 +6,7 @@ tags: [issue]
 The three setups from [[Tunnel tracking 2026-10-18]], each run until the cave is explored, with the
 coordinator's new 30 s stall give-up switched on in every run. GUI runs, 3 per setup. Branch
 `exp/tunnel-tracking`. Raw data: `~/full_runs_2026-10-19/`. Figures, metrics (CSV and JSON) and
-scripts: `assets/full_2026-10-19/`.
+scripts: `assets/navigation/full-comparison/`.
 
 ## Setups
 | Setup | BT | MPPI |
@@ -109,3 +109,5 @@ chamber B rocks (3.7–5.7, 4.0) recur.*
 
 A possible next step is to take tuned's MPPI settings with a `wz_std` between 0.2 and 0.3, aiming to
 keep the straightness and recover smooth's speed.
+
+All figures of this note, each with a one-line meaning: [[Full comparison figures]].

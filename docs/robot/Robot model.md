@@ -74,3 +74,5 @@ base_footprint
     ├── imu_link                    fixed, roll 180° (facing down), massless (MPU-9250 breakout)
     └── pi_link                     fixed
 ```
+
+All figures of this note, each with a one-line meaning: [[Robot figures]].

@@ -34,7 +34,7 @@ GUI) → `compare` → 7. docs + commit. One `observe` window is a hint; only st
 ([[Mesh network setup]]). To watch a sim started by hand, source `simenv.sh` in that terminal first.
 
 ## Metrics
-Same definitions as `docs/demo_runs_2026-10-19/validate.py`, computed live from 10 Hz samples:
+Same definitions as `data/demo_runs_2026-10-19/validate.py`, computed live from 10 Hz samples:
 
 | Metric | Definition |
 |---|---|
@@ -99,3 +99,5 @@ driving forward (green):
 Pausing Gazebo for more than ~4 s ends the run: Nav2's lifecycle bond runs on wall time, so
 `lifecycle_manager_navigation` declares `collision_monitor` dead and shuts Nav2 down (seen
 [[2026-10-20]]). `gz_world` refuses to pause unless forced.
+
+All figures of this note, each with a one-line meaning: [[Rover MCP figures]].

@@ -294,3 +294,5 @@ of these pauses, not at a true finish.
   discovery server, and one was ended by Gazebo exiting. They are excluded and were re-run.
 - Blacklist duration: the loop (P05) is structural; a different duration only changes its period.
 - MPPI critics, until the MPPI trajectory data (§16) is recorded.
+
+All figures of this note, each with a one-line meaning: [[Baseline runs figures]].

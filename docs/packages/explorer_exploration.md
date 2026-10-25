@@ -17,6 +17,7 @@ and ported to this robot on Jazzy on 2026-09-26 ([[2026-09-26]]).
 | `metrics_logger`      | exploration time, path length (from `/odom`), goal count and coverage, printed as one `METRICS_SUMMARY` line |
 | `manual_drive`        | keyboard driving that pauses exploration while it runs (below) |
 | `lifecycle_startup`   | sends STARTUP to the SLAM and Nav2 lifecycle managers `startup_delay` s (default 8) after launch, then exits ([[Nav2 not loaded]]) |
+| `demo_chase_cam`, `demo_view_box`, `demo_recorder` | camera views and recorder for the backup demo video ([[Demo recording]]) |
 
 Topics are in [[Topics]].
 
@@ -26,12 +27,24 @@ Topics are in [[Topics]].
 | `bringup.launch.py`            | sim ([[Gazebo simulation]], default world `cave.sdf`) + SLAM Toolbox + Nav2 + the two nodes + RViz |
 | `benchmark_headless.launch.py` | the same with no Gazebo window or RViz, plus `metrics_logger` |
 | `explore.launch.py`            | only the two nodes, with the TAD parameters as launch arguments |
+| `sim_loop.launch.py`           | endless data for relay tests: `sim_loop` restarts `tunnel_reverse.launch.py` fresh each time true-floor coverage reaches `target_pct` (85 %), plus one `explorer_relay_node` for the whole session; until Ctrl-C |
+| `demo_record.launch.py`        | `tunnel_reverse.launch.py` + chase camera + box-following RViz + side-by-side MP4 ([[Demo recording]]) |
 
 ```bash
 ros2 launch explorer_exploration bringup.launch.py                        # watch it explore the cave
 ros2 launch explorer_exploration bringup.launch.py world:=cave_open.sdf
 ros2 launch explorer_exploration benchmark_headless.launch.py scoring_mode:=nearest
+ros2 launch explorer_exploration sim_loop.launch.py sim_args:='rviz:=false'   # restart at 85 %, until Ctrl-C
 ```
+
+`sim_loop` also restarts a run when the sim launch exits, no `/map` comes within 180 s,
+`/exploration_complete` arrives below the target, or coverage gains < 0.5 m² in `stall_restart_s`
+(300 s; 0 = never). Coverage uses the same true-floor measure as the [[Tuning loop]], from
+`data/demo_runs_2026-10-19/field.npz`, which fits `cave.sdf` only. One row per run (wall-clock start,
+end, coverage, reason) goes to `~/.ros/sim_loop_cycles.csv`. Use it to cut the restart gaps
+(about 20 s without `/map` and `/tf`) out of the communication metrics. The relay keeps one
+`session_id`, and its sequence numbers continue across restarts. It runs with `use_sim_time` false,
+because the sim clock goes back to 0 on each restart and the relay's timers and stamps use wall time anyway.
 
 Gazebo and RViz crash at start if launched from the VS Code terminal
 ([[GUI crashes in VS Code terminal]]).

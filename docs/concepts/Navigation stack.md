@@ -48,3 +48,5 @@ launch ([[Nav2 not loaded]]).
 Why not `nav2_bringup slam:=True`: that path activates SLAM Toolbox from a launch-event
 handler, which races under CPU load. In one of the test runs SLAM Toolbox was configured
 but never activated. The `map` frame never appeared, and Nav2 aborted its bringup.
+
+All figures of this note, each with a one-line meaning: [[Navigation stack figures]].

@@ -53,10 +53,12 @@ its metrics count a third of the old TF rate and one map every 3 s
 ## 2026-10-05: the relay reduced the rates itself
 For one day the sources ran at full rate and the relay thinned them out (the same TF setup as
 since 2026-10-15): 1 of every 3 TF
-messages (counted per source, i.e. per set of child frames, so one source couldn't be
-starved), and the latest map on a fixed 3 s timer. The mesh load was the same, but every
-node on the robot still ran at full rate. Laptop test with fake sources: 267 TF forwarded
-per 10 s out of 80 msg/s, 3 maps per 10 s.
+messages (counted per source, i.e. per set of child frames such as the EKF's `base_footprint`
+or the six wheel joints; one shared counter over the mixed stream could line up with the
+sources' publish pattern and starve one of them), and the latest map on a fixed 3 s timer,
+which gave a known expected map count per window. The mesh load was the same, but every
+node on the robot still ran at full rate. Laptop test with fake sources (TF 80 msg/s from two
+sources, a 30 000-cell map): 267 TF forwarded per 10 s, 3 maps per 10 s.
 
 ## Common to all
 - **Relay parameters:** with `map_publish_period_sec` at 0 (default), each `/map` is forwarded as
@@ -64,7 +66,8 @@ per 10 s out of 80 msg/s, 3 maps per 10 s.
   `tf_decimation` (default 3) forwards 1 of every N `/tf` messages, counted per TF source.
 - **Skipped TF uses no `sequence_id`**, so it never counts as loss.
 - **Map heartbeat right after each map.** `/mesh/map_status` runs at 1 Hz and is also sent
-  straight after every map, so the receiver's expected map count is exact.
+  straight after every map, so the receiver's expected map count is exact and not up to 1 s
+  stale.
 - Maps grow as the cave is explored: about 11 KB at the start, ~109 KB measured on
   2026-10-05, up to about 150 KB for the whole 23 × 16.5 m cave at 0.05 m.
 - `MeshTf.map_in_flight` is still in the message, so the receiver's interface doesn't

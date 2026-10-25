@@ -22,7 +22,7 @@ The pre-check asks the planner once before a frontier is sent. If there is no pa
 frontier is blacklisted at once and never reaches the navigator's recovery tree
 (`explore_coordinator.py`). Four sims saturated the CPU (about 95 %), so the real-time factor was
 **0.75** for every arm. That is equal across arms, but different from the first comparison.
-Scripts and per-run data are in `assets/planner_followup_2026-10-18/`.
+Scripts and per-run data are in `assets/navigation/planner-follow-ups/`.
 
 ## Results
 Mean ± sd over 3 runs.
@@ -105,3 +105,5 @@ A finer lattice (about 0.2 m radius, 32 headings) is a possible later test of Sm
   only for NavFn vs Smac. Within each round all arms shared the same load.
 - The clearance metrics read each arm's own global costmap. For `smacpcw` that costmap is more
   inflated, so only the inscribed-contact share is comparable across arms.
+
+All figures of this note, each with a one-line meaning: [[Planner follow-ups figures]].

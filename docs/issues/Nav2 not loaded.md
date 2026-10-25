@@ -71,3 +71,16 @@ every client is created well before its first call:
 
 The cost is ~6 s longer startup. Not yet verified: on the real robot (`sim:=false`), and
 without the discovery server.
+
+## Seen again with the delayed startup (2026-10-21)
+
+**Hung 1 launch** of `tunnel_reverse.launch.py` started by hand with the discovery server
+running, while the server also carried the relay and the receiver Pi's RViz (2 `/rviz` +
+2 transform listeners from the Pi). `lifecycle_startup` sent STARTUP after 8 s and SLAM came up
+(`nodes active` after 5 s). `lifecycle_manager_navigation` configured `controller_server`, then
+stopped at `Configuring smoother_server`: the smoother configured in 10 ms and logged
+`failed to send response to /smoother_server/change_state (timeout)`. That is the same dropped
+reply as the second form, about 11 s after both processes had started. `lifecycle_startup` then
+logged `no reply within 60 s`. So the 8 s delay covers the STARTUP call, not the manager's own
+`change_state` calls to each node, and it was not enough with remote participants on the server.
+The robot never moved (no `/navigate_to_pose` server).

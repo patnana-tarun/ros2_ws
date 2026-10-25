@@ -105,3 +105,5 @@ first map of the cave, the result is exactly the three tunnel mouths of the star
 - `sensor_long_range` is now 6.0 m (X2), up from 3.5 m (TurtleBot3 LDS).
 - The coordinator logs whether Nav2 succeeded, aborted or cancelled. Before, both
   outcomes printed the same message.
+
+All figures of this note, each with a one-line meaning: [[Frontier exploration figures]].

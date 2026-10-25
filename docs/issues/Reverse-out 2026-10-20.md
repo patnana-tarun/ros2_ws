@@ -7,7 +7,7 @@ The user's idea: when the goal is behind, **back out along the path** instead of
 spot; no 360° turns unless necessary. If a direction change is needed, do a three-point turn
 (reverse curving one way, then forward curving the other). Branch `exp/stuck-ablation`
 (42ff5b5). Raw data: `~/ablation_runs_2026-10-20/`. Figures and numbers:
-`assets/reverse_2026-10-20/`. Follows [[Stall ablation 2026-10-20]].
+`assets/navigation/reverse-out/`. Follows [[Stall ablation 2026-10-20]].
 
 ## Setups (all: demo planner fixes, smoothing BT, pre-check, explored map, 30 s give-up, track 0.38)
 | Setup | File | MPPI changes vs `nav2_params_demo.yaml` |
@@ -91,3 +91,5 @@ setup's, and is no worse than any of them.
   not grow in open areas.
 - On the real robot, reversing speed and the rear-facing behaviour need checking (reverse
   `min_duty` and encoders).
+
+All figures of this note, each with a one-line meaning: [[Reverse-out figures]].

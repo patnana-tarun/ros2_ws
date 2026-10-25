@@ -2,7 +2,7 @@
 # in a terminal is visible to it:   source ~/ros2_ws/tools/rover_mcp/simenv.sh
 # - drops the VS Code snap's GTK/locale variables (docs/issues/GUI crashes in VS Code terminal.md)
 # - isolates ROS and Gazebo traffic from the mesh: own domain, localhost only, no discovery server
-# - NVIDIA PRIME offload for Gazebo/RViz rendering (as in docs/demo_runs_2026-10-19/run_demo.sh)
+# - NVIDIA PRIME offload for Gazebo/RViz rendering (as in data/demo_runs_2026-10-19/run_demo.sh)
 unset GTK_PATH GTK_EXE_PREFIX GTK_IM_MODULE_FILE LOCPATH GIO_MODULE_DIR GSETTINGS_SCHEMA_DIR \
       GDK_PIXBUF_MODULE_FILE GDK_PIXBUF_MODULEDIR
 [ -n "$XDG_DATA_DIRS_VSCODE_SNAP_ORIG" ] && export XDG_DATA_DIRS=$XDG_DATA_DIRS_VSCODE_SNAP_ORIG

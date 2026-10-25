@@ -80,3 +80,5 @@ add little weight.
 - **Dead-end turn-round:** this is the real blocker for finishing the cave in every setup.
   Candidates: detect a dead end before entering (frontier inside a corridor narrower than the
   0.39 m pivot diameter plus margin), or reverse out along the path instead of turning.
+
+All figures of this note, each with a one-line meaning: [[Run to 90 percent figures]].

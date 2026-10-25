@@ -11,8 +11,8 @@ Root-cause analysis of the four problems the user saw in RViz:
 
 Then the fixes and two rounds of GUI validation. Branch `exp/tunnel-tracking`. **Interim:**
 path tracking is fixed and verified; a stuck regression is open. Raw data:
-`docs/demo_runs_2026-10-19/` (moved there from `~/demo_runs_2026-10-19/`), `~/full_runs_2026-10-19/`. Scripts, figures and numbers:
-`assets/navfix_2026-10-19/`. Priority since 2026-10-19: following the path correctly first,
+`data/demo_runs_2026-10-19/` (first in `~/`, then `docs/` until 2026-10-25), `~/full_runs_2026-10-19/`. Scripts, figures and numbers:
+`assets/navigation/navigation-fixes/`. Priority since 2026-10-19: following the path correctly first,
 speed second.
 
 ## What the RViz lines are
@@ -91,3 +91,5 @@ Follow-up: [[Stall ablation 2026-10-20]].
   track-width change all changed together. Next: one change per arm.
 - Why the round-2 turn commands stay small, given the step test shows the robot can still turn
   at 0.64 rad/s.
+
+All figures of this note, each with a one-line meaning: [[Navigation fixes figures]].

@@ -29,12 +29,24 @@ colcon build --packages-select explorer_exploration          # after nav/explora
 # Simulation, explore the cave (Gazebo + RViz + SLAM + Nav2 + frontier exploration)
 ros2 launch explorer_exploration tunnel_reverse.launch.py    # CURRENT best: reverse only in tunnels (exp/nav-speed)
 ros2 launch explorer_exploration tunnel_reverse.launch.py rviz:=false
-ros2 launch explorer_exploration bringup.launch.py           # plain defaults (world:=cave.sdf)
-ros2 launch explorer_exploration reverse_out.launch.py       # older variant: backs out anywhere (rejected by the user)
-ros2 launch explorer_exploration benchmark_headless.launch.py   # headless + metrics (reported results are GUI runs)
+ros2 launch explorer_exploration tunnel_reverse.launch.py $(ros2 run explorer_exploration spawn_point random)   # random safe start
+ros2 launch explorer_exploration tunnel_reverse.launch.py $(ros2 run explorer_exploration spawn_point 9.0 -1.5 1.57)   # chosen start, checked
 ros2 launch explorer_exploration tunnel_reverse.launch.py log_level:=controller_server:=debug  # e.g. rotation-shim debug
+ros2 launch explorer_exploration sim_loop.launch.py sim_args:='rviz:=false'   # relay tests: fresh sim at 85 %, + relay, until Ctrl-C
 # tunnel_reverse.launch.py fixes heading_weight 1.0, explored_cancel true, unknown_margin 2 in its
 # include: change them there (a command-line value does not override an include's argument)
+
+# Review demo (docs/concepts/Demo recording.md): tunnel_reverse + Gazebo chase camera + box-view
+# RViz + live explored %/time HUD + side-by-side MP4 to ~/demo_recordings; Ctrl-C stops and saves
+ros2 launch explorer_exploration demo_record.launch.py                    # start at (0, 0), record
+ros2 launch explorer_exploration demo_record.launch.py record:=false      # live demo, no recording
+ros2 launch explorer_exploration demo_record.launch.py spawn:=random      # random safe start (seed:=N repeats one)
+ros2 launch explorer_exploration demo_record.launch.py x:=9.0 y:=-1.5 yaw:=1.57   # chosen start (unsafe -> nearest safe)
+ros2 launch explorer_exploration demo_record.launch.py hud_x:=-3.8 hud_y:=4.7     # HUD place (m from view centre)
+ros2 launch explorer_exploration demo_record.launch.py box_x:=6.0 box_y:=6.0 glide_s:=0.0   # view box size, snap
+ros2 launch explorer_exploration demo_record.launch.py start_sim:=false x:=9.0 y:=-1.5 yaw:=1.57   # onto a running sim (rviz:=false), its start
+# HUD: RViz Interact tool (key i), drag the plate; saved in ~/.ros/demo_hud_position.json (delete = default)
+# by hand: ros2 run explorer_exploration demo_chase_cam | demo_view_box | demo_hud | demo_recorder
 
 # Simulation, robot model only (no exploration)
 ros2 launch explorer_description explorer_gazebo.launch.py rviz:=true
@@ -70,8 +82,8 @@ Run analysis (run folders are `tools/rover_mcp/runs/<date>_<name>/`, git-ignored
 ```bash
 python3 tools/rover_mcp/gates.py RUN_OR_EXPERIMENT_DIR...     # Must/stretch gates table per run
 python3 tools/rover_mcp/compare.py EXP_DIR... [--out DIR]     # comparison.md + comparison.png
-python3 docs/assets/nav_speed_2026-10-21/before_after.py RUN_DIR...   # validate.py-style p90 table
-python3 docs/assets/nav_speed_2026-10-21/ceiling.py 0.22 OUT.npz      # coverage ceiling for a planner radius
+python3 docs/assets/navigation/nav-speed/before_after.py RUN_DIR...   # validate.py-style p90 table
+python3 docs/assets/navigation/nav-speed/ceiling.py 0.22 OUT.npz      # coverage ceiling for a planner radius
 python3 docs/assets/comparisons/make_figures.py               # redraw the Comparisons.md charts
 ```
 
@@ -85,6 +97,26 @@ thing → smoke_test → experiment. Do not hand-write launch/recorder/`pkill` s
 
 There is no test suite or linter. The xacro include uses `$(find explorer_description)`, so
 source the workspace before running `xacro` or `check_urdf`.
+
+## Old commands
+
+Superseded or rarely needed; kept so earlier runs and docs can be reproduced. Use the commands
+above for new work.
+
+```bash
+ros2 launch explorer_exploration bringup.launch.py           # plain defaults (world:=cave.sdf), before tunnel-reverse tuning
+ros2 launch explorer_exploration bringup.launch.py world:=cave_open.sdf
+ros2 launch explorer_exploration reverse_out.launch.py       # backs out anywhere (rejected by the user, 2026-10-20)
+ros2 launch explorer_exploration benchmark_headless.launch.py   # headless + metrics_logger (reported results are GUI runs)
+ros2 launch explorer_exploration benchmark_headless.launch.py scoring_mode:=nearest
+ros2 launch explorer_exploration explore.launch.py           # only frontier_tad_node + explore_coordinator (TAD weights as args)
+```
+
+## Project report: `reports/`
+
+Review reports for Overleaf (pdfLaTeX + BibTeX). Every review copies `reports/review_3/` and
+follows `reports/FORMAT_GUIDE.md` (the Amrita template in `reports/reference/`, exactly). Figures:
+`reports/review_3/scripts/*.py`. Local build: `~/.local/tinytex/.TinyTeX/bin/x86_64-linux/pdflatex`.
 
 ## Documentation: `docs/` is an Obsidian vault and the single source of truth
 
@@ -101,5 +133,9 @@ Rules for updating docs (the user asked for this to happen automatically, withou
   `Known limitations.md`.
 - Every session that changes something appends to `log/YYYY-MM-DD.md` with the sections
   Done / Verified / Not yet verified / Found, and links it from `Home.md`.
+- Pictures and the scripts that draw them go in `docs/assets/<area>/<topic>/`, one folder per
+  note. Each folder has a `<Topic> figures.md` (tag `moc`) giving every picture a one-line
+  meaning; add a line there for each new picture. Raw run data goes in `data/` (git-ignored),
+  never in `docs/`.
 - Keep notes short, but don't drop information. The user builds their project report from
   these notes.

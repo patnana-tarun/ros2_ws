@@ -85,3 +85,5 @@ Only the noise changes with the seed. The chambers and tunnels are fixed in the 
 `TUNNELS` tables at the top of the script. Edit those to change the layout.
 
 Limitations are in [[Known limitations]].
+
+All figures of this note, each with a one-line meaning: [[Robot figures]].

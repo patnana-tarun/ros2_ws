@@ -51,12 +51,18 @@ ros2 topic pub --once /mesh/logger_cmd std_msgs/msg/String "{data: start}"
 
 ## Output files
 Every run of every session is appended to the same two files. Both files have `timestamp`,
-`scenario_id`, `run_id` and `map_active`.
+`datetime`, `scenario_id`, `run_id` and `map_active`. `datetime` is the same instant as the epoch
+`timestamp`, in the Pi's local time (IST) to the millisecond (added 2026-10-21; older rows were
+converted in place).
 
 | File | Contents |
 |---|---|
-| `~/mesh_results/mesh_runs.csv` | TF and map received/expected counts, combined PDR and loss, TF and map PDR, total/TF/map throughput over the window and over the last 1 s step, `th_req_kbytes_per_sec`, latency min/avg/max and jitter over both streams, TF and map average latency, hop count, TQ |
-| `~/mesh_results/mesh_runs_normalized.csv` | `pdr_percent`, `latency_avg_ms`, `throughput_kbytes_per_sec`, `throughput_step_kbytes_per_sec`, `th_req_kbytes_per_sec`, and `pdr_n`, `latency_n`, `throughput_n`, `throughput_step_n` |
+| `~/ros2_ws/mesh_results/mesh_runs.csv` | TF and map received/expected counts, combined PDR and loss, TF and map PDR, total/TF/map throughput over the window and over the last 1 s step, `th_req_kbytes_per_sec`, latency min/avg/max and jitter over both streams, TF and map average latency, hop count, TQ |
+| `~/ros2_ws/mesh_results/mesh_runs_normalized.csv` | `pdr_percent`, `latency_avg_ms`, `throughput_kbytes_per_sec`, `throughput_step_kbytes_per_sec`, `th_req_kbytes_per_sec`, and `pdr_n`, `latency_n`, `throughput_n`, `throughput_step_n` |
+
+These are the node's default paths on the receiver Pi. Its `receiver.yaml` overrides them with
+`*_hops` names in the same folder. The folder was `~/mesh_results/` until 2026-10-21. It has its
+own git repo and is ignored by the Pi workspace's repo.
 
 If an existing file has different columns (an older version of the node), it is renamed to
 `<name>_old_<date>_<time>.csv`. A new file is started at the same path and the Scenario ID
@@ -104,3 +110,9 @@ An empty input (PDR or latency not available) gives an empty normalized value.
 Both limits are parameters (`th_req_kbps`, `l_max_ms`) in `receiver.yaml`; `th_req_kbps > 0`
 fixes Th_req. On the Pi the user has set `th_req_kbps: 3.00` and `l_max_ms: 2000`. With
 maps now included, a fixed 3 KB/s is met almost always.
+
+**Score columns (laptop copy only).** Since [[2026-10-25]] the four field-test CSVs in
+`mesh_results_data/csv/` end with 17 columns the receiver does not write: the quality-score
+criteria `s_*`, Q per weight set `q_*`, the largest run of missed maps `k_max_*` and
+`q_in_weights`. They were computed afterwards from these rows (fixed values now); their meanings
+are in `mesh_results_data/README.md`.
