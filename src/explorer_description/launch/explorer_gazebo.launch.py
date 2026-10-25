@@ -9,6 +9,7 @@ Run (after `colcon build` and `source install/setup.bash`):
     ros2 launch explorer_description explorer_gazebo.launch.py world:=/path/to/world.sdf x:=1 y:=2 yaw:=1.57
     ros2 launch explorer_description explorer_gazebo.launch.py cmd_vel_stamped:=false
     ros2 launch explorer_description explorer_gazebo.launch.py gui:=false   # headless
+    ros2 launch explorer_description explorer_gazebo.launch.py gui_config:=/path/gui.config   # GUI layout
 
 Odometry: Gazebo publishes wheel odometry (/wheel/odom) and the IMU (/imu); a
 robot_localization EKF fuses them into /odom and the odom -> base_footprint transform,
@@ -40,6 +41,9 @@ def generate_launch_description():
     cmd_vel_stamped = LaunchConfiguration("cmd_vel_stamped")
     headless = PythonExpression(["'' if '", LaunchConfiguration("gui"),
                                  "'.lower() == 'true' else '-s --headless-rendering '"])
+    # empty = Gazebo's default GUI layout (~/.gz/sim/8/gui.config)
+    gui_config = PythonExpression(["'--gui-config ", LaunchConfiguration("gui_config"), " ' if '",
+                                   LaunchConfiguration("gui_config"), "' else ''"])
 
     # Jazzy's turtlebot3 teleop publishes TwistStamped; Nav2 and teleop_twist_keyboard
     # publish Twist. A bridge only connects to one ROS type, so pick it here.
@@ -63,7 +67,7 @@ def generate_launch_description():
             )
         ),
         launch_arguments={
-            "gz_args": ["-r ", headless, world],
+            "gz_args": ["-r ", headless, gui_config, world],
             "on_exit_shutdown": "true",
         }.items(),
     )
@@ -131,6 +135,8 @@ def generate_launch_description():
                                   description="Also open RViz"),
             DeclareLaunchArgument("gui", default_value="true",
                                   description="Open the Gazebo window (false = headless server)"),
+            DeclareLaunchArgument("gui_config", default_value="",
+                                  description="Gazebo GUI layout file (empty = Gazebo's default)"),
             DeclareLaunchArgument("skid_track", default_value="0.34",
                               description="effective skid-steer track for DiffDrive (m), see explorer_gazebo.xacro"),
         DeclareLaunchArgument("cmd_vel_stamped", default_value="true",
