@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__PAGE_TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('ft-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>/*__PLOTLY__*/</script>
+<style>
+/* Presentation theme, light (default, best on projectors) and dark.
+   Colour has one meaning each: green / amber / red = map result and threshold zones only (always
+   with a symbol and a word); blue / raspberry / indigo = runs (validated colour-blind safe, all
+   pairs, in both themes); grey = everything else. */
+:root{
+  --bg:#eef1f5; --surface:#ffffff; --surface-2:#f6f8fa; --border:#d5dbe3; --border-strong:#aeb8c4;
+  --ink:#0f1720; --ink-2:#3d4a58; --ink-3:#66727f; --grid:#e3e8ee; --axis:#9aa5b1;
+  --accent:#1f5fb8; --accent-soft:#e3edf9;
+  --ok:#0b8f0b; --ok-ink:#076b07; --ok-tint:rgba(12,163,12,.10);
+  --warn:#f0a400; --warn-ink:#8a5a00; --warn-tint:rgba(250,178,25,.16);
+  --bad:#d03b3b; --bad-ink:#b02a2a; --bad-tint:rgba(208,59,59,.10);
+  --run1:#2a78d6; --run2:#b8457f; --run3:#5b3fa8;
+  --sans:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; --mono:'JetBrains Mono','SFMono-Regular',Consolas,monospace;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0c0f13; --surface:#151a20; --surface-2:#1b2128; --border:#2a323c; --border-strong:#46515e;
+  --ink:#f2f5f8; --ink-2:#c3ccd6; --ink-3:#8e9aa7; --grid:#242c35; --axis:#55606c;
+  --accent:#6aa7ff; --accent-soft:#1a2a40;
+  --ok:#2fbf3a; --ok-ink:#5bd865; --ok-tint:rgba(47,191,58,.14);
+  --warn:#fab219; --warn-ink:#ffc94d; --warn-tint:rgba(250,178,25,.16);
+  --bad:#ec5b5b; --bad-ink:#ff8080; --bad-tint:rgba(236,91,91,.15);
+  --run1:#2d66c8; --run2:#d55181; --run3:#9682e8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans);-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{display:grid;grid-template-rows:auto auto 1fr;height:100vh;min-height:660px;gap:12px;padding-block:14px}
+header{display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:2px solid var(--border);padding-bottom:12px}
+.eyebrow{font:600 12px var(--sans);color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
+h1{font:800 28px/1.15 var(--sans);color:var(--ink);margin:3px 0 2px;letter-spacing:-.01em}
+.question{color:var(--ink-2);margin:0;font-size:16px}
+.hright{margin-left:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.seg{display:flex;border:1.5px solid var(--border-strong);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{background:transparent;color:var(--ink-2);border:0;padding:9px 15px;font:600 14px var(--sans);cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--border-strong)}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.seg button:hover:not([aria-pressed=true]){background:var(--accent-soft);color:var(--ink)}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lbl{font:700 12px var(--sans);color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);border-radius:8px;padding:6px 12px;
+  font:700 15px var(--sans);cursor:pointer;display:flex;align-items:center;gap:8px}
+.chip small{color:var(--ink-3);font:500 13px var(--sans)}
+.chip .sym{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font:800 12px var(--sans);color:#fff}
+.chip[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.chip:hover{border-color:var(--border-strong)}
+.s-ok{background:var(--ok)} .s-warn{background:var(--warn);color:#2a1d00!important} .s-bad{background:var(--bad)}
+.spacer{flex:1}
+.hint{font:13px var(--sans);color:var(--ink-3)}
+select{background:var(--surface);color:var(--ink);border:1.5px solid var(--border-strong);border-radius:8px;padding:6px 10px;font:600 14px var(--sans)}
+.wpick{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wpick select{padding:2px 6px;font-size:13px;border-radius:6px}
+.wpick select.alt{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.main{display:grid;grid-template-columns:minmax(340px,26%) 1fr;gap:12px;min-height:0}
+.left{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:0;box-shadow:0 1px 2px rgba(15,23,32,.05)}
+.card h2{font:700 15px var(--sans);color:var(--ink);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card h2 span{color:var(--ink-3);font-weight:500;font-size:13px}
+#layoutSvg{display:block;width:100%;height:auto}
+#layoutSvg text{font-family:var(--sans)}
+.trk{stroke:var(--axis);stroke-width:2} .tck{stroke:var(--axis)} .tlab{fill:var(--ink-3);font-size:10.5px}
+.nlab{fill:var(--ink);font-size:12px;font-weight:700} .dlab{fill:var(--ink-2);font-size:11px;font-weight:600}
+.other{fill:var(--border-strong)} .nbase{fill:var(--accent)} .nrelay{fill:var(--run3)} .nexp{fill:var(--ink)}
+.blk{stroke:var(--axis);stroke-width:2.4;stroke-dasharray:5 4}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.kpi{background:var(--surface);padding:9px 11px;min-width:0}
+.kpi .k{font:600 12px/1.25 var(--sans);color:var(--ink-3)}
+.kpi .v{font:800 22px/1.2 var(--sans);color:var(--ink);margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .v small{font-size:13px;color:var(--ink-3);font-weight:600;margin-left:3px}
+.kpi.hl{box-shadow:inset 4px 0 0 var(--hlc)}
+.verdict{display:flex;gap:12px;align-items:center}
+.badge{font:800 15px var(--sans);padding:7px 13px;border-radius:8px;white-space:nowrap;display:flex;align-items:center;gap:8px;color:#fff}
+.badge .sym{font-size:15px}
+.badge.s-warn{color:#2a1d00}
+.verdict p{margin:0;color:var(--ink);font-size:15px;font-weight:500}
+.rule{font-size:13px;color:var(--ink-2);margin-top:9px;line-height:1.5}
+.rule b{font-weight:700}
+.charts{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;min-height:0;min-width:0}
+.chart{display:flex;flex-direction:column;min-height:0;min-width:0}
+.chart .plot{flex:1;min-height:190px}
+.key{display:flex;gap:14px;flex-wrap:wrap;font:600 12.5px var(--sans);color:var(--ink-2);margin:2px 0 0}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.key i{display:inline-block;width:14px;height:10px;border-radius:2px}
+.key i.ln{height:0;border-top:2.5px dashed}
+@media (max-height:820px){
+  .page{gap:8px;padding-block:8px;min-height:600px} header{padding-bottom:8px;gap:12px} h1{font-size:22px} .question{font-size:14px}
+  .eyebrow{font-size:11px} .seg button{padding:6px 11px;font-size:13px} .chip{padding:4px 9px;font-size:14px} .chip .sym{width:18px;height:18px}
+  .main,.left,.charts{gap:8px} .card{padding:8px 11px} .card h2{font-size:14px;margin-bottom:2px} .card h2 span{font-size:12px}
+  #layoutSvg{max-height:96px} .kpi{padding:5px 9px} .kpi .k{font-size:11px} .kpi .v{font-size:18px;margin-top:1px} .kpi .v small{font-size:11.5px}
+  .badge{font-size:14px;padding:5px 10px} .verdict p{font-size:13.5px} .rule{font-size:12px;margin-top:5px}
+  .key{font-size:11.5px;gap:10px} .chart .plot{min-height:150px} .hint{display:none}
+}
+@media (max-width:1100px){.page{height:auto}.main{grid-template-columns:1fr}.charts{grid-template-columns:1fr;grid-template-rows:none}.chart .plot{min-height:300px}}
+button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div>
+      <div class="eyebrow">Mesh relay field test · BATMAN-adv · 2.4 GHz channel 1</div>
+      <h1 id="title"></h1>
+      <p class="question" id="question"></p>
+    </div>
+    <div class="hright">
+      <div class="seg" id="caseSeg" role="group" aria-label="Test case"></div>
+      <div class="seg" id="themeSeg" role="group" aria-label="Colour theme">
+        <button data-t="light">☀ Light</button><button data-t="dark">☾ Dark</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="bar">
+    <span class="lbl">Scenario</span>
+    <div class="chips" id="chips"></div>
+    <span class="spacer"></span>
+    <label class="lbl" for="runSel">Run</label>
+    <select id="runSel"></select>
+    <span class="hint">← → keys change scenario · click a bar to select it</span>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <div class="card">
+        <h2>Test layout <span id="layoutNote"></span></h2>
+        <svg id="layoutSvg" viewBox="0 0 360 132" role="img" aria-label="Positions of the base station, relay and explorer"></svg>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="card">
+        <h2>Map result</h2>
+        <div class="verdict"><span class="badge" id="badge"></span><p id="verdictText"></p></div>
+        <div class="rule">A new map is sent every <b>3 s</b>. <b>Target:</b> at most 1 map missed in a row (gap ≈ 6 s). <b>Hard limit:</b> 2 in a row (≈ 9 s).</div>
+      </div>
+    </div>
+    <div class="charts">
+      <div class="card chart"><h2>Waiting for the next map <span>seconds since the last map arrived</span></h2>
+        <div class="key"><span><i style="background:var(--ok-tint);border:1px solid var(--ok)"></i>within target (up to 6 s)</span><span><i style="background:var(--warn-tint);border:1px solid var(--warn)"></i>hard-limit zone (6–9 s)</span><span><i style="background:var(--bad-tint);border:1px solid var(--bad)"></i>beyond hard limit (over 9 s)</span></div>
+        <div class="plot" id="pAge"></div></div>
+      <div class="card chart"><h2>Signal strength <span id="rssiNote"></span></h2>
+        <div class="key"><span><i style="background:var(--bad-tint);border:1px solid var(--bad)"></i>below −68 dBm: drop a relay</span></div>
+        <div class="plot" id="pRssi"></div></div>
+      <div class="card chart"><h2>Maps delivered, every position <span>label: most maps missed in a row (k)</span></h2>
+        <div class="key" id="resKey1"></div><div class="plot" id="pDel"></div></div>
+      <div class="card chart"><h2>Quality score Q, every position <span class="wpick"><select id="wSel" aria-label="Weight set of the score"></select><span id="qFormula"></span></span></h2>
+        <div class="key" id="resKey2"></div><div class="plot" id="pQ"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+(function(){
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement;
+  const tok = n => getComputedStyle(root).getPropertyValue(n).trim();
+  const CASES = Object.keys(DATA.cases).map(Number);
+  const VKEY = {'target met':'ok','hard limit only':'warn','failed':'bad'};
+  const VSYM = {'target met':'✓','hard limit only':'!','failed':'✕'};
+  const VTXT = {'target met':'Target met','hard limit only':'Hard limit only','failed':'Failed'};
+  const S = {c: CASES[0], i: 0, run: 'all', w: DATA.weights[0].name};
+  const wset = () => DATA.weights.find(x => x.name===S.w);
+  const qOf = s => s.qs[S.w];
+  const neg = s => String(s).replace(/-/g,'−');
+  const fmt = (v,d=1) => v==null ? '–' : neg(Number(v).toFixed(d));
+  const cs = () => DATA.cases[S.c];
+  const sc = () => cs().scenarios[S.i];
+  let T = {};
+
+  function readTheme(){
+    ['bg','surface','surface-2','border','border-strong','ink','ink-2','ink-3','grid','axis','accent',
+     'ok','ok-ink','ok-tint','warn','warn-ink','warn-tint','bad','bad-ink','bad-tint','run1','run2','run3']
+      .forEach(k => T[k] = tok('--'+k));
+    T.runs = [T.run1, T.run2, T.run3, T.run1, T.run2];
+    T.dash = ['solid','solid','solid','dash','dash'];
+  }
+  const vcol = v => T[VKEY[v]];
+
+  const base = () => ({paper_bgcolor:T.surface, plot_bgcolor:T.surface,
+    font:{family:"Inter,'Segoe UI',sans-serif", size:13.5, color:T.ink},
+    margin:{l:58,r:16,t:6,b:44}, showlegend:false, hovermode:'closest',
+    hoverlabel:{bgcolor:T.surface, bordercolor:T['border-strong'], font:{family:"Inter,sans-serif", size:13.5, color:T.ink}}});
+  const AX = (t,o={}) => Object.assign({title:{text:t, font:{size:13, color:T['ink-2']}, standoff:6}, gridcolor:T.grid,
+    zeroline:false, linecolor:T.axis, linewidth:1.5, showline:true, ticks:'outside', tickcolor:T.axis,
+    tickfont:{size:12.5, color:T['ink-2']}}, o);
+  const CFG = {displayModeBar:false, responsive:true};
+  const hline = (y,col,w=2,dash='dash') => ({type:'line', xref:'paper', x0:0, x1:1, y0:y, y1:y, line:{color:col, width:w, dash}, layer:'above'});
+  const band = (y0,y1,fill) => ({type:'rect', xref:'paper', x0:0, x1:1, y0, y1, fillcolor:fill, line:{width:0}, layer:'below'});
+  const note = (y,txt,col,x=1,xa='right',ya='bottom') => ({xref:'paper', x, y, yanchor:ya, xanchor:xa, text:`<b>${txt}</b>`, showarrow:false,
+    font:{size:12.5, color:col}, bgcolor:T.surface, opacity:.95, borderpad:2});
+
+  /* ---- controls ---- */
+  function caseSeg(){
+    const seg = $('caseSeg');
+    if (CASES.length < 2){ seg.remove(); return; }
+    seg.innerHTML = CASES.map(c => `<button data-c="${c}">${DATA.cases[c].name} · ${DATA.cases[c].title}</button>`).join('');
+    seg.querySelectorAll('button').forEach(b => b.onclick = () => { S.c = +b.dataset.c; S.i = 0; S.run = 'all'; draw(); });
+  }
+  function themeSeg(){
+    const set = t => { root.setAttribute('data-theme', t); try{ localStorage.setItem('ft-theme', t); }catch(e){} draw(); };
+    $('themeSeg').querySelectorAll('button').forEach(b => b.onclick = () => set(b.dataset.t));
+  }
+  function chips(){
+    $('chips').innerHTML = cs().scenarios.map((s,i) =>
+      `<button class="chip" data-i="${i}" aria-pressed="${i===S.i}" title="${VTXT[s.verdict]}"><span class="sym s-${VKEY[s.verdict]}">${VSYM[s.verdict]}</span>${s.id}<small>${fmt(s.length)} m</small></button>`).join('');
+    $('chips').querySelectorAll('.chip').forEach(b => b.onclick = () => { S.i = +b.dataset.i; S.run = 'all'; draw(); });
+  }
+  function runSel(){
+    const s = sc();
+    $('runSel').innerHTML = `<option value="all">All runs (${s.runs.length})</option>` +
+      s.runs.map(r => `<option value="${r.id}">Run ${r.id}</option>`).join('');
+    $('runSel').value = String(S.run);
+  }
+  function weightSel(){
+    $('wSel').innerHTML = DATA.weights.map(x => `<option value="${x.name}">${x.label}</option>`).join('');
+    $('wSel').onchange = e => { S.w = e.target.value; kpis(); pQ(); };
+  }
+  function qFormula(){
+    const ws = wset(), d = ws.name==='subjective' ? 2 : 3;
+    $('qFormula').textContent = ['gap','map latency','TF PDR','TF latency'].map((t,j) => `${ws.w[j].toFixed(d)} ${t}`).join(' + ');
+    $('wSel').value = S.w;
+    $('wSel').classList.toggle('alt', ws.name!=='subjective');
+  }
+  function resKeys(){
+    const k = ['target met','hard limit only','failed'].map(v =>
+      `<span><span class="sym s-${VKEY[v]}" style="display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;font:800 10px Inter,sans-serif;color:#fff">${VSYM[v]}</span>${VTXT[v]}</span>`).join('');
+    $('resKey1').innerHTML = k;
+    $('resKey2').innerHTML = k + `<span><i class="ln" style="border-color:var(--ink-2)"></i>0.7 = one missed map</span><span><i class="ln" style="border-color:var(--bad)"></i>0.5 = failing</span>`;
+  }
+
+  /* ---- left column ---- */
+  function layout(){
+    const s = sc(), c = S.c, L = s.layout;
+    const X0 = 22, X1 = 340, maxU = 84, x = u => X0 + (X1-X0)*u/maxU, Y = 80, NY = Y-26;
+    let g = `<line class="trk" x1="${X0}" y1="${Y}" x2="${X1}" y2="${Y}"/>`;
+    for (let mm=0; mm<=48; mm+=8){ const u = mm/DATA.unit;
+      g += `<line class="tck" x1="${x(u)}" y1="${Y}" x2="${x(u)}" y2="${Y+5}"/><text class="tlab" x="${x(u)}" y="${Y+18}" text-anchor="middle">${mm} m</text>`; }
+    cs().scenarios.forEach((o,i) => { if (i===S.i) return;
+      g += `<circle class="other" cx="${x(o.layout.laptop)}" cy="${Y}" r="3.5"><title>Scenario ${o.id}</title></circle>`; });
+    const col = vcol(s.verdict);
+    const link = (a,b) => `<line x1="${x(a)}" y1="${NY}" x2="${x(b)}" y2="${NY}" stroke="${col}" stroke-width="3.5" stroke-linecap="round"/>`;
+    const dist = (a,b,txt) => `<text class="dlab" x="${(x(a)+x(b))/2}" y="${NY+16}" text-anchor="middle">${txt}</text>`;
+    const label = (cx,txt) => { if (!txt) return ''; const anc = cx < 70 ? 'start' : cx > 290 ? 'end' : 'middle';
+      const tx = anc==='start' ? cx-9 : anc==='end' ? cx+9 : cx;
+      return `<text class="nlab" x="${tx}" y="${NY-15}" text-anchor="${anc}">${txt}</text>`; };
+    if (c===1){ g += link(0, L.laptop); if (L.laptop>8) g += dist(0, L.laptop, `${fmt(s.length)} m`); }
+    else if (c===2){ g += link(0, L.n1) + dist(0, L.n1, `${fmt(s.length)} m`); }
+    else { g += `<line class="blk" x1="${x(0)}" y1="${NY}" x2="${x(L.n1)}" y2="${NY}"/>` + link(L.n1, L.laptop) + dist(0, L.n1, '27.8 m');
+      if (L.laptop - L.n1 > 8) g += dist(L.n1, L.laptop, `${fmt(s.length)} m`); }
+    if (c!==1) g += `<text class="tlab" x="${(X0+X1)/2}" y="${Y+36}" text-anchor="middle">direct explorer–base link blocked: 2 hops</text>`;
+    const atBase = L.laptop === 0, atRelay = L.n1 != null && L.laptop === L.n1;
+    g += `<rect class="nbase" x="${x(0)-9}" y="${NY-9}" width="18" height="18" rx="3"/>` + label(x(0), atBase ? 'base + explorer' : 'base');
+    if (L.n1!=null) g += `<rect class="nrelay" x="${x(L.n1)-8}" y="${NY-8}" width="16" height="16" transform="rotate(45 ${x(L.n1)} ${NY})"/>` + label(x(L.n1), atRelay ? '' : 'relay N1');
+    if (!atBase) g += `<circle class="nexp" cx="${x(L.laptop)}" cy="${NY}" r="9" stroke="var(--surface)" stroke-width="2"/>` +
+      label(x(L.laptop), atRelay ? (c===2 ? 'explorer + relay N1' : 'relay N1 + explorer') : 'explorer');
+    $('layoutSvg').innerHTML = g;
+    $('layoutNote').textContent = `${cs().link}: ${fmt(s.length)} m`;
+  }
+
+  function kpis(){
+    const s = sc(), vc = vcol(s.verdict);
+    const K = [[cs().length_label, fmt(s.length), 'm'], ['RSSI, median', fmt(s.rssi), 'dBm'], ['TQ, median', fmt(s.tq,0), '/ 255'],
+      ['Maps delivered', fmt(s.delivery,0), '%', 1], ['Longest map gap', fmt(s.gap_max,0), 's', 1], ['Most missed in a row', s.kmax, 'maps', 1],
+      ['Map latency, median', fmt(s.maplat,0), 'ms'], ['TF PDR, mean', fmt(s.tfpdr), '%'],
+      [S.w==='subjective' ? 'Score Q' : `Score Q · ${wset().label}`, fmt(qOf(s),2), '', 1]];
+    $('kpis').innerHTML = K.map(([k,v,u,h]) => `<div class="kpi${h?' hl':''}" style="--hlc:${vc}"><div class="k">${k}</div><div class="v">${v}<small>${u}</small></div></div>`).join('');
+    const b = $('badge'); b.className = 'badge s-' + VKEY[s.verdict];
+    b.innerHTML = `<span class="sym">${VSYM[s.verdict]}</span>${VTXT[s.verdict]}`;
+    $('verdictText').textContent = s.verdict==='target met' ? 'Never more than one map missed in a row.'
+      : s.verdict==='hard limit only' ? 'Two maps missed in a row at worst: allowed, but weak.'
+      : `Up to ${s.kmax} maps missed in a row (longest gap ${fmt(s.gap_max,0)} s).`;
+  }
+
+  /* ---- charts ---- */
+  const runs = () => { const s = sc(); return S.run==='all' ? s.runs : s.runs.filter(r => String(r.id)===String(S.run)); };
+  const runTrace = (r, y, unit) => ({x:r.t, y, type:'scatter', mode:'lines', name:`Run ${r.id}`,
+    line:{width:3, color:T.runs[(r.id-1)%5], dash:T.dash[(r.id-1)%5], shape: unit==='s' ? 'hv' : 'spline'},
+    hovertemplate:`<b>Run ${r.id}</b><br>t = %{x:.0f} s<br>%{y:.${unit==='s'?0:1}f} ${unit}<extra></extra>`});
+  const runLegend = () => ({showlegend: runs().length>1, legend:{orientation:'h', x:0, y:1.0, yanchor:'bottom',
+    font:{size:13, color:T.ink}, bgcolor:'rgba(0,0,0,0)'}});
+
+  function pAge(){
+    const rr = runs();
+    const ymax = Math.max(15, ...rr.flatMap(r => r.age.filter(v => v!=null))) + 2;
+    Plotly.react('pAge', rr.map(r => runTrace(r, r.age, 's')), Object.assign(base(), runLegend(), {
+      margin:{l:58,r:16,t:30,b:44},
+      xaxis:AX('time in the 60 s run (s)', {range:[0,61]}), yaxis:AX('seconds waiting', {range:[0,ymax]}),
+      shapes:[band(0,6,T['ok-tint']), band(6,9,T['warn-tint']), band(9,ymax,T['bad-tint']),
+              hline(6,T.ok), hline(9,T.warn)]}), CFG);
+  }
+
+  function pRssi(){
+    const rr = runs();
+    Plotly.react('pRssi', rr.map(r => runTrace(r, r.rssi, 'dBm')), Object.assign(base(), runLegend(), {
+      margin:{l:58,r:16,t:30,b:44},
+      xaxis:AX('time in the 60 s run (s)', {range:[0,61]}), yaxis:AX('RSSI, 10 s mean (dBm)', {range:[-95,-40], dtick:10}),
+      shapes:[band(-95,-68,T['bad-tint']), hline(-68,T.bad)],
+      annotations:[note(-68,'relay trigger −68 dBm',T['bad-ink'])]}), CFG);
+    $('rssiNote').textContent = cs().rssi_label;
+  }
+
+  const cats = () => cs().scenarios.map(s => `<b>${s.id}</b><br>${fmt(s.length)} m`);
+  function barStyle(){
+    const L = cs().scenarios;
+    return {color:L.map((s,i) => vcol(s.verdict)), opacity:sel(),
+      line:{color:L.map((s,i) => i===S.i ? T.ink : T.surface), width:L.map((s,i) => i===S.i ? 3 : 1)},
+      pattern:{shape:L.map(s => s.verdict==='failed' ? '/' : ''), fillmode:'overlay', fgcolor:'#ffffff', fgopacity:.55, size:9, solidity:.22}};
+  }
+  const sel = () => cs().scenarios.map((s,i) => i===S.i ? 1 : 0.55);
+
+  function pDel(){
+    const L = cs().scenarios;
+    Plotly.react('pDel', [{x:cats(), y:L.map(s => s.delivery), type:'bar', marker:barStyle(),
+      text:L.map(s => `${VSYM[s.verdict]} k=${s.kmax}`), textposition:'outside', textfont:{size:13, color:T.ink}, cliponaxis:false,
+      customdata:L.map(s => [s.gap_max, s.kmax, VTXT[s.verdict]]),
+      hovertemplate:'Scenario %{x}<br>maps delivered <b>%{y}%</b><br>longest gap %{customdata[0]} s<br>most missed in a row %{customdata[1]}<br><b>%{customdata[2]}</b><extra></extra>'}],
+      Object.assign(base(), {xaxis:AX('', {tickfont:{size:12.5, color:T.ink}, showline:true, ticks:''}),
+        yaxis:AX('maps delivered (%)', {range:[0,118], dtick:20}), bargap:.3, margin:{l:58,r:16,t:10,b:48}}), CFG);
+  }
+
+  function pQ(){
+    const L = cs().scenarios;
+    qFormula();
+    Plotly.react('pQ', [{x:cats(), y:L.map(qOf), type:'bar', marker:barStyle(),
+      text:L.map(s => fmt(qOf(s),2)), textposition:'outside', textfont:{size:13, color:T.ink}, cliponaxis:false,
+      customdata:L.map(s => s.terms.concat([VTXT[s.verdict]])),
+      hovertemplate:`Scenario %{x}<br>Q (${wset().label}) = <b>%{y:.2f}</b> · %{customdata[4]}<br>S_gap %{customdata[0]} · S_lat %{customdata[1]}<br>S_tfpdr %{customdata[2]} · S_tflat %{customdata[3]}<extra></extra>`}],
+      Object.assign(base(), {xaxis:AX('', {tickfont:{size:12.5, color:T.ink}, ticks:''}), yaxis:AX('score Q (0 to 1)', {range:[0,1.2], dtick:.2}),
+        bargap:.3, margin:{l:58,r:16,t:10,b:48}, shapes:[hline(0.7,T['ink-2'],2,'dash'), hline(0.5,T.bad,2,'dash')],
+        annotations:[]}), CFG);
+  }
+
+  function draw(){
+    readTheme();
+    const c = cs();
+    $('title').textContent = `${c.name}: ${c.title}`;
+    $('question').textContent = c.question;
+    document.querySelectorAll('#caseSeg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.c===S.c)));
+    const th = root.getAttribute('data-theme');
+    document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t===th)));
+    chips(); runSel(); resKeys(); layout(); kpis(); pAge(); pRssi(); pDel(); pQ();
+  }
+
+  $('runSel').onchange = e => { S.run = e.target.value; pAge(); pRssi(); };
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName==='SELECT') return;
+    const n = cs().scenarios.length;
+    if (e.key==='ArrowRight'){ S.i = (S.i+1)%n; S.run='all'; draw(); }
+    else if (e.key==='ArrowLeft'){ S.i = (S.i-1+n)%n; S.run='all'; draw(); }
+  });
+  caseSeg(); themeSeg(); weightSel(); draw();
+  ['pDel','pQ'].forEach(id => $(id).on('plotly_click', e => { S.i = e.points[0].pointIndex; S.run = 'all'; draw(); }));
+})();
+</script>
+</body>
+</html>

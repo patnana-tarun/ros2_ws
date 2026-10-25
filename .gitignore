@@ -7,5 +7,9 @@
 __pycache__/
 *.pyc
 
-# raw run data (36 MB), kept locally; figures and scripts are copied into docs/assets/
-docs/demo_runs_2026-10-19/
+# raw run data (e.g. data/demo_runs_2026-10-19, 35 MB), kept locally; figures and scripts are
+# copied into docs/assets/
+/data/
+
+# review reports (LaTeX sources, figures, PDFs, 57 MB), kept locally and built on Overleaf
+/reports/
