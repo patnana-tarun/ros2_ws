@@ -41,9 +41,9 @@ Why the QoS differs: [[QoS design]].
 | pub | `/odom` + TF `odom → base_footprint` | `Odometry` | `ekf_filter_node` (remapped from `odometry/filtered`) |
 
 ## Real robot ([[explorer_bringup]])
-Same as the Gazebo bridge above, from drivers instead: `/wheel/odom` and `/joint_states`
-from `explorer_base`, `/imu` from `mpu9250_imu`, and `/scan` from `ydlidar_ros2_driver`.
-`/cmd_vel` goes into `explorer_base`.
+Same as the Gazebo bridge above, from drivers instead: `/wheel/odom`, `/joint_states` and
+`/imu` from `esp32_bridge` (which forwards `/cmd_vel` to the ESP32), and `/scan` from
+`x2_lidar` (or `ydlidar_ros2_driver` with `lidar:=ydlidar`).
 
 ## Exploration ([[explorer_exploration]])
 | Dir | Topic | Type | Node |

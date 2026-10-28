@@ -16,12 +16,12 @@ setup(
     zip_safe=True,
     maintainer='Patnana Tarun',
     maintainer_email='hansika9705@gmail.com',
-    description='Real-robot bringup for the explorer: motor/encoder and IMU drivers, launch',
+    description='Real-robot bringup for the explorer: ESP32 bridge, X2 LiDAR driver, launch',
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'explorer_base = explorer_bringup.explorer_base:main',
-            'mpu9250_imu = explorer_bringup.mpu9250_imu:main',
+            'esp32_bridge = explorer_bringup.esp32_bridge:main',
+            'x2_lidar = explorer_bringup.x2_lidar:main',
         ],
     },
 )

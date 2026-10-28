@@ -4,9 +4,9 @@
   <name>explorer_bringup</name>
   <version>0.1.0</version>
   <description>
-    Real-robot bringup for the explorer (runs on the Raspberry Pi): TB6612FNG motor and
-    LM393 encoder driver, MPU-9250 IMU driver, and the launch that starts them with the
-    LiDAR, robot_state_publisher and the odometry EKF.
+    Real-robot bringup for the explorer (runs on the Raspberry Pi): bridge to the ESP32
+    that runs the motors, encoders and ICM-20948 IMU (firmware/explorer_esp32), a YDLIDAR X2
+    driver, and the launch that starts them with robot_state_publisher and the odometry EKF.
   </description>
   <maintainer email="hansika9705@gmail.com">Patnana Tarun</maintainer>
   <license>Apache-2.0</license>
@@ -19,9 +19,7 @@
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>robot_localization</exec_depend>
   <exec_depend>xacro</exec_depend>
-  <!-- On the Pi only (not needed for mock:=true): -->
-  <exec_depend>python3-lgpio</exec_depend>
-  <exec_depend>python3-smbus2</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

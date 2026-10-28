@@ -42,8 +42,9 @@ are next to the PNG. Rerun it (workspace sourced) after any change to the xacro.
 | Sensor | Part | Mounting | Simulated as |
 |--------|------|----------|--------------|
 | LiDAR | YDLIDAR X2 | `laser_frame` | 360°, 7 Hz, 430 samples, 0.12–8 m, σ = 1 cm |
-| IMU | MPU-9250 | `imu_link`, centre, facing down | 100 Hz gyro + accel with datasheet noise. Reads gravity as −9.8 on its z. Magnetometer not simulated |
-| Encoders | LM393 slot sensors with slotted disks | the 4 corner wheels (front and rear), not the middle ones | Gazebo DiffDrive wheel odometry on `/wheel/odom` |
+| IMU | MPU-9250 in the model; the robot now carries a SparkFun ICM-20948 (Qwiic), read by the ESP32 (2026-10-28) | `imu_link`, centre, facing down (mounting of the ICM-20948 not yet checked) | 100 Hz gyro + accel with MPU-9250 datasheet noise. Reads gravity as −9.8 on its z. Magnetometer not simulated |
+| Encoders | wheel encoders with A and B outputs (rover_tests assume quadrature; single-channel also supported), read by the ESP32 | the 4 corner wheels (front and rear), not the middle ones | Gazebo DiffDrive wheel odometry on `/wheel/odom` |
+| Controller | ESP32 DevKit: motors, encoders and IMU, on USB serial to the Pi ([[explorer_bringup]]) | — | not simulated (Gazebo drives the wheels directly) |
 
 How they are fused: [[Odometry fusion]].
 

@@ -1,6 +1,6 @@
 # robot_localization EKF: wheel odometry + IMU -> /odom and TF odom -> base_footprint.
-# Used in simulation and meant for the real robot too (encoders on the 4 corner wheels,
-# MPU-9250 at the centre).
+# Used in simulation and on the real robot (encoders on the 4 corner wheels and an ICM-20948,
+# both read by the ESP32; explorer_bringup esp32_bridge publishes them).
 #
 # Skid-steer wheels slip sideways whenever the robot turns, so encoder-derived yaw rate is
 # poor. The wheels supply forward speed (and the no-sideways-motion constraint, vy = 0); the

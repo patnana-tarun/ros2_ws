@@ -14,7 +14,7 @@ over a lossy BATMAN-adv mesh, holds the robot's URDF/Gazebo model, and explores 
 | `src/mesh_nodes`           | ament_python | `explorer_relay_node` (exe `explorer_relay`), launch + YAML |
 | `src/explorer_description` | ament_cmake  | URDF/xacro, Gazebo Harmonic launch, cave world generator, wheel+IMU EKF config |
 | `src/explorer_exploration` | ament_python | frontier/TAD exploration nodes, Nav2 + SLAM Toolbox params, bringup launch |
-| `src/explorer_bringup`     | ament_python | real robot on the Pi: TB6612FNG/encoder and MPU-9250 drivers, robot launch |
+| `src/explorer_bringup`     | ament_python | real robot: Pi nodes `esp32_bridge` + `x2_lidar`, robot launch, ESP32 firmware in `firmware/explorer_esp32/` (motors, encoders, ICM-20948) |
 
 ## Commands
 
@@ -57,6 +57,8 @@ ros2 run explorer_exploration manual_drive
 # Real robot, on the Pi
 ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false
 ros2 launch explorer_bringup robot.launch.py mock:=true          # drivers only, no hardware
+ros2 launch explorer_bringup robot.launch.py esp_port:=/dev/serial/by-path/... lidar_port:=...   # lidar:=none|x2|ydlidar
+arduino-cli compile --fqbn esp32:esp32:esp32 src/explorer_bringup/firmware/explorer_esp32    # ESP32 firmware (add --upload -p PORT)
 
 # Mesh relay (sender side; /map and /tf onto the BATMAN-adv mesh)
 ros2 launch mesh_nodes explorer_relay.launch.py                  # on the robot
