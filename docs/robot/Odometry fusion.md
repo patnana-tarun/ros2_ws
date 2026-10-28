@@ -18,9 +18,10 @@ listed in [[Robot model]].
 - `two_d_mode` is on, and the output runs at 30 Hz. From 2026-10-06 to 2026-10-15 it ran at 10 Hz
   for the mesh relay, which made the startup turn overshoot badly ([[Baseline runs 2026-10-08]]).
   The relay now thins TF for the mesh instead ([[Relay rates]]).
-- On the robot, `esp32_bridge` raises the vx variance from 0.002 to 0.25 while a side's front
-  and rear wheels disagree by more than 30 % (slip), so the EKF trusts the wheels less then
-  ([[explorer_bringup]]).
+- On the robot, [[esp32_bridge]] raises the vx variance while a wheel slips, so the EKF trusts
+  the wheels less then. The robot's EKF also runs with `predict_to_current_time: true` (set in
+  `robot.launch.py`, not here): with the ESP32's 50 Hz telemetry some 30 Hz cycles have no new
+  measurement, and without it `/odom` came out at 20 Hz (measured 2026-10-28).
 - In simulation, Gazebo's DiffDrive publishes `/wheel/odom`. Its own transform goes to an
   unbridged topic, so only the EKF publishes `odom → base_footprint`.
 

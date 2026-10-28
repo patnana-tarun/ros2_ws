@@ -73,7 +73,10 @@ def generate_launch_description():
             package='robot_localization',
             executable='ekf_node',
             name='ekf_filter_node',
-            parameters=[os.path.join(DESC, 'config', 'ekf.yaml')],
+            # predict_to_current_time: publish every 30 Hz cycle. The ESP32's 50 Hz telemetry
+            # leaves some cycles without a new measurement, and the EKF then skips them
+            # (measured 20 Hz without it, 30 Hz with it). The sim keeps ekf.yaml as it is.
+            parameters=[os.path.join(DESC, 'config', 'ekf.yaml'), {'predict_to_current_time': True}],
             remappings=[('odometry/filtered', 'odom')],
             output='screen',
         ),

@@ -21,7 +21,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[mesh_nodes]]: the relay node
 - [[explorer_description]]: the robot model and Gazebo simulation
 - [[explorer_exploration]]: autonomous frontier exploration with Nav2
-- [[explorer_bringup]]: the real robot on the Raspberry Pi (motor, encoder and IMU drivers)
+- [[explorer_bringup]]: the real robot: Pi nodes, launch and ESP32 firmware
 
 ## Concepts
 - [[Message envelope]] → [[PDR measurement]] → [[Run logging]]
@@ -35,6 +35,9 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 - [[Navigation stack]]: SLAM Toolbox + Nav2 tuned for this robot
 - [[Tuning loop]]: how changes are tried and confirmed in simulation, with the `rover` MCP server
 - [[Demo recording]]: chase camera in Gazebo, box-following RViz view, side-by-side backup video
+
+## Hardware (the real robot)
+- [[Hardware]]: start page: Pi 4 = brain, ESP32 = controller; wiring, bring-up, debugging, test tools
 
 ## Robot
 - [[Robot model]]

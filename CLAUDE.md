@@ -59,6 +59,11 @@ ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false
 ros2 launch explorer_bringup robot.launch.py mock:=true          # drivers only, no hardware
 ros2 launch explorer_bringup robot.launch.py esp_port:=/dev/serial/by-path/... lidar_port:=...   # lidar:=none|x2|ydlidar
 arduino-cli compile --fqbn esp32:esp32:esp32 src/explorer_bringup/firmware/explorer_esp32    # ESP32 firmware (add --upload -p PORT)
+ros2 run explorer_bringup hw_selftest --all       # real-robot software, no hardware: must end "0 failed"
+ros2 run explorer_bringup fake_robot              # simulated ESP32 + X2; then esp_port:=socket://localhost:47001 lidar_port:=socket://localhost:47002
+ros2 run explorer_bringup esp32_check PORT        # | x2_check PORT : look at a device without ROS
+# Hardware docs (wiring, bring-up, debugging, protocol): docs/hardware/Hardware.md. The serial
+# protocol is in pilink.h + explorer_esp32.ino + esp32_bridge.py + fake_robot.py: change all four.
 
 # Mesh relay (sender side; /map and /tf onto the BATMAN-adv mesh)
 ros2 launch mesh_nodes explorer_relay.launch.py                  # on the robot
