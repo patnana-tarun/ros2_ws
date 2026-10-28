@@ -14,7 +14,10 @@ tags: [moc]
 | `explorer_bringup/x2_lidar.py` | [[x2_lidar]] |
 | `explorer_bringup/fake_robot.py`, `checks.py`, `selftest.py` | [[Hardware test tools]] |
 | `launch/robot.launch.py` | robot_state_publisher + bridge + EKF + LiDAR; args `mock`, `esp_port`, `lidar`, `lidar_port` |
+| `launch/mapping.launch.py` | `robot.launch.py` + SLAM Toolbox (configured and activated by the launch) + RViz (`rviz:=true`) |
 | `config/robot.yaml` | parameters of the two nodes |
+| `config/slam.yaml` | SLAM Toolbox for hand mapping: a copy of the sim-tuned section of `nav2_params.yaml` |
+| `config/mapping.rviz` | RViz: map, scan, robot model, TF; fixed frame `map` |
 | `setup.py`, `package.xml` | executables; the firmware folder is also installed to `share/explorer_bringup/firmware/` |
 
 Used from other packages: `src/explorer_description/urdf/explorer.urdf.xacro` (frames

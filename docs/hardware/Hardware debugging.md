@@ -39,3 +39,6 @@ Logs: the launch terminal; `~/.ros/log/<date-time>/`; `hw_selftest` writes `/tmp
 | no `/map` | SLAM not activated (lifecycle), no `/scan` | `ros2 lifecycle get /slam_toolbox` | the full bringup activates it; standalone: `ros2 lifecycle set /slam_toolbox configure`, then `activate` |
 | launch can't find nodes / old behaviour after an edit | not rebuilt / not sourced | `ros2 pkg executables explorer_bringup` | `colcon build --packages-select explorer_bringup && source install/setup.bash` |
 | nodes on the laptop and Pi don't see each other | discovery server / domain | [[Discovery server not running]] | as in the mesh setup |
+| map smears or doubles although each part works; robot moves on its own | **old nodes from an earlier run still running**: two EKFs fight over `odom → base_footprint`, an old Nav2 sends `/cmd_vel` | `ros2 node list` shows a name twice, or nodes you didn't start | stop everything (Ctrl-C each launch; `pkill -f ros-args` stops all ROS nodes of the user), start again |
+| `rviz2: symbol lookup error ... /snap/core20/.../libpthread.so.0` | started from VS Code's terminal (snap) | — | a normal terminal, or [[GUI crashes in VS Code terminal]] |
+| EKF: "Failed to meet update rate" now and then | CPU busy for a moment (RViz starting) | `top` | harmless if rare; constant → close RViz on the Pi, view it from a laptop |

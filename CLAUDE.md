@@ -60,6 +60,7 @@ ros2 launch explorer_bringup robot.launch.py mock:=true          # drivers only,
 ros2 launch explorer_bringup robot.launch.py esp_port:=/dev/serial/by-path/... lidar_port:=...   # lidar:=none|x2|ydlidar
 arduino-cli compile --fqbn esp32:esp32:esp32 src/explorer_bringup/firmware/explorer_esp32    # ESP32 firmware (add --upload -p PORT)
 ros2 run explorer_bringup hw_selftest --all       # real-robot software, no hardware: must end "0 failed"
+ros2 launch explorer_bringup mapping.launch.py rviz:=true esp_port:=... lidar_port:=...   # HARDWARE GOAL: robot + LiDAR + SLAM, drive by hand (manual_drive -p topic:=/cmd_vel)
 ros2 run explorer_bringup fake_robot              # simulated ESP32 + X2; then esp_port:=socket://localhost:47001 lidar_port:=socket://localhost:47002
 ros2 run explorer_bringup esp32_check PORT        # | x2_check PORT : look at a device without ROS
 # Hardware docs (wiring, bring-up, debugging, protocol): docs/hardware/Hardware.md. The serial

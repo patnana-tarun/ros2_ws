@@ -141,7 +141,9 @@ def fake_robot_checks(slam):
     procs = [Proc('fake_robot', ['ros2', 'run', 'explorer_bringup', 'fake_robot',
                                  '--esp-port', str(pe), '--lidar-port', str(pl)])]
     time.sleep(1.0)
-    procs.append(Proc('robot_launch', ['ros2', 'launch', 'explorer_bringup', 'robot.launch.py',
+    # --slam starts mapping.launch.py (robot.launch.py + SLAM Toolbox), else robot.launch.py
+    procs.append(Proc('robot_launch', ['ros2', 'launch', 'explorer_bringup',
+                                       'mapping.launch.py' if slam else 'robot.launch.py',
                                        f'esp_port:=socket://localhost:{pe}',
                                        f'lidar_port:=socket://localhost:{pl}']))
     rclpy.init()
@@ -177,7 +179,7 @@ def fake_robot_checks(slam):
         t0 = time.time()
         while time.time() - t0 < 20 and not (msgs['/odom'] and msgs['/scan']):
             time.sleep(0.5)
-        report('robot.launch.py comes up on the fake robot', bool(msgs['/odom'] and msgs['/scan']),
+        report(f"{'mapping' if slam else 'robot'}.launch.py comes up on the fake robot", bool(msgs['/odom'] and msgs['/scan']),
                f'after {time.time() - t0:.0f} s (logs /tmp/hw_selftest_*.log)')
         if not msgs['/odom']:
             return
@@ -219,28 +221,6 @@ def fake_robot_checks(slam):
         report('robot stops when /cmd_vel stops', abs(vx) < 0.02, f'wheel vx {vx:.3f} after 1.5 s')
 
         if slam:
-            share = get_package_share_directory('explorer_exploration')
-            procs.append(Proc('slam', ['ros2', 'run', 'slam_toolbox', 'sync_slam_toolbox_node',
-                                       '--ros-args', '--params-file',
-                                       os.path.join(share, 'config', 'nav2_params.yaml'),
-                                       '-p', 'use_sim_time:=false']))
-            from lifecycle_msgs.msg import Transition
-            from lifecycle_msgs.srv import ChangeState
-            client = node.create_client(ChangeState, '/slam_toolbox/change_state')
-            started = client.wait_for_service(timeout_sec=20.0)
-            for tid in (Transition.TRANSITION_CONFIGURE, Transition.TRANSITION_ACTIVATE):
-                if started:
-                    req = ChangeState.Request()
-                    req.transition.id = tid
-                    fut = client.call_async(req)
-                    t0 = time.time()
-                    while not fut.done() and time.time() - t0 < 20:
-                        time.sleep(0.1)
-                    started = fut.done() and fut.result().success
-            if not started:
-                report('SLAM Toolbox builds a map from the fake LiDAR', False,
-                       'could not configure/activate slam_toolbox (see /tmp/hw_selftest_slam.log)')
-                return
             drive(0.0, 0.5, 8.0)                    # turn on the spot
             drive(0.15, 0.0, 6.0)                   # then drive ahead
             time.sleep(4)
@@ -252,7 +232,7 @@ def fake_robot_checks(slam):
                 ok = occ > 100
                 detail = (f'{g.info.width} x {g.info.height} cells at {g.info.resolution:.2f} m, '
                           f'{occ} occupied')
-            report('SLAM Toolbox builds a map from the fake LiDAR', ok, detail)
+            report('mapping.launch.py: SLAM Toolbox maps the fake world', ok, detail)
     finally:
         ex.shutdown()
         node.destroy_node()

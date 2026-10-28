@@ -7,8 +7,11 @@ Start page for the **real robot**: the Raspberry Pi 4, the ESP32 controller, the
 the code that joins them to the ROS stack. Everything else in this vault is about the
 simulation and the mesh relay; this folder is only about the hardware.
 
-**Status (2026-10-28):** code complete and tested without hardware (all checks pass, the
-full exploration stack maps a simulated room). Not yet run on the robot. Open items are in
+**Goal now:** sensors + LiDAR → SLAM → a map, driven by hand (`mapping.launch.py`). Nav2 and
+autonomous exploration come later.
+
+**Status (2026-10-28):** code complete and tested without hardware (all checks pass; a
+hand-driven route on the simulated robot gives a clean map). Not yet run on the robot. Open items are in
 [[Known limitations]] (#16).
 
 ## Read in this order
@@ -27,8 +30,8 @@ Reference: [[ESP32 firmware]], [[Serial protocol]], [[esp32_bridge]], [[x2_lidar
 ros2 run explorer_bringup hw_selftest --all                 # does the software still work? (~2 min)
 ros2 run explorer_bringup esp32_check /dev/ttyUSB0          # what is the ESP32 sending? (no ROS)
 ros2 run explorer_bringup x2_check /dev/ttyUSB1             # what is the LiDAR sending? (no ROS)
-ros2 launch explorer_bringup robot.launch.py esp_port:=... lidar_port:=...      # robot only
-ros2 launch explorer_exploration bringup.launch.py sim:=false esp_port:=... lidar_port:=...   # + SLAM, Nav2, exploration
+ros2 launch explorer_bringup robot.launch.py esp_port:=... lidar_port:=...      # robot + LiDAR, no map
+ros2 launch explorer_bringup mapping.launch.py rviz:=true esp_port:=... lidar_port:=...   # + SLAM: drive by hand, map builds
 ```
 
 ## For another person or AI assistant picking this up

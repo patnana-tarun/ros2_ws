@@ -77,7 +77,11 @@ class Port:
         self.name, self.client = name, None
         self.srv = socket.socket()
         self.srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.srv.bind(('127.0.0.1', port))
+        try:
+            self.srv.bind(('127.0.0.1', port))
+        except OSError as e:
+            raise SystemExit(f'fake_robot: port {port} is taken ({e.strerror}): another fake_robot '
+                             'is still running (stop it), or choose --esp-port/--lidar-port')
         self.srv.listen(1)
         self.srv.setblocking(False)
         sel.register(self.srv, selectors.EVENT_READ, self)

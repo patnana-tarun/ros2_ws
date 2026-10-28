@@ -20,14 +20,14 @@ or sim. Exit code 0 when nothing failed. What it checks:
 | firmware T-line format matches the bridge parser | the `send(...)` format in `explorer_esp32.ino` and `esp32_bridge.py` agree; a bad checksum is rejected |
 | slip check flags a slipping wheel | the slip logic ([[esp32_bridge]]) |
 | X2 packet decoding | `x2_lidar`'s parser on packets cut into random chunks, with garbage and a broken packet; angles within 0.05° |
-| robot.launch.py comes up on the fake robot | the launch, bridge, EKF, LiDAR node start and connect |
+| robot.launch.py (or, with `--slam`, mapping.launch.py) comes up on the fake robot | the launch, bridge, EKF, LiDAR node start and connect |
 | rates | `/wheel/odom`, `/imu`, `/joint_states` 40–60 Hz; `/odom` 25–35 Hz; `/scan` 6–8 Hz |
 | `/imu` frame and gravity | frame `imu_link`, z ≈ −9.81 (chip facing down) |
 | `/scan` geometry | ranges at 0, 45, 90, −90, 180° match the fake world within 8 cm (directions and the LiDAR's position) |
 | TF | `odom → base_footprint → laser_frame` |
 | EKF follows a command | 0.15 m/s and 0.30 rad/s come back on `/odom` |
 | robot stops | wheel speed 0 within 1.5 s of the last `/cmd_vel` |
-| SLAM (`--slam`) | SLAM Toolbox, with the project's `nav2_params.yaml`, maps the fake world |
+| SLAM (`--slam`) | `mapping.launch.py` (robot + SLAM Toolbox with `config/slam.yaml`) maps the fake world |
 | firmware (`--firmware`) | `explorer_esp32` compiles with no warnings |
 
 **Limit:** the fake X2 encodes its packets with the same angle-correction formula that
@@ -37,15 +37,17 @@ Bring-up step 5 ([[Hardware bring-up]]) is the real check.
 ## `fake_robot`: the whole robot, simulated
 ```bash
 ros2 run explorer_bringup fake_robot          # ESP32 on socket://localhost:47001, X2 on :47002
-ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=true \
+ros2 launch explorer_bringup mapping.launch.py rviz:=true \
     esp_port:=socket://localhost:47001 lidar_port:=socket://localhost:47002
+ros2 run explorer_exploration manual_drive --ros-args -p topic:=/cmd_vel   # drive it, watch the map
 ```
 A simulated ESP32 (same protocol, watchdog, IMU in chip axes) and X2 (real packet format,
 ray-cast) in a 9 × 6 m world: two rooms joined by a doorway, a box and a pillar. The real nodes
 connect to it with pyserial `socket://` URLs, so everything above the serial port runs as on
 the robot. `--slip` makes the left rear wheel spin 50 % fast; `--no-imu` reports no IMU.
-On 2026-10-28 the full stack (SLAM, Nav2, exploration) explored it on its own: through the
-doorway, 50 of the 54 m² mapped in 150 s.
+It prints nothing about its true pose; the robot passes through walls (no collisions).
+2026-10-28: a hand-driven route gave a clean 9.1 × 6.15 m map ([[Hardware mapping figures]]);
+the full exploration stack also explored it on its own (50 of 54 m² in 150 s).
 
 ## `esp32_check`: what is the ESP32 sending?
 ```bash

@@ -94,13 +94,25 @@ ros2 topic echo /imu --field angular_velocity.z      # chip faces down: the robo
 ```
 New `track_width` = 0.43 × 0.5 / (measured rate). Put it in `config/robot.yaml`, rebuild.
 
-## 7. A map
+## 7. A map, driven by hand (the goal of the hardware integration)
+`mapping.launch.py` = the robot (step 5) + SLAM Toolbox (+ RViz). No Nav2, no exploration.
 ```bash
-ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false \
+ros2 launch explorer_bringup mapping.launch.py rviz:=true \
     esp_port:=/dev/serial/by-path/<ESP32> lidar_port:=/dev/serial/by-path/<X2>
-ros2 run explorer_exploration manual_drive          # optional: drive by hand (pauses exploration)
+ros2 run explorer_exploration manual_drive --ros-args -p topic:=/cmd_vel   # second terminal: w a s d x
+ros2 run nav2_map_server map_saver_cli -f ~/map_$(date +%F)              # third terminal: save
 ```
-On a laptop on the same network (same `ROS_DOMAIN_ID`, discovery server as in
-[[Mesh network setup]]): `rviz2` with Fixed Frame `map`, `/map`, `/scan`. Exploration starts
-by itself, as in simulation ([[Frontier exploration]]). Save a map with
-`ros2 run nav2_map_server map_saver_cli -f ~/map_$(date +%F)`.
+Drive slowly (≤ 0.2 m/s, turns ≤ 0.6 rad/s), let the walls come into view, close loops by
+returning to known places. The map should show straight walls; walls that double or fan
+out mean heading drift (steps 4 and 6). `rviz:=true` needs a screen: on the Pi with a monitor,
+or run `rviz2 -d $(ros2 pkg prefix explorer_bringup)/share/explorer_bringup/config/mapping.rviz`
+on a laptop on the same network (same `ROS_DOMAIN_ID` and discovery server as in
+[[Mesh network setup]]). SLAM settings: `config/slam.yaml` (the simulation-tuned values).
+
+Tested on `fake_robot` (2026-10-28): a hand-driven route through the doorway gave the map in
+[[Hardware mapping figures]].
+
+## 8. Later: autonomous exploration
+Not part of the hardware integration yet. When the map in step 7 is good:
+`ros2 launch explorer_exploration bringup.launch.py sim:=false rviz:=false esp_port:=... lidar_port:=...`
+([[Frontier exploration]]).

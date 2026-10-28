@@ -14,7 +14,7 @@ drive ─/odom,/tf──────────┴─► explorer_relay_node �
 
 ## Results
 - [[Comparisons]]: every design choice that was settled by comparing options, with charts (confirmed results only)
-- Figures, one note per folder in `assets/` (each picture with a one-line meaning): [[Comparisons figures]], [[Robot figures]], [[Frontier exploration figures]], [[Navigation stack figures]], [[Baseline runs figures]], [[Planner comparison figures]], [[Planner follow-ups figures]], [[Tunnel tracking figures]], [[Run to 90 percent figures]], [[Full comparison figures]], [[Navigation fixes figures]], [[Stall ablation figures]], [[Reverse-out figures]], [[Tunnel-reverse figures]], [[Nav speed figures]], [[Rover MCP figures]]
+- Figures, one note per folder in `assets/` (each picture with a one-line meaning): [[Comparisons figures]], [[Robot figures]], [[Frontier exploration figures]], [[Navigation stack figures]], [[Baseline runs figures]], [[Planner comparison figures]], [[Planner follow-ups figures]], [[Tunnel tracking figures]], [[Run to 90 percent figures]], [[Full comparison figures]], [[Navigation fixes figures]], [[Stall ablation figures]], [[Reverse-out figures]], [[Tunnel-reverse figures]], [[Nav speed figures]], [[Rover MCP figures]], [[Hardware mapping figures]]
 
 ## Packages
 - [[my_mesh_interfaces]]: the custom mesh messages
