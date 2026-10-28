@@ -45,7 +45,7 @@
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans);-webkit-font-smoothing:antialiased;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.page{display:grid;grid-template-rows:auto auto 1fr;height:100vh;min-height:660px;gap:12px;padding-block:14px}
+.page{display:grid;grid-template-rows:auto auto minmax(0,1fr);height:100vh;min-height:660px;gap:12px;padding-block:14px}
 header{display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:2px solid var(--border);padding-bottom:12px}
 .eyebrow{font:600 12px var(--sans);color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
 h1{font:800 28px/1.15 var(--sans);color:var(--ink);margin:3px 0 2px;letter-spacing:-.01em}
@@ -96,9 +96,12 @@ select{background:var(--surface);color:var(--ink);border:1.5px solid var(--borde
 .verdict p{margin:0;color:var(--ink);font-size:15px;font-weight:500}
 .rule{font-size:13px;color:var(--ink-2);margin-top:9px;line-height:1.5}
 .rule b{font-weight:700}
-.charts{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;min-height:0;min-width:0}
+.charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px;min-height:0;min-width:0}
 .chart{display:flex;flex-direction:column;min-height:0;min-width:0}
-.chart .plot{flex:1;min-height:190px}
+/* the drawn chart is taken out of the flow, so the card's size comes from the grid only, never from
+   a chart drawn at an earlier size (embedded frames such as Canva resize and scale after loading) */
+.chart .plot{flex:1 1 0;min-height:150px;position:relative}
+.chart .plot>.plot-container{position:absolute;inset:0}
 .key{display:flex;gap:14px;flex-wrap:wrap;font:600 12.5px var(--sans);color:var(--ink-2);margin:2px 0 0}
 .key span{display:inline-flex;align-items:center;gap:6px}
 .key i{display:inline-block;width:14px;height:10px;border-radius:2px}
@@ -370,6 +373,11 @@ const DATA = {"unit":0.58,"weights":[{"name":"subjective","label":"Subjective (u
   });
   caseSeg(); themeSeg(); weightSel(); draw();
   ['pDel','pQ'].forEach(id => $(id).on('plotly_click', e => { S.i = e.points[0].pointIndex; S.run = 'all'; draw(); }));
+  // redraw at the box's size whenever it changes (font load, key wrap, frame resize): window resize alone misses these
+  let rq = 0;
+  const ro = new ResizeObserver(() => { cancelAnimationFrame(rq);
+    rq = requestAnimationFrame(() => ['pAge','pRssi','pDel','pQ'].forEach(id => Plotly.Plots.resize($(id)))); });
+  ['pAge','pRssi','pDel','pQ'].forEach(id => ro.observe($(id)));
 })();
 </script>
 </body>
